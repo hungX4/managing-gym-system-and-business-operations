@@ -1,0 +1,13 @@
+{
+    "name": "gym-management-monorepo",
+    "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
+    "scripts": {
+        "dev:backend": "npm run dev --workspace=@gym/backend",
+        "dev:frontend": "npm run dev --workspace=@gym/frontend",
+        "install:all": "npm install",
+        "dev:all": "npm run dev:backend & npm run dev:frontend"
+    }
+}
