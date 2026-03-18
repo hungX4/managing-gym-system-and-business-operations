@@ -1,0 +1,47 @@
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "./User";
+import { SalaryStatus } from "@gym/shared";
+
+@Entity('salary')
+export class Salary {
+
+    @PrimaryGeneratedColumn()
+    salaryId: number;
+
+    @ManyToOne(() => User, (user) => user.salary)
+    @JoinColumn({ name: 'coach_id' })
+    coach: User;
+
+    @Column()
+    month: number;
+
+    @Column()
+    year: number;
+
+    @Column({ type: 'decimal', precision: 15, scale: 2 })
+    totalWorkIncome: number // tong tien tu work_logs(1-1 and dance class)
+
+    @Column({ type: 'decimal', precision: 15, scale: 2 })
+    totalCommission: number; // tong doanh so ban
+
+    @Column({ type: 'decimal', precision: 15, scale: 2 })
+    baseSalarySnapshot: number; //luong cung tai thoi diem chot luong
+
+    @Column({ type: 'decimal' })
+    bonus: number;
+
+    @Column({ type: 'decimal' })
+    deduction: number;
+
+    @Column({ type: 'decimal' })
+    finalAmount: number;
+
+    @Column({ type: 'enum', enum: SalaryStatus })
+    status: SalaryStatus;
+
+    @Column({ type: 'datetime' })
+    createAt: Date;
+
+    @Column({ type: 'datetime' })
+    paidAt: Date;
+}

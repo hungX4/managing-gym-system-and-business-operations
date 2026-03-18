@@ -9,5 +9,17 @@
         "dev:frontend": "npm run dev --workspace=@gym/frontend",
         "install:all": "npm install",
         "dev:all": "npm run dev:backend & npm run dev:frontend"
+    },
+    "devDependencies": {
+        "@types/bcrypt": "^6.0.0",
+        "@types/cookie-parser": "^1.4.10",
+        "@types/jsonwebtoken": "^9.0.10",
+        "tsconfig-paths": "^4.2.0"
+    },
+    "dependencies": {
+        "bcrypt": "^6.0.0",
+        "cookie-parser": "^1.4.7",
+        "jsonwebtoken": "^9.0.3",
+        "typeorm-naming-strategies": "^4.1.0"
     }
 }

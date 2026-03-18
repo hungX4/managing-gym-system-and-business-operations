@@ -1,12 +1,13 @@
 {
   "name": "@gym/shared",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
+  "types": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "shared types, enums, and DTO for gym system"
 }
