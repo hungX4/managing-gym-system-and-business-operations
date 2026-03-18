@@ -8,13 +8,22 @@
             "dom"
         ], // Thêm lib để hỗ trợ các hàm mới
         "strict": true,
-        "rootDir": "./src", // THÊM: Giữ cấu trúc thư mục gọn gàng
+        "rootDirs": [
+            "./src",
+            "../shared/src"
+        ], // THÊM: Giữ cấu trúc thư mục gọn gàng
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "strictPropertyInitialization": false
+        "strictPropertyInitialization": false,
+        "baseUrl": "./",
+        "paths": {
+            "@gym/shared": [
+                "../shared/src/index.ts"
+            ]
+        }
     },
     "include": [
         "src/**/*.ts"
