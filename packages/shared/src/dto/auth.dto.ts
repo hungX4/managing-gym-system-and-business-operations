@@ -9,14 +9,29 @@ export interface RegisterRequestDto {
 }
 
 export interface LoginRequestDto {
-    username: string,
-    passwordRaw: string
+    phone: string,
+    passwordRaw: string,
+    deviceId?: string
+}
+
+export interface RefreshTokenDto {
+    userId: string
+    deviceId?: string
+    // refreshToken đọc từ cookie, không nhận trong body
+}
+
+export interface JwtPayload {
+    sub: string //user_id
+    phone: string
+    roles: Role
+    jti: string // unique token id, có thể add blacklist
+    iat?: number
+    exp?: number
 }
 
 //response
 export interface UserProfileDto {
     userId: string,
-    userName: string,
     fullName: string,
     phone: string,
     gmail: string,
@@ -25,5 +40,7 @@ export interface UserProfileDto {
 
 export interface AuthResponseDto {
     accessToken: string,
+    expiredIn: number,
     userData: UserProfileDto
 }
+

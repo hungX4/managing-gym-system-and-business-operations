@@ -8,6 +8,7 @@
             "dom"
         ], // Thêm lib để hỗ trợ các hàm mới
         "strict": true,
+        "rootDir": "../",
         "rootDirs": [
             "./src",
             "../shared/src"
@@ -18,7 +19,7 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "strictPropertyInitialization": false,
-        "baseUrl": "./",
+        //"baseUrl": "./",
         "paths": {
             "@gym/shared": [
                 "../shared/src/index.ts"
@@ -26,7 +27,9 @@
         }
     },
     "include": [
-        "src/**/*.ts"
+        "./src/**/*.ts",
+        "../shared/src/**/*.ts",
+        "./src/types/express.d.ts"
     ],
     "exclude": [
         "node_modules",

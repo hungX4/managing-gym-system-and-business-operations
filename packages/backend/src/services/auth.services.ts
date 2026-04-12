@@ -1,25 +1,27 @@
-import { RegisterRequestDto, Role } from "@gym/shared";
-import { AppDataSource } from "src/models/data-source";
-import { User } from "src/models/entity/User";
+import { AuthResponseDto, LoginRequestDto, RegisterRequestDto, Role } from "@gym/shared";
+import { AppDataSource } from "../models/data-source";
+import { User } from "../models/entity/User";
 import bcrypt from 'bcrypt'
+import { TokenServices } from "./token.services";
+import { Auth } from "typeorm";
+import { Request, Response } from "express";
 
 export class AuthServices {
 
+    // private static userReposistory = AppDataSource.getRepository(User);
 
-    private static userReposistory = AppDataSource.getRepository(User);
-
-    static async register(data: RegisterRequestDto) {
+    static async register(data: RegisterRequestDto): Promise<AuthResponseDto & { refreshToken: string }> {
         try {
             //check if phone existed
-            const existingUser = await this.userReposistory.findOne({ where: { phone: data.phone } });
+            const existingUser = await AppDataSource.getRepository(User).findOne({ where: { phone: data.phone } });
             if (existingUser) {
-                throw new Error('Số điện thoại đã được đăng kí');
+                throw new Error('PHONE_NUMBER_ALREADY_IN_USE');
             }
 
             //hash
             const hashedPassword = await bcrypt.hash(data.passwordRaw, 10);
 
-            const newUser = this.userReposistory.create({
+            const newUser = AppDataSource.getRepository(User).create({
                 phone: data.phone,
                 passwordHash: hashedPassword,
                 fullName: data.fullName,
@@ -27,20 +29,39 @@ export class AuthServices {
                 gmail: data.gmail
             })
 
-            await this.userReposistory.save(newUser)
-            return { message: 'Đăng ký tài khoản thành công!' };
+            await AppDataSource.getRepository(User).save(newUser);
+            return TokenServices.issueTokens(newUser);
         } catch (error) {
             throw error
         }
-
-
     }
 
-    async login() {
+    static async login(dto: LoginRequestDto): Promise<AuthResponseDto & { refreshToken: string }> {
+        const { phone, passwordRaw, deviceId = 'default' } = dto;
 
+        const user = await AppDataSource.getRepository(User).createQueryBuilder('User')
+            .where('User.phone = :phone', { phone: dto.phone })
+            .addSelect('User.passwordHash') // select pwd
+            .getOne();
+        if (!user) throw new Error('INVALID_CREDENTIALS');
+
+        const valid = bcrypt.compare(passwordRaw, user.passwordHash);
+        if (!valid) throw new Error('INVALID_CREDENTIALS');
+
+        return TokenServices.issueTokens(user, deviceId);
     }
 
-    async logout() {
+    static async refresh(userId: string,
+        deviceId = 'default',
+        oldToken: string): Promise<AuthResponseDto & { refreshToken: string }> {
+        return await TokenServices.rotateTokens(userId, deviceId, oldToken);
+    }
 
+    static async logout(userId: string, deviceId = 'default'): Promise<void> {
+        await TokenServices.revokeToken(userId, deviceId)
+    }
+
+    static async logoutAll(userId: string): Promise<void> {
+        await TokenServices.revokeToken(userId)
     }
 }

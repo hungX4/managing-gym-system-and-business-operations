@@ -10,7 +10,7 @@ import { UsageLog } from "./UsageLog";
 @Entity('user')
 export class User {
     @PrimaryGeneratedColumn()
-    userId: number;
+    userId: string;
 
     @Column({ select: false })
     passwordHash: string;
