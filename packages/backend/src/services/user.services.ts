@@ -13,7 +13,7 @@ export class UserServices {
             .leftJoinAndSelect('user.boughtSubscriptions', 'sub', 'sub.status = :subStatus', { subStatus: 'ACTIVE' })
             .where('user.role = :role', { role: Role.MEMBER })
             .andWhere('(user.phone LIKE :keyword OR user.fullName LIKE :keyword)', { keyword: `%${keyword}%` })
-            .take(3) //lay 3 kq dau tien
+            .take(5) //lay 3 kq dau tien
             .getMany();
 
         return member.map(user => {

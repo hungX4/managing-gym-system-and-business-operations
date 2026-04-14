@@ -40,7 +40,7 @@ bookingRoute.patch(
     bookingCtrl.updateStatus,
 )
 
-// PT huỷ lịch (chỉ huỷ được khi còn SCHEDULED)
+// PT huỷ lịch (chỉ huỷ được khi còn CONFIRM)
 bookingRoute.delete(
     '/:id',
     AuthMiddleware.authenticate,
