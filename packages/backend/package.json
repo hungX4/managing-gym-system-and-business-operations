@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.0.9",
     "express": "^5.2.1",
@@ -20,12 +21,13 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@gym/shared": "*",
     "body-parser": "^2.2.2",
+    "cors": "^2.8.6",
     "dotenv": "^17.2.3",
     "ejs": "^4.0.1",
     "mysql2": "^3.16.2",
     "reflect-metadata": "^0.2.2",
-    "typeorm": "^0.3.28",
-    "@gym/shared": "*"
+    "typeorm": "^0.3.28"
   }
 }

@@ -39,3 +39,8 @@ export enum MemberSubscriptionStatus {
     EXPIRATED = 'EXPIRATED',
     RESERVE = 'RESERVE'
 }
+
+export enum PackageType {
+    MEMBERSHIP = 'ACTIVE',
+    COACHING = 'COACHING'
+}

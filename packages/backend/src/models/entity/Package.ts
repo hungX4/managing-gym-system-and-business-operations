@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { MemberSubscription } from "./MemberSubscription";
+import { PackageType } from "@gym/shared";
 
 @Entity('package')
 export class Package {
@@ -13,7 +14,7 @@ export class Package {
     price: number;
 
     @Column()
-    type: boolean;
+    type: PackageType;
 
     @Column()
     totalSession: number;

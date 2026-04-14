@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+/* Các code css khác của bạn ở dưới... */
+@layer utilities {
+
+    /* Class ẩn thanh cuộn để carousel trông xịn hơn */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}

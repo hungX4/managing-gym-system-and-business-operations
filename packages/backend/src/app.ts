@@ -5,9 +5,10 @@ import { AppDataSource } from "./models/data-source";
 import { User } from "./models/entity/User";
 import { errorMiddleware } from './middleware/error.middleware';
 import cookieParser from 'cookie-parser';
-
+import cors from 'cors';
 const app = express();
 app.use(cookieParser());
+app.use(cors());
 AppDataSource.initialize()
     .then(async () => {
         console.log("🔥 Kết nối Database thành công!");

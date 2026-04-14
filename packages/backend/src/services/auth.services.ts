@@ -45,7 +45,7 @@ export class AuthServices {
             .getOne();
         if (!user) throw new Error('INVALID_CREDENTIALS');
 
-        const valid = bcrypt.compare(passwordRaw, user.passwordHash);
+        const valid = await bcrypt.compare(passwordRaw, user.passwordHash);
         if (!valid) throw new Error('INVALID_CREDENTIALS');
 
         return TokenServices.issueTokens(user, deviceId);

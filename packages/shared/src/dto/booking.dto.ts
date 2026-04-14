@@ -2,10 +2,11 @@ import { CoachType, BookingStatus } from '../enums'
 
 //request
 export interface CreateBookingRequestDto {
-    coach_id: number,
-    member_id: number,
-    start_time: Date,
-    end_time: Date,
+    coachId: string,
+    memberId: number,
+    startTime: Date,
+    endTime: Date,
+    phone: string,
     type: CoachType //gym, dance, yoga session
 }
 
@@ -16,14 +17,14 @@ export interface UpdateBookingStatusDto {
 //response
 
 export interface BookingResponseDto {
-    booking_id: number,
-    coach_id: number,
-    coach_name: string,
-    member_id: number,
-    member_name: string,
-    member_phone: string,
-    start_time: Date,
-    end_time: Date,
+    bookingId: number,
+    coachId: string,
+    coachName: string,
+    memberId: string,
+    memberName: string,
+    memberPhone: string,
+    startTime: Date,
+    endTime: Date,
     type: CoachType,
     status: BookingStatus
 }
