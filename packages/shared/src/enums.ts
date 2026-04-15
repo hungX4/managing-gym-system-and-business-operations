@@ -21,6 +21,7 @@ export enum BookingStatus {
     CONFIRMED = 'CONFIRMED',
     CANCELLED = 'CANCELLED',
     COMPLETED = 'COMPLETED',
+    LATE_CANCEL = 'LATE_CANCEL'
 }
 
 export enum WorkLogStatus {

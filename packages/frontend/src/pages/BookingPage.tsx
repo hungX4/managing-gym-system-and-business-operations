@@ -56,6 +56,7 @@ export default function BookingPage() {
             setBookings(res.data.filter((b: any) => b.status !== 'CANCELLED'));
         } catch (error) {
             console.error("Lỗi lấy lịch:", error);
+            setBookings([]);
         }
     };
 

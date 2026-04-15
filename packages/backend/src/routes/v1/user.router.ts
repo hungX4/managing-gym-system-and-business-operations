@@ -12,7 +12,7 @@ const userCtrl = new UserController();
 userRouter.get(
     '/search',
     AuthMiddleware.authenticate,
-    AuthMiddleware.authorize(Role.COACH, Role.STAFF, Role.ADMIN),
+    AuthMiddleware.authorize(Role.COACH, Role.STAFF, Role.ADMIN), //xu ly chi cho coach vao duoc /booking
     userCtrl.searchMembers
 );
 

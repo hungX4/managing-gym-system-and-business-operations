@@ -3,6 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import HomePage from '../pages/HomePage';
 import BookingPage from '../pages/BookingPage';
 import AuthPage from '../pages/AuthPage';
+import CheckinPage from '../pages/CheckinPage';
+import ProtectedRoute from '../components/guard/ProtectedRoute';
 // import CheckinPage from '../pages/CheckinPage'; // Sau này bạn tạo trang này thì uncomment
 
 export default function AppRoutes() {
@@ -12,11 +14,15 @@ export default function AppRoutes() {
             <Route path="/" element={<HomePage />} />
 
             {/* Trang đặt lịch cho Coach */}
-            <Route path="/bookings" element={<BookingPage />} />
+
+            <Route path="/booking" element={<BookingPage />} />
+            {/* Thêm các trang khác của Coach vào đây... */}
+
 
             {/* Route Đăng nhập / Đăng ký */}
             <Route path="/auth" element={<AuthPage />} />
-
+            {/* Route Checkin */}
+            <Route path="/checkin" element={<CheckinPage />} />
             {/* Trang Lễ tân check-in */}
             {/* <Route path="/checkin" element={<CheckinPage />} /> */}
         </Routes>

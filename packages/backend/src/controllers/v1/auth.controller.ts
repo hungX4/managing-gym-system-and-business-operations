@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthServices } from "../../services/auth.services";
 import { JwtPayload, LoginRequestDto, RegisterRequestDto } from "@gym/shared";
-
+import { CookieOptions } from "express";
 declare global {
     namespace Express {
         interface Request {
@@ -10,10 +10,10 @@ declare global {
     }
 }
 
-const COOKIE_OPTIONS = {
+const COOKIE_OPTIONS: CookieOptions = {
     httpOnly: true,
-    secure: process.env.COOKIE_SECURE === 'true',
-    sameSite: (process.env.COOKIE_SAME_SITE ?? 'strict') as 'strict',
+    secure: false, //true ở productions
+    sameSite: 'strict',
     path: '/api/v1/auth/refresh',
     maxAge: 30 * 24 * 3600 * 1000,
 }

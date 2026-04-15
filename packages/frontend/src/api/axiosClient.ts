@@ -4,7 +4,8 @@ const axiosClient = axios.create({
     baseURL: 'http://localhost:3636/api/v1',
     headers: {
         'Content-Type': 'application/json'
-    }
+    },
+    withCredentials: true
 });
 
 //interceptor: tu dong dinh kem token vao request
@@ -19,6 +20,8 @@ axiosClient.interceptors.request.use((config) => {
 }));
 
 // 2. RESPONSE INTERCEPTOR: Xử lý khi Token hết hạn (Lỗi 401)
+let refreshTokenPromise: any = null;
+
 axiosClient.interceptors.response.use(
     (response) => {
         return response;
@@ -26,48 +29,47 @@ axiosClient.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        // Nếu mã lỗi là 401 (Unauthorized) và request này chưa được retry lần nào
         if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true; // Đánh dấu là đã retry để tránh lặp vô hạn
+            originalRequest._retry = true;
 
-            try {
-                // Lấy userId từ localStorage (dựa theo DTO RefreshTokenDto của bạn)
+            // NẾU CHƯA CÓ AI GỌI REFRESH -> MÌNH ĐỨNG RA GỌI
+            if (!refreshTokenPromise) {
                 const userId = localStorage.getItem('userId');
-
                 if (!userId) {
-                    throw new Error("Không tìm thấy user id");
+                    window.location.href = '/auth';
+                    return Promise.reject(error);
                 }
 
-                // Gọi API refresh token. Chú ý: Dùng thư viện axios gốc để không bị lặp qua interceptor này
-                const res = await axios.post(
-                    'http://localhost:3000/api/v1/auth/refresh', // Sửa đường dẫn chuẩn với BE
+                // Gán promise đang gọi API vào biến khoá
+                refreshTokenPromise = axios.post(
+                    `${axiosClient.defaults.baseURL}/auth/refresh`,
                     { userId: userId },
-                    { withCredentials: true } // Bắt buộc để gửi HttpOnly Cookie chứa refreshToken lên BE
-                );
+                    { withCredentials: true }
+                ).then(res => {
+                    const newAccessToken = res.data.accessToken;
+                    localStorage.setItem('accessToken', newAccessToken);
+                    return newAccessToken;
+                }).catch(refreshError => {
+                    console.error("Refresh token failed", refreshError);
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('userData');
+                    localStorage.removeItem('userId');
+                    // window.location.href = '/auth';
+                    return Promise.reject(refreshError);
+                }).finally(() => {
+                    // Xong việc thì reset khoá
+                    refreshTokenPromise = null;
+                });
+            }
 
-                // Lấy token mới từ response
-                const newAccessToken = res.data.accessToken;
+            try {
+                // TẤT CẢ CÁC REQUEST 401 SẼ ĐỨNG CHỜ Ở ĐÂY CHO ĐẾN KHI CÓ TOKEN
+                const newAccessToken = await refreshTokenPromise;
 
-                // Lưu token mới vào localStorage
-                localStorage.setItem('accessToken', newAccessToken);
-
-                // Cập nhật lại header Authorization cho request cũ đang bị treo
                 originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-
-                // Gửi lại request cũ bằng axiosClient với token mới
                 return axiosClient(originalRequest);
-
-            } catch (refreshError) {
-                // Nếu refresh token cũng hết hạn hoặc lỗi -> Xoá sạch data và đá ra trang login
-                console.error("Refresh token failed", refreshError);
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('userData');
-                localStorage.removeItem('userId');
-
-                // Redirect về trang /auth
-                window.location.href = '/auth';
-
-                return Promise.reject(refreshError);
+            } catch (err) {
+                return Promise.reject(err);
             }
         }
 

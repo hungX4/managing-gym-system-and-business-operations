@@ -181,7 +181,7 @@ export class CheckinService {
 
             // 4.4. Đổi trạng thái Booking tương ứng
             if (status === WorkLogStatus.COMPLETED) {
-                booking.status = BookingStatus.CANCELLED;
+                booking.status = BookingStatus.COMPLETED;
             } else if (status === WorkLogStatus.LATE_CANCEL) {
                 booking.status = BookingStatus.CANCELLED;
             } else {

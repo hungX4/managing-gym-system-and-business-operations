@@ -81,7 +81,7 @@ const Navbar = () => {
                                         <Link to="/profile" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded transition">
                                             Hồ sơ của tôi
                                         </Link>
-                                        <Link to="/bookings" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded transition">
+                                        <Link to="/booking" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded transition">
                                             Quản lý lịch tập
                                         </Link>
                                     </div>
