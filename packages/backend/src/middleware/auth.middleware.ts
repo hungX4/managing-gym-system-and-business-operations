@@ -20,7 +20,6 @@ export class AuthMiddleware {
         }
 
         const token = header.slice(7);
-        console.log(token);
         try {
             const payload = TokenServices.verify(token);
             req.user = payload;

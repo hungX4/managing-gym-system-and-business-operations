@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosClient from '../api/axiosClient';
+import {
+    LoginRequestDto,
+    RegisterRequestDto,
+    AuthResponseDto
+} from "@gym/shared";
+import toast from 'react-hot-toast';
 
 export default function AuthPage() {
     const navigate = useNavigate();
@@ -37,11 +43,16 @@ export default function AuthPage() {
 
         try {
             if (isLogin) {
-                // GỌI API ĐĂNG NHẬP
-                const response = await axiosClient.post('/auth/login', {
+                //ep kieu dto
+                const loginPayLoad: LoginRequestDto = {
                     phone: formData.phone,
                     passwordRaw: formData.passwordRaw,
-                });
+                };
+
+                const response = await axiosClient.post<AuthResponseDto>(
+                    'auth/login',
+                    loginPayLoad
+                );
 
                 const { accessToken, userData } = response.data;
 
@@ -49,18 +60,22 @@ export default function AuthPage() {
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('userData', JSON.stringify(userData));
                 localStorage.setItem('userId', userData.userId); // Lưu userId để dùng cho Booking
-
-                //alert
-                navigate('/'); // Điều hướng về Home
+                toast.success(`Chào mừng trở lại, ${userData.fullName}!`);
+                navigate('/');
 
             } else {
-                // GỌI API ĐĂNG KÝ
-                const response = await axiosClient.post('/auth/register', {
+                //payload dang ky
+                const registerPayload: RegisterRequestDto = {
                     phone: formData.phone,
                     passwordRaw: formData.passwordRaw,
                     fullName: formData.fullName,
-                    gmail: formData.gmail,
-                });
+                    gmail: formData.gmail
+                }
+
+                const response = await axiosClient.post<AuthResponseDto>(
+                    '/auth/register',
+                    registerPayload
+                );
 
                 const { accessToken, userData } = response.data;
 
@@ -68,7 +83,8 @@ export default function AuthPage() {
                 localStorage.setItem('userData', JSON.stringify(userData));
                 localStorage.setItem('userId', userData.userId);
 
-                // alert('Đăng ký thành công!');
+                toast.success(`ĐĂNG KÝ THÀNH CÔNG!, ${userData.fullName}!`);
+
                 navigate('/'); // Điều hướng về Home
             }
         } catch (error: any) {

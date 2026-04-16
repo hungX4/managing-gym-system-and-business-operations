@@ -13,18 +13,20 @@ export default function AppRoutes() {
             {/* Trang chủ */}
             <Route path="/" element={<HomePage />} />
 
-            {/* Trang đặt lịch cho Coach */}
+            <Route element={<ProtectedRoute allowedRoles={['COACH', 'ADMIN']} />}>
+                {/* Trang đặt lịch cho Coach */}
+                <Route path="/booking" element={<BookingPage />} />
+            </Route>
 
-            <Route path="/booking" element={<BookingPage />} />
-            {/* Thêm các trang khác của Coach vào đây... */}
 
-
+            <Route element={<ProtectedRoute allowedRoles={['STAFF', 'ADMIN']} />}>
+                {/* Route Checkin */}
+                <Route path="/checkin" element={<CheckinPage />} />
+            </Route>
             {/* Route Đăng nhập / Đăng ký */}
             <Route path="/auth" element={<AuthPage />} />
-            {/* Route Checkin */}
-            <Route path="/checkin" element={<CheckinPage />} />
-            {/* Trang Lễ tân check-in */}
-            {/* <Route path="/checkin" element={<CheckinPage />} /> */}
+
+
         </Routes>
     );
 }

@@ -5,12 +5,15 @@ import CalendarToolbar from '../components/booking/CalenderToolbar';
 import CalendarGrid from '../components/booking/CalenderGrid'
 import CreateBookingModal from '../components/booking/CreateBookingModal';
 import BookingDetailsModal from '../components/booking/BookingDetailsModals';
+import toast from 'react-hot-toast';
+import { BookingResponseDto, CoachType, CreateBookingRequestDto } from '@gym/shared';
+
 
 export default function BookingPage() {
     // 1. STATE MANAGEMENT
     const [currentDate, setCurrentDate] = useState(new Date());
     const [isMobile, setIsMobile] = useState(false);
-    const [bookings, setBookings] = useState<any[]>([]);
+    const [bookings, setBookings] = useState<BookingResponseDto[]>([]);
 
     // Modal Create State
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,7 +26,7 @@ export default function BookingPage() {
     // Modal Details State
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState<any>(null);
-
+    // const [errorMsg, setErrorMsg] = useState(null);
     // 2. LOGIC RESPONSIVE & CALENDAR
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -52,10 +55,11 @@ export default function BookingPage() {
     // 3. API CALLS
     const fetchBookings = async () => {
         try {
-            const res = await axiosClient.get('/booking');
+            const res = await axiosClient.get<BookingResponseDto[]>('/booking');
             setBookings(res.data.filter((b: any) => b.status !== 'CANCELLED'));
         } catch (error) {
             console.error("Lỗi lấy lịch:", error);
+            toast.error("KHÔNG TẢI ĐƯỢC LỊCH!")
             setBookings([]);
         }
     };
@@ -74,6 +78,9 @@ export default function BookingPage() {
                     setSearchResults(res.data);
                 } catch (error) {
                     console.error("Lỗi tìm kiếm:", error);
+                    console.trace("🔍 Chi tiết Stack Trace của lỗi này:");
+                    // setErrorMsg(error.response?.data?.message || "Không thể tải dữ liệu.");
+                    toast.error("LỖI TÌM KIẾM!!!");
                 } finally {
                     setIsSearching(false);
                 }
@@ -93,19 +100,23 @@ export default function BookingPage() {
 
         try {
             const coachId = localStorage.getItem('userId');
-            await axiosClient.post('/booking', {
+            const payload: CreateBookingRequestDto = {
                 coachId: String(coachId),
-                memberId: selectedMember.memberId,
-                startTime: startTime.toISOString(),
-                endTime: endTime.toISOString(),
+                memberId: selectedMember.memberId, // Chắc chắn UserProfileDto của bạn có trường này
+                startTime: startTime,
+                endTime: endTime,
                 phone: selectedMember.phone,
-                type: 'GYM'
-            });
-            alert("Đặt lịch thành công!");
+                type: CoachType.GYM // Hoặc Enum CoachType.GYM nếu bạn import từ enum
+            };
+            await axiosClient.post(
+                '/booking',
+                payload
+            );
+            toast.success("ĐẶT LỊCH THÀNH CÔNG!")
             setIsModalOpen(false);
             fetchBookings();
         } catch (error: any) {
-            alert(error.response?.data?.message || "Lỗi đặt lịch");
+            toast.error("KHÔNG THỂ ĐẶT LỊCH!")
         }
     };
 
@@ -115,12 +126,12 @@ export default function BookingPage() {
 
         try {
             await axiosClient.delete(`/booking/${selectedBooking.bookingId}`);
-            alert("Huỷ lịch thành công!");
+            toast.success("ĐÃ HỦY LỊCH!")
             setIsDetailsModalOpen(false);
             setSelectedBooking(null);
             fetchBookings();
         } catch (error: any) {
-            alert(error.response?.data?.message || "Lỗi huỷ lịch");
+            toast.success("ĐÃ XẢY RA LỖI!")
         }
     };
 

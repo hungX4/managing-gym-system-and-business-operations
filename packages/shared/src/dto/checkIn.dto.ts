@@ -3,12 +3,13 @@ import { WorkLogStatus } from "../enums";
 //request
 export interface CheckInRequestDto {
     bookingId: number,
-    subscriptionId: number,
+    subscriptionId: number | undefined,
     status: WorkLogStatus
 }
 
 export interface MemberCheckinRequestDto {
-    phone: string;
+    phone?: string;
+    name?: string
 }
 
 export interface ClassCheckinRequestDto {
@@ -33,8 +34,12 @@ export interface CheckInResponseDto {
     earned_amount: number;
 }
 
-export interface MemberCheckinRequestDto {
+export interface MemberCheckinResponseDto {
     message: string;
     memberName: string;
     packageName: string;
 }
+
+// export interface ClassCheckinResponseDto{
+
+// }

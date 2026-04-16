@@ -3,21 +3,22 @@ import { BrowserRouter } from 'react-router-dom';
 import Footer from './components/Layout/Footer';
 import AppRoutes from './routes/AppRoutes';
 import Navbar from './components/Layout/NavBar';
-
+import { Toaster } from 'react-hot-toast';
 const App: React.FC = () => {
   return (
-    <BrowserRouter>
-      {/* Thanh điều hướng luôn nằm ở trên cùng */}
-      <Navbar />
+    <>
+      <Toaster position='bottom-right' />
+      <BrowserRouter>
+        <Navbar />
 
-      {/* Khu vực nội dung chính sẽ thay đổi tuỳ theo URL */}
-      <main className="min-h-screen bg-gray-50">
-        <AppRoutes />
-      </main>
+        <main className="min-h-screen bg-gray-50">
+          <AppRoutes />
+        </main>
 
-      {/* Chân trang luôn nằm ở dưới */}
-      <Footer />
-    </BrowserRouter>
+
+        <Footer />
+      </BrowserRouter>
+    </>
   );
 };
 

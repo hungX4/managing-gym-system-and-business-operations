@@ -26,5 +26,6 @@ export interface BookingResponseDto {
     startTime: Date,
     endTime: Date,
     type: CoachType,
-    status: BookingStatus
+    status: BookingStatus,
+    subscriptionId?: number
 }

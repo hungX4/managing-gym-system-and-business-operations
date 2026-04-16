@@ -1,10 +1,11 @@
+import { WorkLogStatus } from '@gym/shared';
 import React, { useState } from 'react';
 
 interface Props {
     isOpen: boolean;
     onClose: () => void;
     booking: any;
-    onConfirm: (status: 'COMPLETED' | 'LATE_CANCEL') => Promise<void>;
+    onConfirm: (status: WorkLogStatus) => Promise<void>;
 }
 
 export default function ConfirmCheckinModal({ isOpen, onClose, booking, onConfirm }: Props) {
@@ -12,7 +13,7 @@ export default function ConfirmCheckinModal({ isOpen, onClose, booking, onConfir
 
     if (!isOpen || !booking) return null;
 
-    const handleAction = async (status: 'COMPLETED' | 'LATE_CANCEL') => {
+    const handleAction = async (status: WorkLogStatus) => {
         setLoading(true);
         await onConfirm(status);
         setLoading(false);
@@ -47,7 +48,7 @@ export default function ConfirmCheckinModal({ isOpen, onClose, booking, onConfir
                     <div className="flex flex-col gap-3">
                         <button
                             disabled={loading}
-                            onClick={() => handleAction('COMPLETED')}
+                            onClick={() => handleAction(WorkLogStatus.COMPLETED)}
                             className="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition uppercase tracking-wider text-sm shadow-lg shadow-green-600/20 disabled:opacity-50"
                         >
                             {loading ? 'Đang xử lý...' : 'Hoàn Thành (Có Mặt)'}
@@ -55,7 +56,7 @@ export default function ConfirmCheckinModal({ isOpen, onClose, booking, onConfir
 
                         <button
                             disabled={loading}
-                            onClick={() => handleAction('LATE_CANCEL')}
+                            onClick={() => handleAction(WorkLogStatus.LATE_CANCEL)}
                             className="w-full py-3 bg-yellow-600 hover:bg-yellow-700 text-white font-bold rounded-lg transition uppercase tracking-wider text-sm shadow-lg shadow-yellow-600/20 disabled:opacity-50"
                         >
                             {loading ? 'Đang xử lý...' : 'Huỷ Muộn (Vắng Mặt)'}

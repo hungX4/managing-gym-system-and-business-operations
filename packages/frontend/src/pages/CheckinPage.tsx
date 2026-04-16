@@ -3,19 +3,22 @@ import axiosClient from '../api/axiosClient';
 import CheckinGrid from '../components/checkin/CheckinGrid';
 import SlotListModal from '../components/checkin/SlotList';
 import ConfirmCheckinModal from '../components/checkin/ConfirmCheckinModal';
+import { BookingResponseDto, CheckInRequestDto, CheckInResponseDto } from '@gym/shared';
+import { WorkLogStatus } from '@gym/shared';
+import toast from 'react-hot-toast';
 
 export default function CheckinPage() {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [isMobile, setIsMobile] = useState(false);
-    const [bookings, setBookings] = useState<any[]>([]);
+    const [bookings, setBookings] = useState<BookingResponseDto[]>([]);
 
     // State Modals
     const [isListModalOpen, setIsListModalOpen] = useState(false);
-    const [slotBookings, setSlotBookings] = useState<any[]>([]);
+    const [slotBookings, setSlotBookings] = useState<BookingResponseDto[]>([]);
     const [slotTime, setSlotTime] = useState<{ date: Date, hour: number } | null>(null);
 
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-    const [selectedBookingToConfirm, setSelectedBookingToConfirm] = useState<any>(null);
+    const [selectedBookingToConfirm, setSelectedBookingToConfirm] = useState<BookingResponseDto | null>(null);
 
     // Xử lý Responsive & Ngày tháng
     useEffect(() => {
@@ -45,7 +48,7 @@ export default function CheckinPage() {
     // Lấy API (Giả sử Lễ tân dùng chung API GET /booking để lấy toàn bộ lịch)
     const fetchBookings = async () => {
         try {
-            const res = await axiosClient.get('/booking');
+            const res = await axiosClient.get<BookingResponseDto[]>('/booking');
             setBookings(res.data);
         } catch (error) {
             console.error("Lỗi lấy lịch:", error);
@@ -55,6 +58,7 @@ export default function CheckinPage() {
     useEffect(() => {
         fetchBookings();
     }, [currentDate]);
+
 
     // Các hàm mở Modal
     const handleOpenSlotDetails = (bookingsInSlot: any[], date: Date, hour: number) => {
@@ -70,16 +74,18 @@ export default function CheckinPage() {
     };
 
     // CALL API CHECKIN LÊN BACKEND
-    const handleConfirmCheckin = async (status: 'COMPLETED' | 'LATE_CANCEL') => {
+    const handleConfirmCheckin = async (status: WorkLogStatus) => {
+        if (!selectedBookingToConfirm) return;
         try {
-            // Dựa vào DTO CheckInRequestDto: { bookingId, subscriptionId, status }
-            await axiosClient.post('/checkin/pt', {
+            const payload: CheckInRequestDto = {
                 bookingId: selectedBookingToConfirm.bookingId,
-                subscriptionId: selectedBookingToConfirm.subscriptionId || 1, // Backend cần ID này
+                subscriptionId: selectedBookingToConfirm.subscriptionId,
                 status: status
-            });
+            };
+            // Dựa vào DTO CheckInRequestDto: { bookingId, subscriptionId, status }
+            await axiosClient.post<CheckInResponseDto>('/checkin/pt', payload);
 
-            alert('Cập nhật trạng thái thành công!');
+            toast.success('Đã xác nhận lịch tập!');
             setIsConfirmModalOpen(false);
             fetchBookings(); // Tải lại lịch, lúc này lịch đó không còn là CONFIRMED nên sẽ biến mất khỏi bảng
         } catch (error: any) {

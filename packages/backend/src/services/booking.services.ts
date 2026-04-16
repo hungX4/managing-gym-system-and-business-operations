@@ -1,12 +1,14 @@
-import { BookingResponseDto, BookingStatus, CoachType, CreateBookingRequestDto, Role, UpdateBookingStatusDto } from "@gym/shared";
+import { BookingResponseDto, BookingStatus, CoachType, CreateBookingRequestDto, MemberSubscriptionStatus, Role, UpdateBookingStatusDto } from "@gym/shared";
 import { AppDataSource } from "../models/data-source";
 import { Booking } from "../models/entity/Booking";
 import { User } from "../models/entity/User";
+import { MemberSubscription } from "../models/entity/MemberSubscription";
+import { MoreThan } from "typeorm";
 
 export class BookingService {
     private bookingRepo = AppDataSource.getRepository(Booking);
     private userRepo = AppDataSource.getRepository(User);
-
+    private subscriptionRepo = AppDataSource.getRepository(MemberSubscription);
     //create booing for coaching 1-1
     create = async (
         dto: CreateBookingRequestDto,
@@ -63,7 +65,7 @@ export class BookingService {
         });
         await this.bookingRepo.save(booking);
 
-        return this.toResponseDto(booking);
+        return await this.toResponseDto(booking);
     }
 
     getList = async (filters: {
@@ -93,7 +95,7 @@ export class BookingService {
         }
 
         const bookings = await qb.getMany()
-        return bookings.map(this.toResponseDto)
+        return await Promise.all(bookings.map(b => this.toResponseDto(b)));
     }
 
     // ── Lấy chi tiết 1 booking ────────────────────────────────────
@@ -104,7 +106,7 @@ export class BookingService {
             relations: ['coach', 'member'],
         })
         if (!booking) throw new Error('BOOKING_NOT_FOUND')
-        return this.toResponseDto(booking)
+        return await this.toResponseDto(booking)
     }
 
     // ── Cập nhật status (staff dùng khi checkin) ──────────────────
@@ -135,7 +137,7 @@ export class BookingService {
         booking.status = dto.status
         await this.bookingRepo.save(booking)
 
-        return this.toResponseDto(booking)
+        return await this.toResponseDto(booking)
     }
 
     // ── PT huỷ lịch ───────────────────────────────────────────────
@@ -161,16 +163,38 @@ export class BookingService {
     }
 
     //Helper: map entity -> DTO
-    private toResponseDto = (booking: Booking): BookingResponseDto => ({
-        bookingId: booking.bookingId,
-        coachId: booking.coach?.userId as unknown as string,
-        coachName: booking.coach?.fullName ?? '',
-        memberId: booking.member?.userId as unknown as string,
-        memberName: booking.member?.fullName ?? '',
-        memberPhone: booking.member?.phone ?? '',
-        startTime: booking.startTime,
-        endTime: booking.endTime,
-        type: booking.type,
-        status: booking.status,
-    })
+    private toResponseDto = async (booking: Booking): Promise<BookingResponseDto> => {
+        let activeSubscriptionId: number | undefined = undefined;
+
+        if (booking.member) {
+            const activeSub = await this.subscriptionRepo.findOne({
+                where: {
+                    member: { userId: booking.member.userId },
+                    status: MemberSubscriptionStatus.ACTIVE,
+                    remainingSession: MoreThan(0)
+                }
+            })
+
+            if (activeSub) {
+                activeSubscriptionId = activeSub.subscriptionId;
+
+            }
+            // activeSubscriptionId = 1;
+        }
+        return {
+            bookingId: booking.bookingId,
+            coachId: booking.coach?.userId as unknown as string,
+            coachName: booking.coach?.fullName ?? '',
+            memberId: booking.member?.userId as unknown as string,
+            memberName: booking.member?.fullName ?? '',
+            memberPhone: booking.member?.phone ?? '',
+            startTime: booking.startTime,
+            endTime: booking.endTime,
+            type: booking.type,
+            status: booking.status,
+
+            // GẮN THÊM CÁI VỪA TÌM ĐƯỢC VÀO DTO
+            subscriptionId: activeSubscriptionId
+        }
+    }
 }    
