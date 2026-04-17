@@ -13,10 +13,10 @@ export class Package {
     @Column({ type: 'decimal', precision: 15, scale: 2 })
     price: number;
 
-    @Column()
+    @Column({ type: 'enum', enum: PackageType })
     type: PackageType;
 
-    @Column()
+    @Column({ nullable: true })
     totalSession: number;
 
     @Column()

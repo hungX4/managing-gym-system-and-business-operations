@@ -3,8 +3,9 @@ import { Routes, Route } from 'react-router-dom';
 import HomePage from '../pages/HomePage';
 import BookingPage from '../pages/BookingPage';
 import AuthPage from '../pages/AuthPage';
-import CheckinPage from '../pages/CheckinPage';
+
 import ProtectedRoute from '../components/guard/ProtectedRoute';
+import CheckinPage from '../pages/CheckinPage';
 // import CheckinPage from '../pages/CheckinPage'; // Sau này bạn tạo trang này thì uncomment
 
 export default function AppRoutes() {

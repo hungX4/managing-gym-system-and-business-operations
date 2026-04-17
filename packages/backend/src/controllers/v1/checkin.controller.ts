@@ -13,10 +13,10 @@ export class CheckinController {
             const dto = req.body as MemberCheckinRequestDto;
 
             if (!dto.phone) {
+
                 res.status(400).json({ message: "Vui lòng cung cấp số điện thoại." });
                 return;
             }
-
             const result = await this.checkinService.selfCheckin(dto.phone);
             res.status(200).json(result);
         } catch (error: any) {
@@ -99,6 +99,24 @@ export class CheckinController {
             const history = await this.checkinService.getSubscriptionHistory(subId);
             res.status(200).json(history);
         } catch (error) {
+            next(error);
+        }
+    }
+
+    // GET /api/v1/checkin/logs?date=YYYY-MM-DD
+    getLogsByDate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const date = req.query.date as string;
+
+            // Validate nếu frontend quên truyền date
+            if (!date) {
+                res.status(400).json({ message: "Vui lòng cung cấp tham số ngày (date)." });
+                return;
+            }
+
+            const logs = await this.checkinService.getLogsByDate(date);
+            res.status(200).json(logs);
+        } catch (error: any) {
             next(error);
         }
     }

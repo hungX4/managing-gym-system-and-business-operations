@@ -42,6 +42,7 @@ export enum MemberSubscriptionStatus {
 }
 
 export enum PackageType {
-    MEMBERSHIP = 'ACTIVE',
-    COACHING = 'COACHING'
+    MEMBERSHIP = 'MEMBERSHIP',
+    COACHING = 'COACHING',
+    DANCE = 'DANCE'
 }

@@ -6,8 +6,8 @@ import { MemberSubscription } from "../models/entity/MemberSubscription";
 import { UsageLog } from "../models/entity/UsageLog";
 import { Booking } from "../models/entity/Booking";
 import { WorkLog } from "../models/entity/Worklog";
-import { BookingStatus, CheckInRequestDto, CheckInResponseDto, MemberSubscriptionStatus, WorkLogStatus } from "@gym/shared";
-import { In, MoreThan } from "typeorm";
+import { BookingStatus, CheckInRequestDto, CheckInResponseDto, MemberSubscriptionStatus, PackageType, WorkLogStatus } from "@gym/shared";
+import { Between, In, MoreThan } from "typeorm";
 import { SubscriptionHistoryResponseDto } from "@gym/shared/src/dto/usage.dto";
 
 export class CheckinService {
@@ -18,7 +18,7 @@ export class CheckinService {
     private workLogRepo = AppDataSource.getRepository(WorkLog);
 
     // ── LUỒNG 1: TỰ TẬP (SELF-WORKOUT) ──────────────────────────────
-    async selfCheckin(phone: string) {
+    async selfCheckin(phone: string | undefined) {
         // 1. Tìm user theo số điện thoại
         const member = await this.userRepo.findOne({ where: { phone } });
         if (!member) throw new Error('MEMBER_NOT_FOUND');
@@ -29,7 +29,10 @@ export class CheckinService {
                 member: { userId: member.userId },
                 status: MemberSubscriptionStatus.ACTIVE,
                 // Giả định có trường endDate, nếu database bạn dùng cách khác thì điều chỉnh ở đây
-                // endDate: MoreThan(new Date()) 
+                endDate: MoreThan(new Date()),
+                package: {
+                    type: PackageType.MEMBERSHIP
+                }
             }
         });
 
@@ -230,6 +233,48 @@ export class CheckinService {
                 coachName: log.workLog?.coach.fullName,
                 status: status,
                 note: note
+            };
+        });
+    }
+
+    async getLogsByDate(dateString: string) {
+        // Chuyển chuỗi 'YYYY-MM-DD' thành khoảng thời gian từ 00:00:00 đến 23:59:59
+        const startOfDay = new Date(`${dateString}T00:00:00.000Z`);
+        const endOfDay = new Date(`${dateString}T23:59:59.999Z`);
+
+        // Tìm tất cả log trong ngày đó
+        const logs = await this.usageLogRepo.find({
+            where: {
+                checkinTime: Between(startOfDay, endOfDay),
+                subscription: {
+                    package: { type: PackageType.MEMBERSHIP }
+                }
+
+            },
+            // Load luôn thông tin hội viên, gói tập và PT (nếu có)
+            relations: ['member', 'subscription', 'subscription.package', 'workLog', 'workLog.coach'],
+            order: { checkinTime: 'DESC' } // Mới nhất lên đầu
+        });
+
+        // Format lại dữ liệu cho Frontend dễ đọc
+        return logs.map(log => {
+            const hasWorkLog = !!log.workLog;
+            let type = 'Tự tập (Gym)';
+            let coachName = null;
+
+            if (hasWorkLog) {
+                type = log.workLog!.status === WorkLogStatus.COMPLETED ? 'Tập cùng PT' : 'Bị trừ do Late Cancel';
+                coachName = log.workLog?.coach?.fullName || null;
+            }
+
+            return {
+                usageLogId: log.usageLogId,
+                checkinTime: log.checkinTime,
+                memberName: log.member.fullName,
+                memberPhone: log.member.phone,
+                packageName: log.subscription.package.name,
+                coachName: coachName,
+                type: log.subscription.package.type
             };
         });
     }

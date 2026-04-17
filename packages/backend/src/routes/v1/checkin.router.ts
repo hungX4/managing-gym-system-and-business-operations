@@ -40,4 +40,10 @@ checkinRouter.get(
     AuthMiddleware.authorize(Role.STAFF, Role.ADMIN, Role.MEMBER), // Member cũng có thể xem lịch sử của chính họ
     checkinCtrl.getHistory
 );
+
+// THÊM DÒNG NÀY VÀO:
+checkinRouter.get('/logs',
+    AuthMiddleware.authenticate,
+    AuthMiddleware.authorize(Role.STAFF, Role.ADMIN),
+    checkinCtrl.getLogsByDate);
 export default checkinRouter;
