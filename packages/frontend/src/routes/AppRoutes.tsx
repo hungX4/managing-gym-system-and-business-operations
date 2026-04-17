@@ -5,6 +5,7 @@ import BookingPage from '../pages/BookingPage';
 import AuthPage from '../pages/AuthPage';
 
 import ProtectedRoute from '../components/guard/ProtectedRoute';
+import PackagePage from '../pages/PackagePage';
 import CheckinPage from '../pages/CheckinPage';
 // import CheckinPage from '../pages/CheckinPage'; // Sau này bạn tạo trang này thì uncomment
 
@@ -19,14 +20,17 @@ export default function AppRoutes() {
                 <Route path="/booking" element={<BookingPage />} />
             </Route>
 
-
             <Route element={<ProtectedRoute allowedRoles={['STAFF', 'ADMIN']} />}>
                 {/* Route Checkin */}
                 <Route path="/checkin" element={<CheckinPage />} />
             </Route>
+
             {/* Route Đăng nhập / Đăng ký */}
             <Route path="/auth" element={<AuthPage />} />
 
+            <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
+                <Route path='/package' element={<PackagePage />} />
+            </Route>
 
         </Routes>
     );

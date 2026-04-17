@@ -16,8 +16,8 @@ export class Package {
     @Column({ type: 'enum', enum: PackageType })
     type: PackageType;
 
-    @Column({ nullable: true })
-    totalSession: number;
+    @Column({ nullable: true, type: 'int' })
+    totalSession: number | null;
 
     @Column()
     durationDays: number;

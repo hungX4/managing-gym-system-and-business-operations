@@ -32,4 +32,19 @@
         background: #dc2626;
         /* Hover màu đỏ cực chất */
     }
+
+    /* Ghi đè màu nền mặc định khi Autofill trên Chrome/Edge/Safari */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        /* Đổi mã màu #1a1a1a cho khớp với màu nền input dark mode của bạn */
+        -webkit-box-shadow: 0 0 0 30px #1a1a1a inset !important;
+
+        /* Đổi màu chữ thành trắng */
+        -webkit-text-fill-color: white !important;
+
+        /* Mẹo giữ màu nền vĩnh viễn */
+        transition: background-color 5000s ease-in-out 0s;
+    }
 }
