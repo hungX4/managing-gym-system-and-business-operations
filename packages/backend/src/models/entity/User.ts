@@ -54,7 +54,7 @@ export class User {
     @OneToMany(() => Booking, (booking) => booking.member)
     memberBooking: Booking[];
 
-    @OneToMany(() => Salary, (salary) => salary.coach)
+    @OneToMany(() => Salary, (salary) => salary.employee)
     salary: Salary[];
 
     @OneToMany(() => WorkLog, (log) => log.coach)

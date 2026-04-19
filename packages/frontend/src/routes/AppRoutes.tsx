@@ -8,7 +8,8 @@ import ProtectedRoute from '../components/guard/ProtectedRoute';
 import PackagePage from '../pages/PackagePage';
 import CheckinPage from '../pages/CheckinPage';
 import OfflineSucscriptionPage from '../pages/OfflineSubscriptionPage';
-// import CheckinPage from '../pages/CheckinPage'; // Sau này bạn tạo trang này thì uncomment
+import { Role } from '@gym/shared';
+import SalaryConfigurationPage from '../pages/SalaryConfigurationPage';
 
 export default function AppRoutes() {
     return (
@@ -29,12 +30,13 @@ export default function AppRoutes() {
             {/* Route Đăng nhập / Đăng ký */}
             <Route path="/auth" element={<AuthPage />} />
 
-            <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
+            <Route element={<ProtectedRoute allowedRoles={[Role.ADMIN]} />}>
                 <Route path='/package' element={<PackagePage />} />
+                <Route path='/salaryconfig' element={<SalaryConfigurationPage />} />
             </Route>
 
 
-            <Route element={<ProtectedRoute allowedRoles={['STAFF', 'ADMIN', 'COACH']} />}>
+            <Route element={<ProtectedRoute allowedRoles={[Role.STAFF, Role.ADMIN, Role.COACH]} />}>
                 {/* Route mua goi tập offline */}
                 <Route path="/offline-sub" element={<OfflineSucscriptionPage />} />
             </Route>

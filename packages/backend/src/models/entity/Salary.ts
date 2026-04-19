@@ -9,8 +9,8 @@ export class Salary {
     salaryId: number;
 
     @ManyToOne(() => User, (user) => user.salary)
-    @JoinColumn({ name: 'coach_id' })
-    coach: User;
+    @JoinColumn({ name: 'employee_id' })
+    employee: User;
 
     @Column()
     month: number;
@@ -27,10 +27,10 @@ export class Salary {
     @Column({ type: 'decimal', precision: 15, scale: 2 })
     baseSalarySnapshot: number; //luong cung tai thoi diem chot luong
 
-    @Column({ type: 'decimal' })
+    @Column({ type: 'decimal', nullable: true })
     bonus: number;
 
-    @Column({ type: 'decimal' })
+    @Column({ type: 'decimal', nullable: true })
     deduction: number;
 
     @Column({ type: 'decimal' })
