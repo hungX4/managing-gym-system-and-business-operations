@@ -2,7 +2,7 @@ import { AuthResponseDto, LoginRequestDto, RegisterRequestDto, Role } from "@gym
 import { AppDataSource } from "../models/data-source";
 import { User } from "../models/entity/User";
 import bcrypt from 'bcrypt'
-import { TokenServices } from "./token.services";
+import { TokenServices } from "./token.service";
 import { Auth } from "typeorm";
 import { Request, Response } from "express";
 

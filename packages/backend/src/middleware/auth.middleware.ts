@@ -1,6 +1,6 @@
 import { JwtPayload, Role } from "@gym/shared";
 import { NextFunction, Request, Response } from "express";
-import { TokenServices } from "../services/token.services";
+import { TokenServices } from "../services/token.service";
 
 // Mở rộng Express Request để các controller dùng được req.user
 declare global {

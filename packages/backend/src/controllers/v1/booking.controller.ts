@@ -1,7 +1,7 @@
 // packages/backend/src/controllers/v1/booking.controller.ts
 
 import { Request, Response, NextFunction } from 'express'
-import { BookingService } from '../../services/booking.services'
+import { BookingService } from '../../services/booking.service'
 import { BookingStatus } from '@gym/shared'
 import type {
     CreateBookingRequestDto,

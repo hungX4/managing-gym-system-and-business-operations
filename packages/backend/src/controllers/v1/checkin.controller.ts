@@ -1,7 +1,7 @@
 // packages/backend/src/controllers/v1/checkin.controller.ts
 
 import { Request, Response, NextFunction } from 'express';
-import { CheckinService } from '../../services/checkin.services';
+import { CheckinService } from '../../services/checkin.service';
 import { MemberCheckinRequestDto, ClassCheckinRequestDto, CheckInRequestDto } from '@gym/shared';
 
 export class CheckinController {

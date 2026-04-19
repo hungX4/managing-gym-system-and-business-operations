@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { PackageService } from '../../services/package.services';
+import { PackageService } from '../../services/package.service';
 import { CreatePackageRequestDto } from '@gym/shared/src/dto/package.dto';
 
 export class PackageController {

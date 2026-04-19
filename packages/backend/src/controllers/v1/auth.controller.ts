@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { AuthServices } from "../../services/auth.services";
+import { AuthServices } from "../../services/auth.service";
 import { JwtPayload, LoginRequestDto, RegisterRequestDto } from "@gym/shared";
 import { CookieOptions } from "express";
 declare global {

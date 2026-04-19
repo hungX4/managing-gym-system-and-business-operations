@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { MemberSubscriptionService } from '../../services/member-subscription.services';
+import { MemberSubscriptionService } from '../../services/member-subscription.service';
 
 export class MemberSubscriptionController {
     private subscriptionService = new MemberSubscriptionService();

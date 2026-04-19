@@ -1,7 +1,7 @@
 // packages/backend/src/controllers/v1/user.controller.ts
 
 import { Request, Response, NextFunction } from 'express';
-import { UserServices } from '../../services/user.services';
+import { UserServices } from '../../services/user.service';
 
 export class UserController {
     private userService = new UserServices();

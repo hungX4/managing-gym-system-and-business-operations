@@ -1,9 +1,9 @@
 import { Router } from "express";
-import authRoute from "./auth.router";
-import bookingRoute from './booking.router'
-import checkinRouter from "./checkin.router";
-import userRouter from "./user.router";
-import packageRouter from "./package.router";
+import authRoute from "./auth.route";
+import bookingRoute from './booking.route'
+import checkinRouter from "./checkin.route";
+import userRouter from "./user.route";
+import packageRouter from "./package.route";
 import memberSubscriptionRoute from "./member-subscription.routes";
 import salaryConfigRoute from "./salary-config.routes";
 const router = Router();
