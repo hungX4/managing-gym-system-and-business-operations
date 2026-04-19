@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { MemberSubscriptionStatus } from "@gym/shared";
+import { MemberSubscriptionStatus, PaymentMethod } from "@gym/shared";
 import { Package } from "./Package";
 import { User } from "./User";
 import { UsageLog } from "./UsageLog";
@@ -15,7 +15,7 @@ export class MemberSubscription {
 
     @ManyToOne(() => User, (user) => user.soldSubscriptions)
     @JoinColumn({ name: 'seller_id' })
-    seller: User
+    seller: User | null;
 
     @ManyToOne(() => Package, (pkg) => pkg.subscriptions)
     @JoinColumn({ name: 'package_id' })
@@ -35,6 +35,12 @@ export class MemberSubscription {
 
     @Column({ type: 'decimal', default: 0 })
     actualPaid: number;
+
+    @Column({ type: 'enum', enum: PaymentMethod, nullable: true })
+    paymentMethod: PaymentMethod; // Có thể null nếu khách mua Online qua cổng thanh toán khác, hoặc set cứng sau
+
+    @Column({ type: 'varchar', nullable: true })
+    appliedVoucherCode: string | null; // Lưu lại mã Voucher khách đã dùng (nếu có)
 
     @Column({ type: 'enum', enum: MemberSubscriptionStatus })
     status: MemberSubscriptionStatus;

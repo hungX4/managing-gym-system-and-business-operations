@@ -18,7 +18,7 @@ packageRouter.post(
 packageRouter.get(
     '/',
     AuthMiddleware.authenticate,
-    AuthMiddleware.authorize(Role.ADMIN),
+    AuthMiddleware.authorize(Role.ADMIN, Role.COACH, Role.STAFF),
     packageController.getAllPackages
 );
 

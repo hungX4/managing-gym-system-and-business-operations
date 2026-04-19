@@ -16,4 +16,11 @@ userRouter.get(
     userCtrl.searchMembers
 );
 
+// API lấy danh sách Coach 
+userRouter.get(
+    '/coaches',
+    AuthMiddleware.authenticate,
+    userCtrl.getCoaches
+);
+
 export default userRouter;

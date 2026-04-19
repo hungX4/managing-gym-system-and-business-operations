@@ -5,7 +5,7 @@ export interface CreatePackageRequestDto {
     name: string,
     price: number,
     durationDays: number,
-    totalSessions?: number | null,
+    totalSessions?: number,
     type: PackageType
 }
 
@@ -16,6 +16,6 @@ export interface PackageResponseDto {
     price: number,
     durationDays: number,
     totalSessions: number | null,
-    type: CoachType,
+    type: PackageType,
     isActive: boolean
 }

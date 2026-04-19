@@ -46,3 +46,10 @@ export enum PackageType {
     COACHING = 'COACHING',
     DANCE = 'DANCE'
 }
+
+export enum PaymentMethod {
+    CASH = 'CASH',                   // Tiền mặt
+    BANK_TRANSFER = 'BANK_TRANSFER', // Chuyển khoản
+    CREDIT_CARD = 'CREDIT_CARD',     // Quẹt thẻ
+    INSTALLMENT = 'INSTALLMENT'      // Trả góp
+}

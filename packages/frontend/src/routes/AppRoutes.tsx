@@ -7,6 +7,7 @@ import AuthPage from '../pages/AuthPage';
 import ProtectedRoute from '../components/guard/ProtectedRoute';
 import PackagePage from '../pages/PackagePage';
 import CheckinPage from '../pages/CheckinPage';
+import OfflineSucscriptionPage from '../pages/OfflineSubscriptionPage';
 // import CheckinPage from '../pages/CheckinPage'; // Sau này bạn tạo trang này thì uncomment
 
 export default function AppRoutes() {
@@ -32,6 +33,11 @@ export default function AppRoutes() {
                 <Route path='/package' element={<PackagePage />} />
             </Route>
 
+
+            <Route element={<ProtectedRoute allowedRoles={['STAFF', 'ADMIN', 'COACH']} />}>
+                {/* Route mua goi tập offline */}
+                <Route path="/offline-sub" element={<OfflineSucscriptionPage />} />
+            </Route>
         </Routes>
     );
 }

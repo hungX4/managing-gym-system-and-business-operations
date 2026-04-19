@@ -16,4 +16,15 @@ export class UserController {
             next(error);
         }
     }
+
+    // GET /api/v1/user/coaches
+    getCoaches = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            // Gọi service lấy danh sách coach đã join với coach_profile
+            const result = await this.userService.getCoaches();
+            res.json(result);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
