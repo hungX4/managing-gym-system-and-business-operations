@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./User";
 import { SalaryStatus } from "@gym/shared";
 
@@ -39,9 +39,9 @@ export class Salary {
     @Column({ type: 'enum', enum: SalaryStatus })
     status: SalaryStatus;
 
-    @Column({ type: 'datetime' })
+    @CreateDateColumn({ type: 'datetime' })
     createAt: Date;
 
-    @Column({ type: 'datetime' })
+    @Column({ type: 'datetime', nullable: true })
     paidAt: Date;
 }

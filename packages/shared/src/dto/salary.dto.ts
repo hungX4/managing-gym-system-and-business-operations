@@ -36,8 +36,19 @@ export interface SalaryResponseDto {
     // PHẦN 3: LƯƠNG HOA HỒNG SALE (Query từ bảng MemberSubscription dựa theo created_at)
     totalSalesAmount: number;      // Tổng doanh số mang về (Cộng tổng actual_paid)
     salesCommission: number;        // Tiền hoa hồng (BE tự tính dựa trên tổng doanh số và trả về)
-
+    staffBonus: number;
     // TỔNG KẾT
     totalIncome: number;            // = base_salary + teaching_income + sales_commission
     status: SalaryStatus;            // 'PENDING' (Chưa chốt), 'PAID' (Đã chuyển khoản)
+}
+
+export interface FinalizeSalaryDto {
+    month: number;
+    year: number;
+}
+
+export interface GetSalaryDetailQueryDto {
+    coachId: number;
+    month: number;
+    year: number;
 }

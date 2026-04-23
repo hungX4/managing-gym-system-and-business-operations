@@ -9,7 +9,8 @@ import PackagePage from '../pages/PackagePage';
 import CheckinPage from '../pages/CheckinPage';
 import OfflineSucscriptionPage from '../pages/OfflineSubscriptionPage';
 import { Role } from '@gym/shared';
-import SalaryConfigurationPage from '../pages/SalaryConfigurationPage';
+import SalaryConfigurationPage from '../pages/salary/SalaryConfigurationPage';
+import { SalaryComponent } from '../components/admin/salary/SalaryComponent';
 
 export default function AppRoutes() {
     return (
@@ -33,6 +34,7 @@ export default function AppRoutes() {
             <Route element={<ProtectedRoute allowedRoles={[Role.ADMIN]} />}>
                 <Route path='/package' element={<PackagePage />} />
                 <Route path='/salaryconfig' element={<SalaryConfigurationPage />} />
+                <Route path='/salary' element={<SalaryComponent />} />
             </Route>
 
 

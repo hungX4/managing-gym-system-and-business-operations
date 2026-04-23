@@ -6,6 +6,7 @@ import userRouter from "./user.route";
 import packageRouter from "./package.route";
 import memberSubscriptionRoute from "./member-subscription.routes";
 import salaryConfigRoute from "./salary-config.routes";
+import salaryRoute from "./salary.route";
 const router = Router();
 
 router.use('/auth', authRoute);
@@ -15,4 +16,5 @@ router.use('/user', userRouter);
 router.use('/package', packageRouter);
 router.use('/subscription', memberSubscriptionRoute);
 router.use('/salaryconfig', salaryConfigRoute);
+router.use('/salary', salaryRoute);
 export default router;
