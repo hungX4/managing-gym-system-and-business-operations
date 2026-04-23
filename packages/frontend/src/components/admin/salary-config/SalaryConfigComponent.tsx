@@ -58,9 +58,7 @@ const SalaryConfigComponent: React.FC = () => {
         }
     };
 
-    // ==========================================
     // 3. XỬ LÝ LOGIC GIAO DIỆN
-    // ==========================================
     const handleConfigChange = (id: string, field: keyof SalaryConfigUI, value: any) => {
         setConfigs(prevConfigs =>
             prevConfigs.map(config => {
@@ -68,7 +66,7 @@ const SalaryConfigComponent: React.FC = () => {
                     let updatedConfig = { ...config, [field]: value };
 
                     // AUTO DỌN RÁC: Nếu user chọn Role không phải COACH thì tự set null/0
-                    if (field === 'role' && value !== Role.COACH) {
+                    if (field === 'role' && value !== Role.COACH && updatedConfig.coachType !== CoachType.GYM) {
                         updatedConfig.coachType = null;
                         updatedConfig.coachLevel = null;
                         updatedConfig.pricePerSession = 0;
@@ -96,13 +94,11 @@ const SalaryConfigComponent: React.FC = () => {
         setConfigs(configs.filter(config => config.tempId !== id));
     };
 
-    // ==========================================
-    // 4. GỌI API THẬT (LƯU DỮ LIỆU - DÙNG ĐÚNG DTO)
-    // ==========================================
+    // 4. GỌI API THẬT (LƯU DỮ LIỆU - DÙNG DTO)
     const handleSave = async () => {
         setLoading(true);
         try {
-            // Ép kiểu chuẩn xác từ State UI sang UpdateSalaryConfigItemDto
+            // Ép kiểu từ State UI sang UpdateSalaryConfigItemDto
             const payloadItems: UpdateSalaryConfigItemDto[] = configs.map(item => {
 
                 // Tạo base item theo chuẩn DTO
@@ -182,7 +178,8 @@ const SalaryConfigComponent: React.FC = () => {
                     <tbody>
                         {configs.map((row) => {
                             const isCoach = row.role === Role.COACH;
-
+                            const isGymCoach = row.coachType === CoachType.GYM;
+                            console.log(isGymCoach);
                             return (
                                 <tr key={row.tempId} className="border-b border-zinc-900 hover:bg-zinc-900/50 transition-colors">
                                     {/* ROLE */}
@@ -239,9 +236,9 @@ const SalaryConfigComponent: React.FC = () => {
                                             type="number"
                                             value={row.pricePerSession}
                                             min="0"
-                                            disabled={!isCoach}
+                                            disabled={!isCoach || isGymCoach}
                                             onChange={(e) => handleConfigChange(row.tempId, 'pricePerSession', e.target.value)}
-                                            className={`bg-black border border-zinc-700 text-white rounded px-3 py-2 w-full focus:outline-none focus:border-red-600 ${!isCoach ? 'opacity-30 cursor-not-allowed bg-zinc-900' : ''}`}
+                                            className={`bg-black border border-zinc-700 text-white rounded px-3 py-2 w-full focus:outline-none focus:border-red-600 ${!isCoach || isGymCoach ? 'opacity-30 cursor-not-allowed bg-zinc-900' : ''}`}
                                         />
                                     </td>
 
