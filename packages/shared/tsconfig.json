@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "es2022",
+        "module": "commonjs",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        // Khuyên dùng thêm strict property để báo lỗi chuẩn hơn
+        "strictPropertyInitialization": false
+    }
+}

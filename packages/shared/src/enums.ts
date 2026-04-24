@@ -53,3 +53,10 @@ export enum PaymentMethod {
     CREDIT_CARD = 'CREDIT_CARD',     // Quẹt thẻ
     INSTALLMENT = 'INSTALLMENT'      // Trả góp
 }
+
+export enum TrialStatus {
+    UNCONTACTED = 'UNCONTACTED',
+    CONTACTED = 'CONTACTED',
+    CONVERTED = 'CONVERTED',
+    FAILED = 'FAILED'
+}

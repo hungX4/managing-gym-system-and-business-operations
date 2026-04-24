@@ -5,7 +5,9 @@ import tailwindcss from '@tailwindcss/vite' // <-- Thêm dòng này
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      tsDecorators: true
+    }),
     tailwindcss(), // <-- Thêm dòng này
   ],
   server: {

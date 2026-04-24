@@ -31,7 +31,7 @@ const Footer = () => {
                 <div className="text-center mb-8">
                     <a href="#" className="text-sm font-bold uppercase hover:underline mb-2 block">Chính sách bảo mật</a>
                     <p className="text-gray-500 text-xs tracking-widest">
-                        Copyright © 2025 Elite Fitness. All rights reserved
+                        Copyright © 2026 Fit Station. All rights reserved
                     </p>
                 </div>
 

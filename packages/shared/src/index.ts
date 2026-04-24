@@ -7,4 +7,6 @@ export * from './dto/checkIn.dto';
 export * from './dto/package.dto';
 export * from './dto/salary.dto';
 export * from './dto/usage.dto';
-export * from './dto/salary-config'
+export * from './dto/salary-config';
+export * from './dto/create-trial.dto';
+export * from './dto/update-trial.dto';

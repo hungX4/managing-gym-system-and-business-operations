@@ -6,6 +6,7 @@ import { Booking } from "./Booking";
 import { Salary } from "./Salary";
 import { WorkLog } from "./Worklog";
 import { UsageLog } from "./UsageLog";
+import { TrialLead } from "./TrialLead";
 
 @Entity('user')
 export class User {
@@ -62,4 +63,7 @@ export class User {
 
     @OneToMany(() => UsageLog, (log) => log.member)
     usageLogs: UsageLog[];
+
+    @OneToMany(() => TrialLead, (trialLead) => trialLead.assignedTo)
+    trialLeads: TrialLead[];
 }
