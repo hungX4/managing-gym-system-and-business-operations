@@ -47,4 +47,13 @@
         /* Mẹo giữ màu nền vĩnh viễn */
         transition: background-color 5000s ease-in-out 0s;
     }
+
+    textarea:-webkit-autofill,
+    select:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+        -webkit-text-fill-color: #111827 !important;
+        /* text-gray-900 */
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
 }

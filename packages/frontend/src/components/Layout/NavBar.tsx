@@ -1,30 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavbar } from '../../hooks/useNavbar';
+import { MAIN_NAV_LINKS, DROPDOWN_LINKS, AllowedRoles } from '../../config/navigation';
+
 
 const Navbar = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [userData, setUserData] = useState<any>(null);
-
-    // Lấy data user từ localStorage khi Navbar load
-    useEffect(() => {
-        const storedUser = localStorage.getItem('userData');
-        if (storedUser) {
-            setUserData(JSON.parse(storedUser));
-        } else {
-            setUserData(null);
-        }
-    }, [location]);
-
-    const handleLogout = () => {
-        // Xóa sạch dấu vết đăng nhập
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('userData');
-        localStorage.removeItem('userId');
-
-        setUserData(null);
-        navigate('/auth'); // Đá về trang đăng nhập
-    };
+    const { userData, navigate, checkPermission, handleLogout } = useNavbar();
 
     return (
         <nav className="fixed w-full z-50 bg-black/90 backdrop-blur-sm border-b border-gray-800">
@@ -41,11 +22,17 @@ const Navbar = () => {
 
                     {/* Menu links - Ẩn trên mobile */}
                     <div className="hidden md:flex space-x-8 uppercase font-medium text-gray-300">
-                        {/* Lưu ý: Nên dùng <Link to="..."> của react-router-dom thay vì thẻ <a> để không bị reload trang */}
-                        <Link to="/" className="hover:text-red-500 transition">Dịch vụ</Link>
-                        <Link to="/" className="hover:text-red-500 transition">Câu lạc bộ</Link>
-                        <Link to="/bookings" className="hover:text-red-500 transition">Lịch tập</Link>
-                        <Link to="/" className="hover:text-red-500 transition">Bảng giá</Link>
+                        {MAIN_NAV_LINKS
+                            .filter(link => checkPermission(link.allowedRoles)) // Lọc link hợp lệ
+                            .map((link, index) => (
+                                <Link
+                                    key={index}
+                                    to={link.path}
+                                    className="hover:text-red-500 transition"
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
                     </div>
 
                     {/* Khu vực Auth / Profile */}
@@ -78,12 +65,17 @@ const Navbar = () => {
 
                                     {/* Các link chức năng */}
                                     <div className="p-2">
-                                        <Link to="/profile" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded transition">
-                                            Hồ sơ của tôi
-                                        </Link>
-                                        <Link to="/booking" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded transition">
-                                            Quản lý lịch tập
-                                        </Link>
+                                        {DROPDOWN_LINKS
+                                            .filter(link => checkPermission(link.allowedRoles))
+                                            .map((link, index) => (
+                                                <Link
+                                                    key={index}
+                                                    to={link.path}
+                                                    className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded transition"
+                                                >
+                                                    {link.label}
+                                                </Link>
+                                            ))}
                                     </div>
 
                                     {/* Nút Logout */}
@@ -107,7 +99,7 @@ const Navbar = () => {
 
                 </div>
             </div>
-        </nav>
+        </nav >
     );
 };
 
