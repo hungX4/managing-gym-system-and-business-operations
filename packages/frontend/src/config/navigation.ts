@@ -20,7 +20,8 @@ export const MAIN_NAV_LINKS: NavLink[] = [
 
 export const DROPDOWN_LINKS: NavLink[] = [
     { path: '/profile', label: 'Hồ sơ của tôi', allowedRoles: 'ALL_LOGGED_IN' },
-    { path: '/admin-dashboard', label: 'Quản lý hệ thống', allowedRoles: [Role.ADMIN] },
+    { path: '/admin', label: 'Quản lý hệ thống', allowedRoles: [Role.ADMIN] },
+    { path: '/salary', label: "Chốt lương", allowedRoles: [Role.ADMIN] },
     { path: '/booking', label: 'Đặt lịch hẹn', allowedRoles: [Role.ADMIN, Role.COACH] },
     { path: '/checkin', label: 'Quản lý lịch tập', allowedRoles: [Role.ADMIN, Role.STAFF] },
 ];
