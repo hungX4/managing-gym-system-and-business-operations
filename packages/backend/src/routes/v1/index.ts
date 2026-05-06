@@ -8,8 +8,12 @@ import memberSubscriptionRoute from "./member-subscription.routes";
 import salaryConfigRoute from "./salary-config.routes";
 import salaryRoute from "./salary.route";
 import trialRouter from "./trialLead.route";
+import adminRouter from "./revenue.route";
 const router = Router();
-
+router.use((req, res, next) => {
+    console.log(`\n[BÁO ĐỘNG] Có request bay vào: ${req.method} ${req.originalUrl}`);
+    next();
+});
 router.use('/auth', authRoute);
 router.use('/booking', bookingRoute);
 router.use('/checkin', checkinRouter);
@@ -19,4 +23,7 @@ router.use('/subscription', memberSubscriptionRoute);
 router.use('/salaryconfig', salaryConfigRoute);
 router.use('/salary', salaryRoute);
 router.use('/trial', trialRouter);
+router.use('/admin', adminRouter);
+
+console.log("🔥 FILE ROUTER TỔNG ĐÃ ĐƯỢC LOAD THÀNH CÔNG!");
 export default router;
