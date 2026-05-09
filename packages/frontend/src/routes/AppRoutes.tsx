@@ -12,6 +12,7 @@ import { Role } from '@gym/shared';
 import SalaryConfigurationPage from '../pages/salary/SalaryConfigurationPage';
 import { SalaryComponent } from '../components/admin/salary/SalaryComponent';
 import AdminDashboard from '../pages/AdminDashboard';
+import RevenueDashboard from '../components/admin/RevenueDashBoard';
 
 export default function AppRoutes() {
     return (
@@ -43,7 +44,7 @@ export default function AppRoutes() {
                 <Route path="/admin" element={<AdminDashboard />}>
 
                     {/* index: Nghĩa là khi vào "/admin", nó sẽ mặc định render Thống kê */}
-                    <Route index element={<div>Giao diện Thống kê nhét vào đây</div>} />
+                    <Route index element={<RevenueDashboard />} />
 
                     {/* Trang Trial: URL sẽ là /admin/trial */}
                     <Route path="trial" element={<div>Giao diện Trial Data nhét vào đây</div>} />

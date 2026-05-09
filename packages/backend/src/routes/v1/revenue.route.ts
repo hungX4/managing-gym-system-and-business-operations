@@ -7,6 +7,6 @@ const adminRouter = Router();
 const revenueController = new RevenueController();
 adminRouter.get('/',
 
-    revenueController.getMonthlyStats);
+    revenueController.getFullStats);
 
 export default adminRouter;

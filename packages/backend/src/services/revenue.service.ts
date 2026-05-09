@@ -1,22 +1,39 @@
+// services/revenue.service.ts
 import { Between, Repository } from 'typeorm';
 import { MemberSubscription } from '../models/entity/MemberSubscription';
 import { AppDataSource } from '../models/data-source';
 
 export class RevenueService {
-    // Khởi tạo trực tiếp tại đây, không cần constructor
     private subscriptionRepo = AppDataSource.getRepository(MemberSubscription);
 
-    public async getMonthlyRevenue(month: number, year: number) {
+    /**
+     * HÀM TỔNG HỢP: Gọi song song Monthly và Yearly
+     */
+    public async getFullDashboardData(month: number, year: number) {
+        const [monthlyData, yearlyData] = await Promise.all([
+            this.getMonthlyStats(month, year),
+            this.getYearlyStats(year)
+        ]);
+
+        return {
+            ...monthlyData,
+            yearly: yearlyData
+        };
+    }
+
+    /**
+     * LOGIC THÁNG: Doanh thu, Tăng trưởng, Nhân viên, Danh sách gói
+     */
+    private async getMonthlyStats(month: number, year: number) {
         const startDate = new Date(year, month - 1, 1);
         const endDate = new Date(year, month, 0, 23, 59, 59, 999);
-
         const prevStartDate = new Date(year, month - 2, 1);
         const prevEndDate = new Date(year, month - 1, 0, 23, 59, 59, 999);
 
         const [currentMonthSubs, prevMonthSubs] = await Promise.all([
             this.subscriptionRepo.find({
                 where: { createdAt: Between(startDate, endDate) },
-                relations: ['package'],
+                relations: ['package', 'seller'], // Giả sử có relation seller để biết ai bán
             }),
             this.subscriptionRepo.find({
                 where: { createdAt: Between(prevStartDate, prevEndDate) },
@@ -27,55 +44,83 @@ export class RevenueService {
         const prevTotalRevenue = prevMonthSubs.reduce((sum, sub) => sum + Number(sub.actualPaid), 0);
 
         // Tính % tăng trưởng
-        let growthRate = 0;
-        if (prevTotalRevenue > 0) {
-            growthRate = Number((((totalRevenue - prevTotalRevenue) / prevTotalRevenue) * 100).toFixed(2));
-        } else if (totalRevenue > 0) {
-            growthRate = 100; // Tháng trước = 0, tháng này có tiền thì tăng 100%
-        }
+        let growthRate = prevTotalRevenue > 0
+            ? Number((((totalRevenue - prevTotalRevenue) / prevTotalRevenue) * 100).toFixed(2))
+            : (totalRevenue > 0 ? 100 : 0);
 
-        // 4. Phân loại doanh thu theo mảng (Tự động dynamic theo PackageType)
-        const revenueByType: Record<string, number> = {};
-
+        // Logic Hiệu suất nhân viên (KPI 800tr)
+        const employeeMap: Record<string, any> = {};
         currentMonthSubs.forEach(sub => {
-            const type = sub.package?.type || 'OTHER'; // Đề phòng lỗi thiếu package
+            const sellerName = sub.seller?.fullName || 'Membership';
             const amount = Number(sub.actualPaid);
 
-            if (revenueByType[type]) {
-                revenueByType[type] += amount;
-            } else {
-                revenueByType[type] = amount;
+            if (!employeeMap[sellerName]) {
+                // Mock target dựa trên role (Ở thực tế nên lấy từ DB)
+                // Giả sử logic: Nếu tên có chữ PT thì target 150tr, còn lại 100tr
+                const isPT = sellerName.toUpperCase().includes('PT');
+                employeeMap[sellerName] = {
+                    name: sellerName,
+                    sold: 0,
+                    target: isPT ? 150000000 : 100000000
+                };
             }
+            employeeMap[sellerName].sold += amount;
         });
-
-        // 5. Build dữ liệu cho Biểu đồ (Nhóm theo ngày)
-        const daysInMonth = endDate.getDate();
-        const chartDataMap: Record<string, number> = {};
-
-        // Khởi tạo mốc 0 cho tất cả các ngày trong tháng để biểu đồ không bị đứt đoạn
-        for (let i = 1; i <= daysInMonth; i++) {
-            const dayString = `${i.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}`;
-            chartDataMap[dayString] = 0;
-        }
-
-        // Đổ tiền vào từng ngày
-        currentMonthSubs.forEach(sub => {
-            const dateObj = new Date(sub.createdAt);
-            const dayString = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
-            chartDataMap[dayString] += Number(sub.actualPaid);
-        });
-
-        // Chuyển Object Map thành Array dùng cho Recharts bên Frontend
-        const chartData = Object.keys(chartDataMap).map(date => ({
-            date: date,
-            revenue: chartDataMap[date]
-        }));
 
         return {
             totalRevenue,
+            monthlyTarget: 800000000,
             growthRate,
-            revenueByType,
-            chartData
+            employeeSales: Object.values(employeeMap),
+            detailedPackages: currentMonthSubs.map(sub => ({
+                id: sub.subscriptionId,
+                date: new Date(sub.createdAt).toLocaleDateString('vi-VN'),
+                customer: sub.member?.fullName || 'Khách lẻ',
+                packageName: sub.package?.name,
+                type: sub.package?.type,
+                seller: sub.seller?.fullName,
+                amount: sub.actualPaid
+            })).slice(0, 10) // Lấy 10 giao dịch gần nhất
+        };
+    }
+
+    /**
+     * LOGIC NĂM: Biểu đồ 12 tháng và Cơ cấu doanh thu năm
+     */
+    private async getYearlyStats(year: number) {
+        const startYear = new Date(year, 0, 1);
+        const endYear = new Date(year, 11, 31, 23, 59, 59);
+
+        const yearlySubs = await this.subscriptionRepo.find({
+            where: { createdAt: Between(startYear, endYear) },
+            relations: ['package']
+        });
+
+        // 1. Xử lý 12 tháng cho biểu đồ cột
+        const monthlyChart = Array.from({ length: 12 }, (_, i) => ({
+            month: `T${i + 1}`,
+            revenue: 0
+        }));
+
+        // 2. Xử lý cơ cấu doanh thu (Biểu đồ tròn)
+        const revenueByType: Record<string, number> = {};
+
+        yearlySubs.forEach(sub => {
+            const date = new Date(sub.createdAt);
+            const monthIdx = date.getMonth();
+            const amount = Number(sub.actualPaid);
+
+            // Cộng dồn vào tháng tương ứng
+            monthlyChart[monthIdx].revenue += amount;
+
+            // Phân loại theo type
+            const type = sub.package?.type || 'OTHER';
+            revenueByType[type] = (revenueByType[type] || 0) + amount;
+        });
+
+        return {
+            chartData: monthlyChart,
+            revenueByType: revenueByType
         };
     }
 }
