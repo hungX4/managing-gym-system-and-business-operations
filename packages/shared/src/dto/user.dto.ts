@@ -12,6 +12,8 @@ export interface MemberSearchResponseDto {
     phone: string,
     avatarUrl: string | null,
     remainingPtSession: number,
+    hasActivePackage: boolean,
+    latestEndDate: string | null
 }
 
 //coach search

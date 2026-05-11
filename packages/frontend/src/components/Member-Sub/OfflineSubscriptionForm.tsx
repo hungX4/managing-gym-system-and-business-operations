@@ -3,36 +3,21 @@ import toast from 'react-hot-toast';
 // Chú ý import thêm PackageType từ shared (hoặc dùng string 'COACHING' nếu bạn chưa export)
 import { PaymentMethod, PackageResponseDto, PackageType } from '@gym/shared';
 import axiosClient from '../../api/axiosClient';
+import { CoachResponseDto, MemberSearchResponseDto } from '@gym/shared';
 
-interface SearchMemberResult {
-    memberId: string;
-    fullName: string;
-    phone: string;
-    avatarUrl: string | null;
-    hasActivePackage: boolean;
-    latestEndDate: string | null;
-}
 
-interface Coach {
-    userId: string;
-    fullName: string;
-    phone: string;
-    coachProfile: {
-        level: string;
-        type: string;
-    }
-}
+
 
 export default function OfflineSubscriptionForm() {
     // --- STATE TÌM KIẾM ---
     const [keyword, setKeyword] = useState('');
-    const [searchResults, setSearchResults] = useState<SearchMemberResult[]>([]);
-    const [selectedMember, setSelectedMember] = useState<SearchMemberResult | null>(null);
+    const [searchResults, setSearchResults] = useState<MemberSearchResponseDto[]>([]);
+    const [selectedMember, setSelectedMember] = useState<MemberSearchResponseDto | null>(null);
     const [isSearching, setIsSearching] = useState(false);
 
     // --- STATE DATA MASTER (Gói tập & HLV) ---
     const [packages, setPackages] = useState<PackageResponseDto[]>([]);
-    const [coaches, setCoaches] = useState<Coach[]>([]);
+    const [coaches, setCoaches] = useState<CoachResponseDto[]>([]);
     const [loadingPackages, setLoadingPackages] = useState(false);
     const [loadingCoaches, setLoadingCoaches] = useState(false);
 
@@ -96,7 +81,7 @@ export default function OfflineSubscriptionForm() {
         return () => clearTimeout(delayDebounceFn);
     }, [keyword, selectedMember]);
 
-    const handleSelectMember = (member: SearchMemberResult) => {
+    const handleSelectMember = (member: MemberSearchResponseDto) => {
         setSelectedMember(member);
         setSearchResults([]);
         setKeyword(`${member.phone} - ${member.fullName}`);
@@ -213,7 +198,7 @@ export default function OfflineSubscriptionForm() {
                                         </span>
                                         {user.hasActivePackage && user.latestEndDate && (
                                             <span className="text-neutral-500 text-[10px]">
-                                                Hết hạn: {new Date(user.latestEndDate).toLocaleDateString('vi-VN')}
+                                                Hết hạn: {new Date(user.latestEndDate).toLocaleDateString('vi-VN')} Còn {user.remainingPtSession} buổi PT
                                             </span>
                                         )}
                                     </div>
@@ -233,7 +218,7 @@ export default function OfflineSubscriptionForm() {
                         <div>
                             <label className="block text-sm text-neutral-400 mb-1">Gói tập đăng ký</label>
                             <select
-                                className="w-full bg-[#1a1a1a] border border-neutral-700 rounded-lg px-4 py-3 text-white focus:border-red-500 outline-none appearance-none"
+                                className="w-full bg-[#1a1a1a] border border-neutral-700 rounded-lg px-4 py-3 text-white focus:border-red-500 outline-none appearance-none cursor-pointer"
                                 value={formData.packageId}
                                 // Reset lại sellerId mỗi khi đổi gói tập để tránh lưu data rác
                                 onChange={(e) => setFormData({ ...formData, packageId: e.target.value, sellerId: '' })}
@@ -255,17 +240,16 @@ export default function OfflineSubscriptionForm() {
                             <div className="animate-fadeIn">
                                 <label className="block text-sm text-red-400 font-bold mb-1">Chọn Huấn luyện viên (*)</label>
                                 <select
-                                    className="w-full bg-red-950/20 border border-red-500/50 rounded-lg px-4 py-3 text-white focus:border-red-500 outline-none appearance-none"
-                                    value={formData.sellerId}
+                                    className="w-full bg-[#111111] border border-gray-800 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none focus:ring-1 focus:ring-red-600 cursor-pointer"
                                     onChange={(e) => setFormData({ ...formData, sellerId: e.target.value })}
                                     disabled={loadingCoaches}
                                 >
-                                    <option value="" disabled>
+                                    <option value="" className='bg-neutral-900 text-neutral-500' disabled>
                                         {loadingCoaches ? 'Đang tải danh sách...' : '-- Chọn Huấn luyện viên --'}
                                     </option>
                                     {coaches.map((coach) => (
                                         <option key={coach.userId} value={coach.userId}>
-                                            {coach.fullName} - {coach.phone} (Level: {coach.coachProfile?.level || 'N/A'})
+                                            {coach.fullName} {coach.coachType ? `- ${coach.coachType}` : ''} {coach.coachLevel ? `(Cấp: ${coach.coachLevel})` : ''}
                                         </option>
                                     ))}
                                 </select>
@@ -319,7 +303,7 @@ export default function OfflineSubscriptionForm() {
                 </div>
             </div>
 
-            {/* Modal thành công (GIỮ NGUYÊN) */}
+            {/* Modal thành công  */}
             {showSuccessModal && (
                 <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 backdrop-blur-sm p-4">
                     <div className="bg-[#111111] border border-red-600/50 rounded-2xl p-8 max-w-md w-full text-center">
