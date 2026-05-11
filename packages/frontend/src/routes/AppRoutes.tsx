@@ -13,6 +13,7 @@ import SalaryConfigurationPage from '../pages/salary/SalaryConfigurationPage';
 import { SalaryComponent } from '../components/admin/salary/SalaryComponent';
 import AdminDashboard from '../pages/AdminDashboard';
 import RevenueDashboard from '../components/admin/RevenueDashBoard';
+import TrialLeadManager from '../components/admin/TrialLeadManager';
 
 export default function AppRoutes() {
     return (
@@ -47,7 +48,7 @@ export default function AppRoutes() {
                     <Route index element={<RevenueDashboard />} />
 
                     {/* Trang Trial: URL sẽ là /admin/trial */}
-                    <Route path="trial" element={<div>Giao diện Trial Data nhét vào đây</div>} />
+                    <Route path="trial" element={<TrialLeadManager />} />
 
                     {/* Bạn có thể đưa các route admin cũ vào đây luôn */}
                     <Route path="package" element={<PackagePage />} />

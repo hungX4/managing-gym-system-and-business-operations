@@ -6,7 +6,7 @@ import {
 } from 'recharts';
 import { TrendingUp, DollarSign, Users, Package, ChevronDown, Calendar, Loader2 } from 'lucide-react';
 import axiosClient from '../../api/axiosClient';
-
+import { useRevenue } from '../../hooks/useRevenue'
 const formatCurrency = (v: number) => new Intl.NumberFormat('vi-VN').format(v) + ' ₫';
 const formatShortCurrency = (v: number) => `${(v / 1000000).toFixed(0)}M`;
 
@@ -32,35 +32,13 @@ const EmployeeTooltip = ({ active, payload }: any) => {
 };
 
 const RevenueDashboardRedBlack = () => {
-    // Quản lý State Filter
-    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+    const {
+        selectedYear, setSelectedYear,
+        selectedMonth, setSelectedMonth,
+        data, loading // Quản lý State Data API
+    } = useRevenue();
     const [showYearDropdown, setShowYearDropdown] = useState(false);
     const [showMonthDropdown, setShowMonthDropdown] = useState(false);
-
-    // Quản lý State Data API
-    const [data, setData] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
-
-    // Gọi API mỗi khi Tháng/Năm thay đổi
-    useEffect(() => {
-        const fetchDashboardData = async () => {
-            setLoading(true);
-            try {
-                // Đổi Port hoặc URL cho khớp với môi trường của bạn
-                const response = await axiosClient.get(`/admin?month=${selectedMonth}&year=${selectedYear}`);
-                if (response.data.success) {
-                    setData(response.data.data);
-                }
-            } catch (error) {
-                console.error("Lỗi lấy dữ liệu:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchDashboardData();
-    }, [selectedMonth, selectedYear]);
 
     // Loading State
     if (loading && !data) {

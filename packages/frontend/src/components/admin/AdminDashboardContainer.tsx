@@ -71,16 +71,14 @@ export default function AdminLayout() {
 
                 {/* 2. KHU VỰC NỘI DUNG CHÍNH */}
 
-                <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden relative">
+                <div className="flex-1 flex flex-col overflow-hidden relative">
                     {/*  thêm marginLeft (ml) khi sidebar đóng để chữ không đè lên nút nổi */}
                     <div className={`mb-4 shrink-0 transition-all duration-300 ${!isSidebarOpen ? 'ml-10' : 'ml-0'}`}>
-                        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-wider">
-                            {activeMenuItem.label}
-                        </h1>
+
                     </div>
 
-                    <div className="flex-1 overflow-y-auto bg-[#0a0a0a] rounded-xl border border-gray-800 p-4">
-                        <Outlet />
+                    <div className="flex-1 overflow-y-auto bg-[#0a0a0a] rounded-xl">
+                        <Outlet context={{ isSidebarOpen }} />
                     </div>
                 </div>
 

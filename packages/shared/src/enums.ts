@@ -57,6 +57,7 @@ export enum PaymentMethod {
 export enum TrialStatus {
     UNCONTACTED = 'UNCONTACTED',
     CONTACTED = 'CONTACTED',
+    TRIALING = 'TRIALING',
     CONVERTED = 'CONVERTED',
     FAILED = 'FAILED'
 }

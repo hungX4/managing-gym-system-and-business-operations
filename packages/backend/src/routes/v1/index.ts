@@ -10,10 +10,6 @@ import salaryRoute from "./salary.route";
 import trialRouter from "./trialLead.route";
 import adminRouter from "./revenue.route";
 const router = Router();
-router.use((req, res, next) => {
-    console.log(`\n[BÁO ĐỘNG] Có request bay vào: ${req.method} ${req.originalUrl}`);
-    next();
-});
 router.use('/auth', authRoute);
 router.use('/booking', bookingRoute);
 router.use('/checkin', checkinRouter);

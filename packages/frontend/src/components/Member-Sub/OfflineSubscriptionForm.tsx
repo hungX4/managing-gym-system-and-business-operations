@@ -48,9 +48,7 @@ export default function OfflineSubscriptionForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-    // ==========================================
     // 1. GỌI API LẤY DATA BAN ĐẦU (Packages & Coaches)
-    // ==========================================
     useEffect(() => {
         const fetchInitialData = async () => {
             setLoadingPackages(true);
@@ -76,9 +74,7 @@ export default function OfflineSubscriptionForm() {
         fetchInitialData();
     }, []);
 
-    // ==========================================
     // 2. TÌM KIẾM HỘI VIÊN (DEBOUNCE)
-    // ==========================================
     useEffect(() => {
         if (!keyword.trim() || selectedMember) {
             setSearchResults([]);
@@ -106,9 +102,7 @@ export default function OfflineSubscriptionForm() {
         setKeyword(`${member.phone} - ${member.fullName}`);
     };
 
-    // ==========================================
     // 3. LOGIC XÁC ĐỊNH GÓI TẬP VÀ XỬ LÝ SUBMIT
-    // ==========================================
 
     // Tìm gói tập đang được chọn để check type
     const selectedPkgInfo = packages.find(p => p.packageId.toString() === formData.packageId);
