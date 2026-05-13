@@ -1,67 +1,85 @@
+// packages/backend/src/services/user.service.ts
 import { Role } from "@gym/shared";
 import { AppDataSource } from "../models/data-source";
 import { User } from "../models/entity/User";
+import { MemberSearchResponseDto, CoachResponseDto } from "../dto/user.dto";
 
-export class UserServices {
-    private userRepo = AppDataSource.getRepository(User);
+export class UserService {
+    private static userRepo = AppDataSource.getRepository(User);
 
-    async searchMembers(keyword: string): Promise<any[]> {
-        if (!keyword || keyword.trim() === '') return [];
+    // Sử dụng MemberSearchResponseDto
+    static async searchMembers(keyword: string): Promise<MemberSearchResponseDto[]> {
+        if (!keyword?.trim()) return [];
 
-        const member = await this.userRepo.createQueryBuilder('user')
-            //join toi cac goi tap dang ACTIVE
+        const members = await this.userRepo.createQueryBuilder('user')
             .leftJoinAndSelect('user.boughtSubscriptions', 'sub', 'sub.status = :subStatus', { subStatus: 'ACTIVE' })
             .where('user.role = :role', { role: Role.MEMBER })
             .andWhere('(user.phone LIKE :keyword OR user.fullName LIKE :keyword)', { keyword: `%${keyword}%` })
-            .take(5) //lay 3 kq dau tien
+            .take(5)
             .getMany();
 
-        return member.map(user => {
-            // Tính tổng số buổi PT còn lại của member này
-            const remainingPtSession = user.boughtSubscriptions?.reduce((total, sub) => {
-                return total + (sub.remainingSession || 0);
-            }, 0) || 0;
-            //ktra xem còn gói tập đang kích hoạt k
+        return members.map(user => {
             const activeSubs = user.boughtSubscriptions || [];
-            const hasActivePackage = activeSubs.length > 0;
 
-            // Tìm ngày hết hạn xa nhất trong các gói đang Active để Lễ tân biết
-            let latestEndDate = null;
+            // Tính tổng buổi PT còn lại
+            const remainingPtSession = activeSubs.reduce((total, sub) => total + (sub.remainingSession || 0), 0);
 
-            if (hasActivePackage) {
-                // Lấy ra mảng các endDate và tìm ngày lớn nhất
-                const endDates = activeSubs.map(sub => new Date(sub.endDate).getTime());
-                latestEndDate = new Date(Math.max(...endDates));
-            }
+            // Tìm ngày hết hạn xa nhất
+            const latestEndDate = activeSubs.length > 0
+                ? activeSubs.reduce((max, sub) => (new Date(sub.endDate) > new Date(max) ? sub.endDate : max), activeSubs[0].endDate)
+                : null;
+
             return {
-                memberId: user.userId, // Lưu ý: userId trong entity của bạn là string
+                memberId: Number(user.userId), // Cast sang number theo DTO của bạn
                 fullName: user.fullName,
                 phone: user.phone,
-                avatarUrl: user.avartarUrl || null, // Trả về avatar để làm giao diện cục tròn
+                avatarUrl: user.avatarUrl || null, // Map từ avartarUrl (Entity) -> avatarUrl (DTO)
                 remainingPtSession: remainingPtSession,
-                hasActivePackage: hasActivePackage,
-                latestEndDate: latestEndDate // Trả về để FE hiển thị ngày
+                hasActivePackage: activeSubs.length > 0,
+                latestEndDate: latestEndDate ? new Date(latestEndDate).toISOString() : null
             };
         });
     }
 
-    //get all coach
-    async getCoaches(): Promise<any[]> {
+    // Sử dụng CoachResponseDto
+    static async getCoaches(): Promise<CoachResponseDto[]> {
         const coaches = await this.userRepo.find({
             where: { role: Role.COACH },
-            relations: ['coachProfile'], // Thực hiện JOIN với bảng CoachProfile
+            relations: ['coachProfile'],
         });
 
-        // Map data trả về theo định dạng CoachResponseDto
         return coaches.map(coach => ({
             userId: coach.userId,
             fullName: coach.fullName,
             phone: coach.phone,
-            avatarUrl: coach.avartarUrl || null,
+            avatarUrl: coach.avatarUrl || null,
             profileId: coach.coachProfile?.profileId || null,
             coachType: coach.coachProfile?.type || null,
             coachLevel: coach.coachProfile?.level || null,
             bio: coach.coachProfile?.bio || null
         }));
+    }
+
+    static async getAllUsers() {
+        return await this.userRepo.find();
+    }
+
+    static async getUserById(userId: string) {
+        return await this.userRepo.findOne({ where: { userId }, relations: ['coachProfile'] });
+    }
+
+    static async updateUser(userId: string, data: Partial<User>) {
+        // 1. Tìm user hiện tại. Cần ép kiểu userId nếu là string/number
+        const user = await this.userRepo.findOneBy({ userId: userId as any });
+        if (!user) throw new Error('USER_NOT_FOUND');
+
+        // 2. Kiểm tra nếu 'data' không có trường nào để update thì trả về luôn user cũ
+        if (Object.keys(data).length === 0) return user;
+
+        // 3. Ghi đè dữ liệu mới vào user cũ
+        Object.assign(user, data);
+
+        // 4. Lưu lại. TypeORM save() sẽ tự động xử lý logic UPDATE
+        return await this.userRepo.save(user);
     }
 }

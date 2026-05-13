@@ -1,28 +1,89 @@
 // packages/backend/src/controllers/v1/user.controller.ts
 
 import { Request, Response, NextFunction } from 'express';
-import { UserServices } from '../../services/user.service';
-
+import { UserService } from '../../services/user.service';
+import { MemberSearchRequestDto } from '@gym/shared';
+import cloudinary from '../../config/cloudinary';
 export class UserController {
-    private userService = new UserServices();
 
     // GET /api/v1/users/search?keyword=abc
-    searchMembers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    static searchMembers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const keyword = req.query.keyword as string;
-            const result = await this.userService.searchMembers(keyword);
-            res.json(result);
+            // Ép kiểu query theo DTO
+            const { keyword } = req.query as unknown as MemberSearchRequestDto;
+            const result = await UserService.searchMembers(keyword);
+            res.status(200).json(result);
         } catch (error) {
             next(error);
         }
     }
 
     // GET /api/v1/user/coaches
-    getCoaches = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    static getCoaches = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            // Gọi service lấy danh sách coach đã join với coach_profile
-            const result = await this.userService.getCoaches();
-            res.json(result);
+            const result = await UserService.getCoaches();
+            res.status(200).json(result);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    //GET /api/v1/user
+    static getAllUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const users = await UserService.getAllUsers();
+            res.status(200).json(users);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    //GET /api/v1/user/:id
+    static getUserProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const user = await UserService.getUserById(req.params.id as string);
+            if (!user) {
+                res.status(404).json({ message: "User not found" });
+                return;
+            }
+            res.status(200).json(user);
+        } catch (error) {
+            next(error);
+        }
+    }
+    //PATCH /api/v1/user/:id
+    static updateProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            //console.log("File nhận được từ Multer:", req.file); // Kiểm tra xem có file không
+            //console.log("Body nhận được:", req.body);
+            const userId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+            const { fullName, gmail, phone } = req.body;
+            const updateData: any = { fullName, gmail, phone };
+
+            if ((req as any).file) {
+                //get user
+                const currentUser = await UserService.getUserById(userId);
+
+                //check if avatar existed
+                if (currentUser?.avatarId) {
+                    await cloudinary.uploader.destroy(currentUser.avatarId);
+                }
+
+                updateData.avatarUrl = req.file?.path;
+                updateData.avatarId = req.file?.fieldname;
+            }
+
+            // Nếu cả body rỗng và không có file, báo lỗi ngay tránh gọi xuống DB
+            if (Object.keys(updateData).length === 0) {
+                res.status(400).json({ message: "No data provided for update" });
+                return;
+            }
+
+            const updatedUser = await UserService.updateUser(userId, updateData);
+            res.status(200).json({
+                message: "Updated Successfully!!",
+                data: updatedUser
+            });
         } catch (error) {
             next(error);
         }

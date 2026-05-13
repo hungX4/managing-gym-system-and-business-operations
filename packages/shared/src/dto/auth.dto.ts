@@ -35,7 +35,8 @@ export interface UserProfileDto {
     fullName: string,
     phone: string,
     gmail: string,
-    role: Role
+    role: Role,
+    avatarUrl: string
 }
 
 export interface AuthResponseDto {

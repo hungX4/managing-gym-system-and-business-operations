@@ -14,6 +14,7 @@ import { SalaryComponent } from '../components/admin/salary/SalaryComponent';
 import AdminDashboard from '../pages/AdminDashboard';
 import RevenueDashboard from '../components/admin/RevenueDashBoard';
 import TrialLeadManager from '../components/admin/TrialLeadManager';
+import ProfilePage from '../pages/ProfilePage';
 
 export default function AppRoutes() {
     return (
@@ -39,6 +40,8 @@ export default function AppRoutes() {
                 <Route path='/salaryconfig' element={<SalaryConfigurationPage />} />
                 <Route path='/salary' element={<SalaryComponent />} />
             </Route>
+
+            <Route path='/profile' element={<ProfilePage />} />
 
             {/* for admin */}
             <Route element={<ProtectedRoute allowedRoles={[Role.ADMIN]} />}>

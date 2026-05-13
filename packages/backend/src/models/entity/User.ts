@@ -35,10 +35,10 @@ export class User {
     createAt: Date;
 
     @Column({ nullable: true })
-    avartarUrl: string; //link CDN để hiển thị ảnh
+    avatarUrl: string; //link CDN để hiển thị ảnh
 
     @Column({ nullable: true })
-    avartarId: string; //Cloudinary public_id để xóa ảnh
+    avatarId: string; //Cloudinary public_id để xóa ảnh
 
     @OneToOne(() => CoachProfile, (profile) => (profile.user))
     coachProfile: CoachProfile;

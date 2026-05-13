@@ -41,14 +41,12 @@ const Navbar = () => {
                             /* --- GIAO DIỆN KHI ĐÃ ĐĂNG NHẬP --- */
                             <div className="relative group cursor-pointer">
                                 {/* Cục Avatar & Tên hiển thị trên thanh Navbar */}
-                                <div className="flex items-center space-x-3 text-white hover:text-red-500 transition p-2">
-                                    <span className="hidden sm:block font-medium text-gray-300 group-hover:text-white transition">
-                                        {userData.fullName}
-                                    </span>
-                                    {/* Avatar chữ cái đầu (VD: Nguyễn Văn A -> N) */}
-                                    <div className="w-9 h-9 bg-gray-800 rounded-full flex items-center justify-center font-bold uppercase border border-gray-600 group-hover:border-red-500 transition">
-                                        {userData.fullName?.charAt(0) || 'U'}
-                                    </div>
+                                <div className="w-9 h-9 bg-gray-800 rounded-full flex items-center justify-center font-bold uppercase border border-gray-600 group-hover:border-red-500 transition overflow-hidden">
+                                    {userData.avatarUrl ? (
+                                        <img src={`${userData.avatarUrl}?t=${new Date().getTime()}`} alt="Avatar" className="w-full h-full object-cover" />
+                                    ) : (
+                                        userData.fullName?.charAt(0) || 'U'
+                                    )}
                                 </div>
 
                                 {/* DROPDOWN MENU (Chỉ hiện khi di chuột vào cụm trên) */}

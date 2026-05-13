@@ -57,7 +57,8 @@ export class TokenServices {
                 fullName: user.fullName,
                 gmail: user.gmail,
                 phone: user.phone,
-                role: user.role
+                role: user.role,
+                avatarUrl: user.avatarUrl
             },
             refreshToken: rawToken
         }

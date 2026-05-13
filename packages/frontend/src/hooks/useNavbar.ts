@@ -14,7 +14,19 @@ export const useNavbar = () => {
         } else {
             setUserData(null);
         }
-    }, [location]); // Chạy lại mỗi khi đổi trang để cập nhật trạng thái mới nhất
+        const syncUserData = () => {
+            const stringifiedUser = localStorage.getItem('userData');
+            if (stringifiedUser) {
+                setUserData(JSON.parse(stringifiedUser));
+            }
+        };
+
+        // Lắng nghe sự kiện thay đổi
+        window.addEventListener('userDataUpdated', syncUserData);
+        return () => {
+            window.removeEventListener('userDataUpdated', syncUserData);
+        };
+    }, [location, setUserData]); // Chạy lại mỗi khi đổi trang để cập nhật trạng thái mới nhất
 
     // Hàm kiểm tra quyền
     const checkPermission = (allowedRoles: AllowedRoles) => {
@@ -35,6 +47,7 @@ export const useNavbar = () => {
 
     return {
         userData,
+        setUserData,
         navigate,
         checkPermission,
         handleLogout
