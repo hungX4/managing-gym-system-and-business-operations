@@ -1,7 +1,8 @@
 // services/revenue.service.ts
-import { Between, Repository } from 'typeorm';
+import { Between, In, Repository } from 'typeorm';
 import { MemberSubscription } from '../models/entity/MemberSubscription';
 import { AppDataSource } from '../models/data-source';
+import { MemberSubscriptionStatus } from '@gym/shared';
 
 export class RevenueService {
     private subscriptionRepo = AppDataSource.getRepository(MemberSubscription);
@@ -29,14 +30,25 @@ export class RevenueService {
         const endDate = new Date(year, month, 0, 23, 59, 59, 999);
         const prevStartDate = new Date(year, month - 2, 1);
         const prevEndDate = new Date(year, month - 1, 0, 23, 59, 59, 999);
-
+        // ĐỊNH NGHĨA TRẠNG THÁI HỢP LỆ (Chỉ lấy đơn ĐÃ CÓ TIỀN)
+        const validStatuses = [
+            MemberSubscriptionStatus.ACTIVE,
+            MemberSubscriptionStatus.EXPIRATED,
+            MemberSubscriptionStatus.RESERVE
+        ];
         const [currentMonthSubs, prevMonthSubs] = await Promise.all([
             this.subscriptionRepo.find({
-                where: { createdAt: Between(startDate, endDate) },
-                relations: ['package', 'seller'], // Giả sử có relation seller để biết ai bán
+                where: {
+                    createdAt: Between(startDate, endDate),
+                    status: In(validStatuses)
+                },
+                relations: ['package', 'seller'], //có relation seller để biết ai bán
             }),
             this.subscriptionRepo.find({
-                where: { createdAt: Between(prevStartDate, prevEndDate) },
+                where: {
+                    createdAt: Between(prevStartDate, prevEndDate),
+                    status: In(validStatuses)
+                },
             })
         ]);
 
@@ -90,9 +102,16 @@ export class RevenueService {
     private async getYearlyStats(year: number) {
         const startYear = new Date(year, 0, 1);
         const endYear = new Date(year, 11, 31, 23, 59, 59);
-
+        const validStatuses = [
+            MemberSubscriptionStatus.ACTIVE,
+            MemberSubscriptionStatus.EXPIRATED,
+            MemberSubscriptionStatus.RESERVE
+        ];
         const yearlySubs = await this.subscriptionRepo.find({
-            where: { createdAt: Between(startYear, endYear) },
+            where: {
+                createdAt: Between(startYear, endYear),
+                status: In(validStatuses)
+            },
             relations: ['package']
         });
 

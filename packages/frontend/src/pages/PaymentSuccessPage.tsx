@@ -12,10 +12,7 @@ const PaymentSuccess = () => {
 
     useEffect(() => {
         const verifyPayment = async () => {
-            // 1. Lấy toàn bộ chuỗi query parameters (?vnp_Amount=...&vnp_ResponseCode=...)
             const queryParams = location.search;
-
-            console.log("Dữ liệu nhận được từ VNPAY:", queryParams);
 
             if (!queryParams) {
                 console.error("Không có thông tin thanh toán trên URL!");
@@ -24,21 +21,30 @@ const PaymentSuccess = () => {
                 return;
             }
 
+            // 1. LẤY MÃ PHẢN HỒI THỰC TẾ TỪ URL CỦA VNPAY
+            const urlParams = new URLSearchParams(queryParams);
+            const vnp_ResponseCode = urlParams.get('vnp_ResponseCode');
+
             try {
-                // 2. Gọi ngầm xuống Backend để kiểm tra chữ ký và Active Database
-                // Đường dẫn API: /online-payment/vnpay-ipn (Khớp với file route của bạn)
+                // 2. Vẫn gọi Backend để nó chạy logic cập nhật Database
                 const response = await axiosClient.get(`/online-payment/vnpay-ipn${queryParams}`);
 
-                console.log("Backend trả về:", response.data);
-
-                // RspCode '00' là mã thành công chuẩn của VNPAY
-                if (response.data.RspCode === '00' || response.data.RspCode === '02') {
-                    setStatus('success');
-                    setMessage("Gói tập của bạn đã được kích hoạt thành công!");
+                // 3. XỬ LÝ LOGIC HIỂN THỊ
+                if (vnp_ResponseCode === '00') {
+                    // Trạng thái '00': Khách ĐÃ TRẢ TIỀN thành công
+                    if (response.data.RspCode === '00' || response.data.RspCode === '02') {
+                        setStatus('success');
+                        setMessage("Gói tập của bạn đã được kích hoạt thành công!");
+                    } else {
+                        setStatus('failed');
+                        setMessage(response.data.Message || "Giao dịch không thành công.");
+                    }
                 } else {
+                    // Nếu khách bấm HỦY (mã 24) hoặc THẺ LỖI, vnp_ResponseCode sẽ khác '00'
                     setStatus('failed');
-                    setMessage(response.data.Message || "Giao dịch không thành công.");
+                    setMessage("Giao dịch đã bị hủy hoặc thanh toán thất bại.");
                 }
+
             } catch (error: any) {
                 console.error("Lỗi khi gọi API Backend:", error);
                 setStatus('failed');
@@ -76,7 +82,7 @@ const PaymentSuccess = () => {
                             </svg>
                         </div>
                         <h2 className="text-3xl font-black uppercase tracking-tighter text-white mb-4">
-                            Tuyệt vời!
+                            Thanh toán thành công
                         </h2>
                         <p className="text-gray-300 text-lg mb-8 leading-relaxed">
                             {message} <br /> Chào mừng bạn gia nhập cộng đồng Gym của chúng tôi.

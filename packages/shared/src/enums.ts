@@ -39,7 +39,8 @@ export enum MemberSubscriptionStatus {
     ACTIVE = 'ACTIVE',
     EXPIRATED = 'EXPIRATED',
     RESERVE = 'RESERVE',
-    PENDING = "PENDING"
+    PENDING = "PENDING",
+    CANCELLED = "CANCELLED"
 }
 
 export enum PackageType {

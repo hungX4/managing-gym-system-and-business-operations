@@ -1,5 +1,5 @@
 import { In } from 'typeorm';
-import { Role, CoachType, PackageType, WorkLogStatus, SalaryStatus, FinalizeSalaryDto, GetSalaryDetailQueryDto } from '@gym/shared';
+import { Role, CoachType, PackageType, WorkLogStatus, SalaryStatus, FinalizeSalaryDto, GetSalaryDetailQueryDto, MemberSubscriptionStatus } from '@gym/shared';
 import { AppDataSource } from '../models/data-source';
 import { User } from '../models/entity/User';
 import { MemberSubscription } from '../models/entity/MemberSubscription';
@@ -78,6 +78,12 @@ export class SalaryService {
                 .where('pkg.type = :type', { type: PackageType.MEMBERSHIP })
                 .andWhere('sub.createdAt >= :startDate', { startDate })
                 .andWhere('sub.createdAt <= :endDate', { endDate })
+                .andWhere('sub.status NOT IN (:...invalidStatuses)', {
+                    invalidStatuses: [
+                        MemberSubscriptionStatus.CANCELLED,
+                        MemberSubscriptionStatus.PENDING
+                    ]
+                })
                 .select('SUM(sub.actualPaid)', 'total')
                 .getRawOne();
             totalClubMembershipSales = Number(clubSales?.total || 0);

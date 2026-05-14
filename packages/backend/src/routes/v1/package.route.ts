@@ -14,11 +14,8 @@ packageRouter.post(
     packageController.createPackage
 );
 
-// Thêm gói tập mới (Chỉ Admin mới có quyền tạo)
 packageRouter.get(
     '/',
-    AuthMiddleware.authenticate,
-    AuthMiddleware.authorize(Role.ADMIN, Role.COACH, Role.STAFF),
     packageController.getAllPackages
 );
 

@@ -36,7 +36,14 @@ axiosClient.interceptors.response.use(
             if (!refreshTokenPromise) {
                 const userId = localStorage.getItem('userId');
                 if (!userId) {
-                    window.location.href = '/auth';
+                    // Chỉ redirect nếu người dùng ĐANG KHÔNG Ở trang chủ (hoặc các trang public)
+                    const publicPaths = ['/']; // Thêm các route public của bạn vào đây
+                    const currentPath = window.location.pathname;
+
+                    if (!publicPaths.includes(currentPath)) {
+                        window.location.href = '/auth';
+                    }
+
                     return Promise.reject(error);
                 }
 

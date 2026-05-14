@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 // Nhớ sửa lại đường dẫn import axiosClient cho đúng với project của bạn
 import axiosClient from '../api/axiosClient';
 
@@ -17,7 +18,9 @@ const OnlinePaymentPage = () => {
     const [packages, setPackages] = useState<PackageResponseDto[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [isBuying, setIsBuying] = useState<number | null>(null);
-
+    const navigate = useNavigate();
+    //popup when have not login yet
+    const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
     const VIP_BENEFITS = [
         "Sử dụng toàn bộ thiết bị Gym",
         "Miễn phí tủ Locker cá nhân",
@@ -49,24 +52,30 @@ const OnlinePaymentPage = () => {
 
     // Xử lý khi bấm nút Mua
     const handleBuyPackage = async (packageId: number) => {
+        // 1. Kiểm tra xem khách đã đăng nhập chưa bằng cách check localStorage
+        const isLogged = localStorage.getItem('userId') && localStorage.getItem('accessToken');
+
+        if (!isLogged) {
+            // Nếu chưa đăng nhập -> Mở Popup thân thiện và dừng hàm lại
+            setShowAuthModal(true);
+            return;
+        }
+
+        // 2. Nếu đã đăng nhập thì chạy logic mua như bình thường
         setIsBuying(packageId);
         try {
-            // Chuẩn bị payload theo BuyPackageOnlineRequestDto
             const payload = {
                 packageId: packageId,
-                startDate: new Date().toISOString() // Bắt đầu tính từ hôm nay
+                startDate: new Date().toISOString()
             };
 
-            // axiosClient tự động gắn Token vào Header rồi
             const res = await axiosClient.post('/online-payment/buy-online', payload);
 
             if (res.data && res.data.url) {
-                // Chuyển hướng trực tiếp sang trang VNPAY
                 window.location.href = res.data.url;
             }
         } catch (error: any) {
             console.error("Lỗi tạo thanh toán:", error);
-            // Bắt lỗi từ response của Backend
             alert(error.response?.data?.message || "Có lỗi xảy ra khi tạo giao dịch. Vui lòng thử lại!");
         } finally {
             setIsBuying(null);
@@ -142,6 +151,43 @@ const OnlinePaymentPage = () => {
                     ))}
                 </div>
             </div>
+            {showAuthModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+                    <div className="bg-[#111111] border border-gray-800 rounded-2xl max-w-md w-full p-8 shadow-[0_0_50px_rgba(220,38,38,0.15)] relative transform transition-all scale-100 animate-slideUp">
+
+                        {/* Icon cảnh báo nhẹ nhàng */}
+                        <div className="w-20 h-20 bg-red-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+
+                        <h3 className="text-2xl font-black text-center text-white uppercase tracking-wider mb-3">
+                            Chưa đăng nhập?
+                        </h3>
+
+                        <p className="text-gray-400 text-center mb-8 leading-relaxed">
+                            Để bảo vệ quyền lợi và lưu trữ gói tập của bạn an toàn, vui lòng đăng nhập hoặc tạo tài khoản trước khi thanh toán nhé!
+                        </p>
+
+                        <div className="flex flex-col space-y-4">
+                            <button
+                                onClick={() => navigate('/auth')} // Chuyển hướng sang trang đăng nhập
+                                className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl uppercase tracking-widest transition-all duration-300 shadow-[0_4px_20px_rgba(220,38,38,0.4)] hover:-translate-y-1"
+                            >
+                                Đăng nhập ngay
+                            </button>
+
+                            <button
+                                onClick={() => setShowAuthModal(false)} // Tắt popup
+                                className="w-full bg-transparent border border-gray-700 hover:border-gray-500 text-gray-400 hover:text-white font-bold py-3 rounded-xl uppercase tracking-widest transition-all duration-300"
+                            >
+                                Để sau
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

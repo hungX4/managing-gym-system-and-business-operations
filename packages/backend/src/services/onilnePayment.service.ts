@@ -94,7 +94,7 @@ export class OnlinePaymentService {
             await this.subRepo.save(sub);
             return { RspCode: '00', Message: 'Success' };
         } else {
-            sub.status = MemberSubscriptionStatus.EXPIRATED;
+            sub.status = MemberSubscriptionStatus.CANCELLED;
             await this.subRepo.save(sub);
             return { RspCode: '00', Message: 'Payment Failed' };
         }
@@ -129,7 +129,6 @@ export class OnlinePaymentService {
             // Encode key và value theo đúng chuẩn VNPAY
             sorted[key] = encodeURIComponent(obj[key]).replace(/%20/g, "+");
         }
-
         return sorted;
     }
 }
