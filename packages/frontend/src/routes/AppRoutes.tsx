@@ -15,6 +15,7 @@ import AdminDashboard from '../pages/AdminDashboard';
 import RevenueDashboard from '../components/admin/RevenueDashBoard';
 import TrialLeadManager from '../components/admin/TrialLeadManager';
 import ProfilePage from '../pages/ProfilePage';
+import PaymentSuccess from '../pages/PaymentSuccessPage';
 
 export default function AppRoutes() {
     return (
@@ -34,7 +35,7 @@ export default function AppRoutes() {
 
             {/* Route Đăng nhập / Đăng ký */}
             <Route path="/auth" element={<AuthPage />} />
-
+            <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route element={<ProtectedRoute allowedRoles={[Role.ADMIN]} />}>
                 <Route path='/package' element={<PackagePage />} />
                 <Route path='/salaryconfig' element={<SalaryConfigurationPage />} />

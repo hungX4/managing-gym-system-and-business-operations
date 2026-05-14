@@ -38,7 +38,8 @@ export enum SalaryStatus {
 export enum MemberSubscriptionStatus {
     ACTIVE = 'ACTIVE',
     EXPIRATED = 'EXPIRATED',
-    RESERVE = 'RESERVE'
+    RESERVE = 'RESERVE',
+    PENDING = "PENDING"
 }
 
 export enum PackageType {

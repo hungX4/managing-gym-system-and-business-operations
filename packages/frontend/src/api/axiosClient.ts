@@ -54,7 +54,7 @@ axiosClient.interceptors.response.use(
                     localStorage.removeItem('accessToken');
                     localStorage.removeItem('userData');
                     localStorage.removeItem('userId');
-                    // window.location.href = '/auth';
+                    window.location.href = '/auth';
                     return Promise.reject(refreshError);
                 }).finally(() => {
                     // Xong việc thì reset khoá

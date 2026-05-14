@@ -9,6 +9,7 @@ import salaryConfigRoute from "./salary-config.routes";
 import salaryRoute from "./salary.route";
 import trialRouter from "./trialLead.route";
 import adminRouter from "./revenue.route";
+import onlinePaymentRouter from "./onlinePayment.route";
 const router = Router();
 router.use('/auth', authRoute);
 router.use('/booking', bookingRoute);
@@ -20,6 +21,6 @@ router.use('/salaryconfig', salaryConfigRoute);
 router.use('/salary', salaryRoute);
 router.use('/trial', trialRouter);
 router.use('/admin', adminRouter);
-
+router.use('/online-payment', onlinePaymentRouter)
 console.log("🔥 FILE ROUTER TỔNG ĐÃ ĐƯỢC LOAD THÀNH CÔNG!");
 export default router;

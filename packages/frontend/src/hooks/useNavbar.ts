@@ -42,7 +42,7 @@ export const useNavbar = () => {
         localStorage.removeItem('userData');
         localStorage.removeItem('userId');
         setUserData(null);
-        navigate('/auth');
+        navigate('/');
     };
 
     return {
