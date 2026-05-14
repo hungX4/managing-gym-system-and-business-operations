@@ -16,6 +16,7 @@ import RevenueDashboard from '../components/admin/RevenueDashBoard';
 import TrialLeadManager from '../components/admin/TrialLeadManager';
 import ProfilePage from '../pages/ProfilePage';
 import PaymentSuccess from '../pages/PaymentSuccessPage';
+import CoachProfileSettings from '../pages/salary/CoachProfilePage';
 
 export default function AppRoutes() {
     return (
@@ -43,7 +44,7 @@ export default function AppRoutes() {
             </Route>
 
             <Route path='/profile' element={<ProfilePage />} />
-
+            <Route path='/coach-profile' element={<CoachProfileSettings />} />
             {/* for admin */}
             <Route element={<ProtectedRoute allowedRoles={[Role.ADMIN]} />}>
                 <Route path="/admin" element={<AdminDashboard />}>

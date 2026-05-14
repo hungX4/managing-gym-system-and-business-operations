@@ -1,32 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { AllowedRoles } from '../config/navigation';
+
 export const useNavbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [userData, setUserData] = useState<any>(null);
 
-    // Đồng bộ thông tin user từ LocalStorage
-    useEffect(() => {
-        const storedUser = localStorage.getItem('userData');
-        if (storedUser) {
-            setUserData(JSON.parse(storedUser));
+    // Hàm đồng bộ data (Dùng useCallback để không bị tạo lại tham chiếu)
+    const syncUserData = useCallback(() => {
+        const stringifiedUser = localStorage.getItem('userData');
+        if (stringifiedUser) {
+            setUserData(JSON.parse(stringifiedUser));
         } else {
             setUserData(null);
         }
-        const syncUserData = () => {
-            const stringifiedUser = localStorage.getItem('userData');
-            if (stringifiedUser) {
-                setUserData(JSON.parse(stringifiedUser));
-            }
-        };
+    }, []);
 
-        // Lắng nghe sự kiện thay đổi
+    // 1. Đồng bộ lại dữ liệu mỗi khi chuyển trang (Đổi URL)
+    useEffect(() => {
+        syncUserData();
+    }, [location, syncUserData]);
+
+    // 2. Lắng nghe tín hiệu cập nhật từ nơi khác (Chỉ cần đăng ký 1 lần lúc mount)
+    useEffect(() => {
+        // Lắng nghe đúng tên sự kiện 'userDataUpdated'
         window.addEventListener('userDataUpdated', syncUserData);
+
         return () => {
             window.removeEventListener('userDataUpdated', syncUserData);
         };
-    }, [location, setUserData]); // Chạy lại mỗi khi đổi trang để cập nhật trạng thái mới nhất
+    }, [syncUserData]);
 
     // Hàm kiểm tra quyền
     const checkPermission = (allowedRoles: AllowedRoles) => {

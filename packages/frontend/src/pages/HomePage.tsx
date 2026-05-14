@@ -4,12 +4,14 @@ import HeroCarousel from '../components/Home/HeroCarouel';
 import TrialSection from '../components/Home/TrialSection';
 import Footer from '../components/Layout/Footer';
 import OnlinePaymentPage from './OnlinePaymentPage';
+import CoachList from '../components/Home/CoachList';
 const HomePage = () => {
     return (
         <main>
             <HeroCarousel />
             <TrialSection />
             <OnlinePaymentPage />
+            <CoachList />
             {/* Sau này bạn có thể nhúng thêm các component khác ở đây:
           <AboutSection />
           <ServicesSection />
