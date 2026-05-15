@@ -14,6 +14,7 @@ services:
       - "3307:3306"
     volumes:
       - ./mysql_data:/var/lib/mysql # QUAN TRỌNG: Lưu dữ liệu ra ngoài để không mất khi tắt Docker
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
     command: --default-authentication-plugin=mysql_native_password # Fix lỗi connect cho một số client cũ
 
   # (Tùy chọn) Cài thêm Adminer (Giao diện web nhẹ) để check nhanh nếu lười bật DBeaver
