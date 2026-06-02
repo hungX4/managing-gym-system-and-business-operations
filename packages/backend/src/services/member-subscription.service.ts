@@ -187,4 +187,18 @@ export class MemberSubscriptionService {
 
         return subscriptions;
     }
+    // Thêm vào file: member-subscription.service.ts
+
+    // async getActiveSubscription(memberId: string) {
+    //     const now = new Date();
+
+    //     return await this.subRepo.findOne({
+    //         where: {
+    //             member: { userId: memberId },
+    //             status: MemberSubscriptionStatus.ACTIVE,
+    //         },
+    //         relations: ['package'],
+    //         order: { createdAt: 'DESC' } // Lấy gói mới nhất nếu khách mua chồng gói
+    //     });
+    // }
 }

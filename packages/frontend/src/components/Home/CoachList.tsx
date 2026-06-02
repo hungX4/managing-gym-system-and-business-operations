@@ -1,18 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { coachApi } from '../../api/coachApi';
-
-interface Coach {
-    userId: string;
-    fullName: string;
-    phone: string;
-    avatarUrl: string | null;
-    coachType: string | null;
-    coachLevel: string | null;
-    bio: string | null;
-}
+import { CoachResponseDto } from '@gym/shared';
 
 const CoachList: React.FC = () => {
-    const [coaches, setCoaches] = useState<Coach[]>([]);
+    const [coaches, setCoaches] = useState<CoachResponseDto[]>([]);
     const [loading, setLoading] = useState(true);
 
     const sliderRef = useRef<HTMLDivElement>(null);
@@ -52,10 +43,9 @@ const CoachList: React.FC = () => {
     return (
         // Xóa min-h-[70vh], chỉ dùng py-12 để dải trắng vừa vặn, không bị thừa trên dưới
         <div className="bg-white py-12 px-4 sm:px-6 flex flex-col justify-center">
-            <div className="max-w-6xl mx-auto w-full">
-
+            <div className="mx-auto w-full">
                 {/* Phần Tiêu đề */}
-                <div className="text-center mb-8">
+                <div className="text-center mb-3">
                     <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-gray-900 mb-2">
                         Đội Ngũ <span className="text-red-600">Huấn Luyện Viên</span>
                     </h1>
@@ -65,9 +55,14 @@ const CoachList: React.FC = () => {
                 </div>
 
                 {/* Khu vực Slider thu gọn lại max-w-5xl để mũi tên không bị quá xa */}
-                <div className="relative group flex items-center justify-center max-w-5xl mx-auto">
+                <div className="relative group flex items-center justify-center mx-auto w-full
+                        max-w-[320px]       {/* Điện thoại: Hiển thị 1 card */}
+                        sm:max-w-[620px]    {/* Tablet: Hiển thị 2 cards */}
+                        lg:max-w-[920px]    {/* Laptop nhỏ: Hiển thị 3 cards */}
+                        xl:max-w-[1240px]   {/* Laptop to/PC: Hiển thị 4 cards */}
+                        2xl:max-w-[1550px]  {/* Màn hình siêu rộng: Hiển thị 5 cards */}">
 
-                    {/* Nút Cuộn Trái (neo sát vào rìa của max-w-5xl) */}
+                    {/* Nút Cuộn Trái (neo sát vào rìa của width) */}
                     <button
                         onClick={slideLeft}
                         className="absolute -left-4 md:-left-12 z-10 p-2.5 bg-white border border-gray-200 text-red-600 rounded-full shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:bg-red-50 hover:scale-110 transition-all duration-300 focus:outline-none"
@@ -88,12 +83,17 @@ const CoachList: React.FC = () => {
                             // Giữ nguyên kích thước nhỏ nhắn: w-[280px], h-[420px]
                             <div
                                 key={coach.userId}
-                                className="flex-none w-[280px] h-[420px] bg-[#0f172a] rounded-2xl overflow-hidden hover:border-red-600/50 transition-all duration-300 group shadow-lg hover:shadow-2xl flex flex-col border border-gray-800"
+                                className="flex-none h-[420px] bg-[#0f172a] rounded-2xl overflow-hidden hover:border-red-600/50 transition-all duration-300 group shadow-lg hover:shadow-2xl flex flex-col border border-gray-800
+                                            w-full                                  {/* Mobile: 1 thẻ (100%) */}
+                                            sm:w-[calc((100%-1.5rem)/2)]            {/* Tablet: 2 thẻ. (1.5rem là gap-6) */}
+                                            lg:w-[calc((100%-3rem)/3)]              {/* Laptop nhỏ: 3 thẻ. (3rem là 2 cái gap-6) */}
+                                            xl:w-[calc((100%-4.5rem)/4)]            {/* Laptop to: 4 thẻ. (4.5rem là 3 cái gap-6) */}
+                                            2xl:w-[calc((100%-6rem)/5)]             {/* Màn PC to: Chính xác 5 thẻ. (6rem là 4 cái gap-6) */}"
                             >
                                 {/* Avatar Section */}
                                 <div className="h-48 w-full overflow-hidden relative bg-gray-800 flex-shrink-0">
                                     <img
-                                        src={coach.avatarUrl || 'https://via.placeholder.com/400x400?text=No+Avatar'}
+                                        src={coach.avatarUrl || 'https://placehold.co/400x400/1e293b/ffffff?text=No+Avatar'}
                                         alt={coach.fullName}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     />

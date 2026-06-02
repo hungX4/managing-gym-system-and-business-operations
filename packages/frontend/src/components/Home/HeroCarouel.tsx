@@ -129,7 +129,7 @@ const HeroCarousel: React.FC = () => {
                     <div key={banner.id} className="min-w-full h-full relative">
                         <div className="absolute inset-0">
                             <img src={banner.image} alt="Banner" className="w-full h-full object-cover opacity-40 pointer-events-none" />
-                            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
+                            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent"></div>
                         </div>
 
                         <div className="relative h-full flex items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
