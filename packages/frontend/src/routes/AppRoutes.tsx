@@ -16,7 +16,7 @@ import RevenueDashboard from '../components/admin/RevenueDashBoard';
 import TrialLeadManager from '../components/admin/TrialLeadManager';
 import ProfilePage from '../pages/ProfilePage';
 import PaymentSuccess from '../pages/PaymentSuccessPage';
-import CoachProfileSettings from '../pages/salary/CoachProfilePage';
+import CoachProfileSettings from '../pages/CoachProfilePage';
 
 export default function AppRoutes() {
     return (

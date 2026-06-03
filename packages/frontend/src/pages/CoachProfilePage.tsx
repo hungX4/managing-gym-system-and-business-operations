@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { coachApi } from '../../api/coachApi';
+import { coachApi } from '../api/user/coachApi';
 import toast from 'react-hot-toast';
 
 const CoachProfileSettings: React.FC = () => {

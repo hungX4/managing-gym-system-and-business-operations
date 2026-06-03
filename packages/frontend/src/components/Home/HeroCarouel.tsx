@@ -132,26 +132,45 @@ const HeroCarousel: React.FC = () => {
                             <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent"></div>
                         </div>
 
-                        <div className="relative h-full flex items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="relative h-full flex items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:max-w-none xl:mx-0 xl:pl-16 xl:pr-16
+    2xl:pl-24 2xl:pr-24">
                             {/* Bỏ cursor-grab ở đây vì đã đưa lên thẻ div ngoài cùng */}
-                            <div className="w-full md:w-2/3 pt-32">
-                                <div className="mb-6 relative pointer-events-none">
-                                    <h2 className="text-4xl md:text-5xl font-light tracking-widest text-gray-300">
+                            <div className="w-full md:w-2/3 pt-16 ">
+                                <div className="mb-6 relative pointer-events-none flex flex-col gap-y-1 md:gap-y-3 xl:gap-y-6 2xl:gap-y-8">
+
+                                    <h2 className="text-4xl md:text-5xl font-light tracking-widest text-gray-300 leading-tight ">
                                         {banner.subTitle}
                                     </h2>
-                                    <h1 className="text-6xl leading-snug md:text-8xl font-black uppercase text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500" style={{ WebkitTextStroke: '1px white' }}>
+
+                                    {/* 2. Sửa leading-snug thành leading-tight ở mobile và md:leading-none ở màn hình lớn để chữ không lấn chiếm không gian */}
+                                    {/* 3. Thêm py-1 để tránh việc hiệu ứng WebkitTextStroke hoặc bg-clip-text bị trình duyệt cắt mất một vài pixel ở đỉnh chữ */}
+                                    <h1
+                                        className="text-6xl leading-tight md:text-8xl font-black uppercase text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 md:leading-none py-1"
+                                        style={{ WebkitTextStroke: '1px white' }}
+                                    >
                                         {banner.title}
                                     </h1>
-                                    <p className="text-red-600 font-bold tracking-[0.3em] mt-2 text-sm md:text-base">
+
+                                    <p className="text-red-600 font-bold tracking-[0.3em] text-sm md:text-base">
                                         {banner.description}
                                     </p>
+
                                 </div>
 
                                 <div className="border border-red-600/30 bg-red-900/10 p-6 rounded-sm w-fit backdrop-blur-sm mb-8 pointer-events-none">
                                     <ul className="space-y-3">
                                         {banner.features.map((feature, idx) => (
                                             <li key={idx} className="flex items-center text-white font-medium uppercase text-sm md:text-base">
-                                                <span className="text-cyan-400 mr-3">▶</span> {feature}
+                                                <svg
+                                                    className="w-5 h-5 text-red-500 mr-3 flex-shrink-0 filter drop-shadow-[0_0_3px_rgba(239,68,68,0.5)]"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                    strokeWidth="3"
+                                                >
+                                                    <path strokeLinecap="square" strokeLinejoin="miter" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                {feature}
                                             </li>
                                         ))}
                                     </ul>

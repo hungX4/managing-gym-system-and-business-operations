@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 // Nhớ sửa lại đường dẫn import axiosClient cho đúng với project của bạn
-import axiosClient from '../api/axiosClient';
+import axiosClient from '../../api/axiosClient';
 
 // Dùng đúng chuẩn DTO bạn cung cấp
 interface PackageResponseDto {
@@ -14,7 +14,7 @@ interface PackageResponseDto {
     isActive: boolean;
 }
 
-const OnlinePaymentPage = () => {
+const OnlinePaymentComponent = () => {
     const [packages, setPackages] = useState<PackageResponseDto[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [isBuying, setIsBuying] = useState<number | null>(null);
@@ -37,9 +37,11 @@ const OnlinePaymentPage = () => {
                 const res = await axiosClient.get('/package');
 
                 // Chỉ lấy những gói đang Active và là loại MEMBERSHIP
-                const availablePackages = res.data.filter(
-                    (pkg: PackageResponseDto) => pkg.isActive && pkg.type === 'MEMBERSHIP'
-                );
+                const availablePackages = res.data
+                    .filter(
+                        (pkg: PackageResponseDto) => pkg.isActive && pkg.type === 'MEMBERSHIP'
+                    )
+                    .sort((a: PackageResponseDto, b: PackageResponseDto) => a.price - b.price);;
                 setPackages(availablePackages);
             } catch (error) {
                 console.error("Lỗi khi tải gói tập:", error);
@@ -192,4 +194,4 @@ const OnlinePaymentPage = () => {
     );
 };
 
-export default OnlinePaymentPage;
+export default OnlinePaymentComponent;

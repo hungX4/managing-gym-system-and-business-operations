@@ -56,7 +56,7 @@ const PaymentSuccess = () => {
     }, [location.search]);
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4 font-sans">
+        <div className="p-24 min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4 font-sans">
             <div className="max-w-md w-full bg-[#111111] border border-gray-800 rounded-3xl p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)] text-center relative overflow-hidden">
 
                 {/* Trang trí: Đốm sáng đỏ mờ phía sau */}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { coachApi } from '../../api/coachApi';
+import { coachApi } from '../../api/user/coachApi';
 import { CoachResponseDto } from '@gym/shared';
 
 const CoachList: React.FC = () => {
