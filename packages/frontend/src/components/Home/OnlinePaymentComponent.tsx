@@ -89,7 +89,7 @@ const OnlinePaymentComponent = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-[calc(100vh-25vh)] bg-[#0a0a0a] text-white pt-12 pb-12 px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-12">
                     <h1 className="text-4xl font-extrabold uppercase tracking-widest mb-4">
@@ -106,9 +106,9 @@ const OnlinePaymentComponent = () => {
                             key={pkg.packageId}
                             className="bg-[#111111] border border-gray-800 rounded-2xl overflow-hidden hover:border-red-600 hover:shadow-[0_0_20px_rgba(220,38,38,0.2)] transition-all duration-300 flex flex-col"
                         >
-                            <div className="p-8 flex-grow">
-                                <h2 className="text-2xl font-bold uppercase text-white mb-2">{pkg.name}</h2>
-                                <p className="text-red-500 text-sm font-semibold tracking-wider uppercase mb-6">Thẻ Hội Viên</p>
+                            <div className="p-6 flex-grow">
+                                <h2 className="text-2xl font-bold uppercase text-white mb-2 whitespace-nowrap">{pkg.name}</h2>
+                                <p className="text-red-500 text-sm font-semibold tracking-wider uppercase mb-5">Thẻ Hội Viên</p>
 
                                 <div className="flex items-baseline mb-6">
                                     <span className="text-4xl font-extrabold">
@@ -117,13 +117,7 @@ const OnlinePaymentComponent = () => {
                                     <span className="text-gray-500 ml-2">VNĐ</span>
                                 </div>
 
-                                <ul className="space-y-4 text-gray-300 mb-8">
-                                    <li className="flex items-center">
-                                        <span className="w-2 h-2 bg-red-600 rounded-full mr-3"></span>
-                                        Thời hạn: <strong className="ml-1 text-white">{pkg.durationDays} ngày</strong>
-                                    </li>
-                                </ul>
-                                {/* Danh sách đặc quyền (Dấu tick) */}
+                                {/* Danh sách quyền lợi */}
                                 <ul className="space-y-4 text-gray-300">
                                     {VIP_BENEFITS.map((benefit, index) => (
                                         <li key={index} className="flex items-start">
@@ -141,7 +135,7 @@ const OnlinePaymentComponent = () => {
                                 <button
                                     onClick={() => handleBuyPackage(pkg.packageId)}
                                     disabled={isBuying === pkg.packageId}
-                                    className={`w-full py-3 rounded-lg font-bold uppercase tracking-wider transition-all duration-200 ${isBuying === pkg.packageId
+                                    className={`w-full py-3 rounded-lg font-bold uppercase tracking-wider transition-all duration-200 hover:cursor-pointer ${isBuying === pkg.packageId
                                         ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
                                         : 'bg-red-600 hover:bg-red-700 text-white shadow-[0_4px_14px_0_rgba(220,38,38,0.39)]'
                                         }`}
