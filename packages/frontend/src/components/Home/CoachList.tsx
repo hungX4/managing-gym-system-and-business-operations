@@ -55,7 +55,7 @@ const CoachList: React.FC = () => {
                 </div>
 
                 {/* Khu vực Slider thu gọn lại max-w-5xl để mũi tên không bị quá xa */}
-                <div className="relative group flex items-center justify-center mx-auto w-full
+                <div className="relative flex items-center justify-center mx-auto w-full
                         max-w-[320px]       {/* Điện thoại: Hiển thị 1 card */}
                         sm:max-w-[620px]    {/* Tablet: Hiển thị 2 cards */}
                         lg:max-w-[920px]    {/* Laptop nhỏ: Hiển thị 3 cards */}
@@ -91,7 +91,7 @@ const CoachList: React.FC = () => {
                                             2xl:w-[calc((100%-6rem)/5)]             {/* Màn PC to: Chính xác 5 thẻ. (6rem là 4 cái gap-6) */}"
                             >
                                 {/* Avatar Section */}
-                                <div className="h-48 w-full overflow-hidden relative bg-gray-800 flex-shrink-0">
+                                <div className="h-60 w-full overflow-hidden relative bg-gray-800 flex-shrink-0">
                                     <img
                                         src={coach.avatarUrl || 'https://placehold.co/400x400/1e293b/ffffff?text=No+Avatar'}
                                         alt={coach.fullName}
