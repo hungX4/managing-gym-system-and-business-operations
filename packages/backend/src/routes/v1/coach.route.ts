@@ -4,22 +4,9 @@ import { Router } from 'express';
 import { CoachController } from '../../controllers/v1/coach.controller';
 import { AuthMiddleware } from '../../middleware/auth.middleware';
 import { Role } from '@gym/shared';
-import multer from 'multer';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
-import cloudinary from '../../config/cloudinary';
+import { upload } from '../../middleware/upload.middleware';
 
 const coachRouter = Router();
-
-// Cấu hình kho lưu trữ Cloudinary cho Multer giống hệt User
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: async (_req, _file) => ({
-        folder: 'gym_avatar', // Có thể đổi thành 'coach_avatar' nếu muốn tách riêng thư mục
-        allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
-    }),
-});
-
-const upload = multer({ storage });
 
 // ==========================================
 // 1. PUBLIC ROUTES (Dành cho việc xem danh sách)
@@ -31,7 +18,6 @@ coachRouter.get(
     '/',
     CoachController.getAllCoaches
 );
-
 
 // ==========================================
 // 2. PRIVATE ROUTES (Chỉ dành riêng cho COACH)

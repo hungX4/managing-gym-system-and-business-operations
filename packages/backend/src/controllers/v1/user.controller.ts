@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 import { UserService } from '../../services/user.service';
 import { MemberSearchRequestDto } from '@gym/shared';
 import cloudinary from '../../config/cloudinary';
+import { deleteCloudinaryImage } from '../../utils/cloudinary.util';
 export class UserController {
 
     // GET /api/v1/users/search?keyword=abc
@@ -51,6 +52,7 @@ export class UserController {
             next(error);
         }
     }
+
     //PATCH /api/v1/user/:id
     static updateProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
@@ -63,14 +65,11 @@ export class UserController {
             if ((req as any).file) {
                 //get user
                 const currentUser = await UserService.getUserById(userId);
-
-                //check if avatar existed
-                if (currentUser?.avatarId) {
-                    await cloudinary.uploader.destroy(currentUser.avatarId);
-                }
+                //xoa anh tren cloudinary
+                await deleteCloudinaryImage(currentUser?.avatarId);
 
                 updateData.avatarUrl = req.file?.path;
-                updateData.avatarId = req.file?.fieldname;
+                updateData.avatarId = req.file?.filename || (req.file as any).public_id;
             }
 
             // Nếu cả body rỗng và không có file, báo lỗi ngay tránh gọi xuống DB

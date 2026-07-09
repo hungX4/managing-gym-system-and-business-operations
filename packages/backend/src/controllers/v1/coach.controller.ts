@@ -1,6 +1,9 @@
 // packages/backend/src/controllers/v1/coach.controller.ts
 import { Request, Response, NextFunction } from 'express';
 import { CoachService } from '../../services/coach.service';
+import { UserService } from '../../services/user.service';
+import cloudinary from '../../config/cloudinary';
+import { deleteCloudinaryImage } from '../../utils/cloudinary.util';
 
 export class CoachController {
 
@@ -36,6 +39,10 @@ export class CoachController {
             const updateData: any = { fullName, phone, bio };
 
             if ((req as any).file) {
+                const currentCoach = await UserService.getUserById(userId);
+                //xoa anh cu tren cloudinary
+                await deleteCloudinaryImage(currentCoach?.avatarId);
+
                 updateData.avatarUrl = (req as any).file.path;
                 updateData.avatarId = (req as any).file.filename;
             }

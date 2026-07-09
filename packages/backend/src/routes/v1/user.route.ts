@@ -4,21 +4,8 @@ import { Router } from 'express';
 import { UserController } from '../../controllers/v1/user.controller';
 import { AuthMiddleware } from '../../middleware/auth.middleware';
 import { Role } from '@gym/shared';
-import multer from 'multer';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
-import cloudinary from '../../config/cloudinary';
+import { upload } from '../../middleware/upload.middleware';
 const userRouter = Router();
-
-// Cấu hình kho lưu trữ Cloudinary cho Multer
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: async (_req, _file) => ({
-        folder: 'gym_avatar', // Thư mục chứa ảnh trên Cloudinary
-        allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
-    }),
-});
-
-const upload = multer({ storage });
 
 // API tìm kiếm khách hàng (Coach, Staff, Admin đều dùng được)
 userRouter.get(
