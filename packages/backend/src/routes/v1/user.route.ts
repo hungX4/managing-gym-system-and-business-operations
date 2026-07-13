@@ -32,8 +32,9 @@ userRouter.get(
 userRouter.get('/:id', AuthMiddleware.authenticate, UserController.getUserProfile);
 
 userRouter.patch(
-    '/:id',
+    '/me',
     upload.single('avatar'), // Field name phía Frontend gửi lên
+    AuthMiddleware.authenticate,
     UserController.updateProfile
 );
 

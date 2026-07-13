@@ -53,12 +53,12 @@ export class UserController {
         }
     }
 
-    //PATCH /api/v1/user/:id
+    //PATCH /api/v1/user/me
     static updateProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             //console.log("File nhận được từ Multer:", req.file); // Kiểm tra xem có file không
             //console.log("Body nhận được:", req.body);
-            const userId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+            const userId = req.user?.sub as string;
             const { fullName, gmail, phone } = req.body;
             const updateData: any = { fullName, gmail, phone };
 

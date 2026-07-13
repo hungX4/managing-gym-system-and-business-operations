@@ -24,5 +24,5 @@ router.use('/trial', trialRouter);
 router.use('/admin', adminRouter);
 router.use('/online-payment', onlinePaymentRouter);
 router.use('/coach', coachRouter)
-console.log("🔥 FILE ROUTER TỔNG ĐÃ ĐƯỢC LOAD THÀNH CÔNG!");
+//console.log("🔥 FILE ROUTER TỔNG ĐÃ ĐƯỢC LOAD THÀNH CÔNG!");
 export default router;
