@@ -69,7 +69,8 @@ export class BookingService {
     }
 
     getList = async (filters: {
-        date?: string   // 'YYYY-MM-DD'
+        startDate?: string
+        endDate?: string   // 'YYYY-MM-DD'
         coachId?: number
         memberId?: number
         status?: BookingStatus
@@ -81,14 +82,18 @@ export class BookingService {
             .leftJoinAndSelect('b.member', 'member')
             .orderBy('b.startTime', 'ASC')
 
-        if (filters.date) {
-            qb.andWhere('DATE(b.start_time) = :date', { date: filters.date })
+        if (filters.startDate && filters.endDate) {
+            qb.andWhere('DATE(b.startTime) >= :startDate', { startDate: filters.startDate })
+                .andWhere('DATE(b.endTime) <= :endDate', { endDate: filters.endDate });
+        }
+        else if (filters.startDate) {
+            qb.andWhere('b.startTime >= :startDate', { startDate: filters.startDate });
         }
         if (filters.coachId) {
-            qb.andWhere('b.coach_id = :coachId', { coachId: filters.coachId })
+            qb.andWhere('b.coachId = :coachId', { coachId: filters.coachId })
         }
         if (filters.memberId) {
-            qb.andWhere('b.member_id = :memberId', { memberId: filters.memberId })
+            qb.andWhere('b.memberId = :memberId', { memberId: filters.memberId })
         }
         if (filters.status) {
             qb.andWhere('b.status = :status', { status: filters.status })

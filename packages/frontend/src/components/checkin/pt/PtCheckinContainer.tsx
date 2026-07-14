@@ -45,19 +45,40 @@ export default function CheckinPage() {
     };
     const daysToRender = getDaysToRender();
 
-    // Lấy API (Giả sử Lễ tân dùng chung API GET /booking để lấy toàn bộ lịch)
+    // Hàm phụ trợ convert từ đối tượng Date sang chuỗi 'YYYY-MM-DD' (Tránh lệch múi giờ)
+    const formatDateToYYYYMMDD = (date: Date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    // call api
     const fetchBookings = async () => {
+        if (daysToRender.length === 0) return;
         try {
-            const res = await axiosClient.get<BookingResponseDto[]>('/booking');
+            // Lấy ngày đầu tiên và ngày cuối cùng trong danh sách hiển thị
+            const startDate = formatDateToYYYYMMDD(daysToRender[0]);
+            const endDate = formatDateToYYYYMMDD(daysToRender[daysToRender.length - 1]);
+
+            // 2. SỬ DỤNG CONFIG PARAMS CỦA AXIOS (AN TOÀN HƠN)
+            // Lưu ý: Đảm bảo Backend đón nhận đúng tên khóa (startDate, endDate)
+            const res = await axiosClient.get<BookingResponseDto[]>('/booking', {
+                params: {
+                    startDate,
+                    endDate
+                }
+            });
             setBookings(res.data);
         } catch (error) {
             console.error("Lỗi lấy lịch:", error);
         }
     };
 
+    // Gọi lại API bất cứ khi nào người dùng chuyển tuần (currentDate đổi) hoặc đổi chế độ Mobile/Desktop
     useEffect(() => {
         fetchBookings();
-    }, [currentDate]);
+    }, [currentDate, isMobile]);
 
 
     // Các hàm mở Modal

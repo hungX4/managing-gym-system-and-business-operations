@@ -1,8 +1,8 @@
+process.env.TZ = 'Asia/Ho_Chi_Minh';
 import express from 'express'
 import router from "./routes" //auto find index.ts file in routes folder
 import bodyParser from 'body-parser';
 import { AppDataSource } from "./models/data-source";
-import { User } from "./models/entity/User";
 import { errorMiddleware } from './middleware/error.middleware';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';

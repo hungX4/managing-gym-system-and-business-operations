@@ -11,6 +11,7 @@ export const AppDataSource = new DataSource({
     synchronize: true,
     logging: false,
     entities: ["src/models/entity/*.ts"],
+    timezone: '+07:00',
     subscribers: [],
     migrations: [],
     namingStrategy: new SnakeNamingStrategy(),

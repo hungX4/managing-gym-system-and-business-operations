@@ -39,14 +39,15 @@ export class BookingController {
     // GET /api/v1/bookings?date=2024-01-01&coachId=1&status=CONFIRM
     getList = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { date, coachId, memberId, status } = req.query
+            const { startDate, endDate, coachId, memberId, status } = req.query
             const result = await this.bookingService.getList({
-                date: date as string | undefined,
+                startDate: startDate as string | undefined,
+                endDate: endDate as string | undefined,
                 coachId: coachId ? Number(coachId) : undefined,
                 memberId: memberId ? Number(memberId) : undefined,
                 status: status ? (status as BookingStatus) : undefined,
             })
-            res.json(result)
+            res.json(result);
         } catch (err) {
             next(err)
         }
