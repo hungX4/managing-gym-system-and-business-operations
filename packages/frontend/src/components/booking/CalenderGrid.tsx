@@ -10,6 +10,20 @@ interface Props {
 }
 
 export default function CalendarGrid({ isMobile, daysToRender, bookings, onOpenBookingModal, onOpenDetailsModal }: Props) {
+
+    // Hàm xử lý hiển thị tên thông minh
+    const formatDisplayName = (name: string) => {
+        if (!name) return '';
+        const trimmed = name.trim();
+        // Nếu tên có dấu cách -> Chỉ lấy chữ cuối cùng
+        if (trimmed.includes(' ')) {
+            const parts = trimmed.split(/\s+/);
+            return parts[parts.length - 1];
+        }
+        // Nếu không có dấu cách -> Giữ nguyên để Tailwind tự động truncate thành "abc..."
+        return trimmed;
+    };
+
     return (
         <div className="bg-[#111111] rounded-xl border border-gray-800 shadow-2xl flex-1 flex flex-col overflow-hidden relative">
             <div className="flex-1 flex flex-col overflow-x-auto custom-scrollbar">
@@ -44,20 +58,32 @@ export default function CalendarGrid({ isMobile, daysToRender, bookings, onOpenB
                                 {daysToRender.map((date, idx) => {
                                     const existingBooking = bookings.find(b => {
                                         const bDate = new Date(b.startTime);
-                                        return bDate.getDate() === date.getDate() && bDate.getHours() === hour;
+                                        return bDate.getFullYear() === date.getFullYear() &&
+                                            bDate.getMonth() === date.getMonth() &&
+                                            bDate.getDate() === date.getDate() &&
+                                            bDate.getHours() === hour;
                                     });
 
                                     return (
                                         <div
                                             key={idx}
-                                            className={`p-1 border-r border-gray-800 last:border-r-0 min-h-[80px] md:min-h-[100px] transition-colors hover:bg-[#1f1f1f] cursor-pointer`}
+                                            // Thêm `min-w-0` và `overflow-hidden` vào bọc ngoài để cố định cột Grid không bị phình ra
+                                            className="p-1 border-r border-gray-800 last:border-r-0 min-h-[80px] md:min-h-[100px] transition-colors hover:bg-[#1f1f1f] cursor-pointer min-w-0 overflow-hidden"
                                             onClick={() => existingBooking ? onOpenDetailsModal(existingBooking) : onOpenBookingModal(date, hour)}
                                         >
                                             {existingBooking && (
-                                                <div className={`w-full h-full p-2 rounded shadow-sm flex flex-col justify-center ${getBookingStyle(existingBooking.status)}`}>
-                                                    <div className="font-bold text-xs md:text-sm truncate">{existingBooking.memberName}</div>
-                                                    <div className="text-[10px] md:text-xs opacity-80 mt-0.5">{existingBooking.memberPhone}</div>
-                                                    <div className="mt-auto pt-1 text-[9px] md:text-[10px] font-bold uppercase tracking-wider opacity-90">
+                                                <div className={`w-full h-full p-2 rounded shadow-sm flex flex-col justify-center ${getBookingStyle(existingBooking.status)} overflow-hidden`}>
+                                                    {/* title={...} giúp hiển thị tooltip tên đầy đủ khi di chuột vào */}
+                                                    <div
+                                                        className="font-bold text-xs md:text-sm truncate"
+                                                        title={existingBooking.memberName}
+                                                    >
+                                                        {formatDisplayName(existingBooking.memberName)}
+                                                    </div>
+                                                    <div className="text-[10px] md:text-xs opacity-80 mt-0.5 truncate">
+                                                        {existingBooking.memberPhone}
+                                                    </div>
+                                                    <div className="mt-auto pt-1 text-[9px] md:text-[10px] font-bold uppercase tracking-wider opacity-90 truncate">
                                                         {existingBooking.status}
                                                     </div>
                                                 </div>

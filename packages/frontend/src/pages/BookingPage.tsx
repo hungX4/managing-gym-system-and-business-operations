@@ -1,13 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
-import axiosClient from '../api/axiosClient'; // Chú ý sửa lại đường dẫn import
+import axiosClient from '../api/axiosClient';
 import CalendarToolbar from '../components/booking/CalenderToolbar';
 import CalendarGrid from '../components/booking/CalenderGrid'
 import CreateBookingModal from '../components/booking/CreateBookingModal';
 import BookingDetailsModal from '../components/booking/BookingDetailsModals';
 import toast from 'react-hot-toast';
 import { BookingResponseDto, CoachType, CreateBookingRequestDto } from '@gym/shared';
-
 
 export default function BookingPage() {
     // 1. STATE MANAGEMENT
@@ -26,7 +24,7 @@ export default function BookingPage() {
     // Modal Details State
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState<any>(null);
-    // const [errorMsg, setErrorMsg] = useState(null);
+
     // 2. LOGIC RESPONSIVE & CALENDAR
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -52,21 +50,42 @@ export default function BookingPage() {
     };
     const daysToRender = getDaysToRender();
 
-    // 3. API CALLS
+    // Hàm convert sang YYYY-MM-DD
+    const formatDateToYYYYMMDD = (date: Date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    // 3. API CALLS ĐÃ ĐƯỢC TỐI ƯU
     const fetchBookings = async () => {
+        if (daysToRender.length === 0) return;
         try {
-            const res = await axiosClient.get<BookingResponseDto[]>('/booking');
+            const startDate = formatDateToYYYYMMDD(daysToRender[0]);
+            const endDate = formatDateToYYYYMMDD(daysToRender[daysToRender.length - 1]);
+            const coachId = localStorage.getItem('userId'); // Lấy ID của Coach hiện tại
+
+            // Truyền param lên Backend để Server tự động lọc lịch
+            const res = await axiosClient.get<BookingResponseDto[]>('/booking', {
+                params: {
+                    startDate,
+                    endDate,
+                    coachId // Database sẽ chỉ trả về lịch của đúng PT này
+                }
+            });
             setBookings(res.data.filter((b: any) => b.status !== 'CANCELLED'));
         } catch (error) {
             console.error("Lỗi lấy lịch:", error);
-            toast.error("KHÔNG TẢI ĐƯỢC LỊCH!")
+            toast.error("KHÔNG TẢI ĐƯỢC LỊCH!");
             setBookings([]);
         }
     };
 
+    // Gọi lại API khi chuyển tuần hoặc đổi màn hình
     useEffect(() => {
         fetchBookings();
-    }, [currentDate]);
+    }, [currentDate, isMobile]);
 
     // Search Debounce API
     useEffect(() => {
@@ -78,8 +97,6 @@ export default function BookingPage() {
                     setSearchResults(res.data);
                 } catch (error) {
                     console.error("Lỗi tìm kiếm:", error);
-                    console.trace("🔍 Chi tiết Stack Trace của lỗi này:");
-                    // setErrorMsg(error.response?.data?.message || "Không thể tải dữ liệu.");
                     toast.error("LỖI TÌM KIẾM!!!");
                 } finally {
                     setIsSearching(false);
@@ -102,21 +119,18 @@ export default function BookingPage() {
             const coachId = localStorage.getItem('userId');
             const payload: CreateBookingRequestDto = {
                 coachId: String(coachId),
-                memberId: selectedMember.memberId, // Chắc chắn UserProfileDto của bạn có trường này
+                memberId: selectedMember.memberId,
                 startTime: startTime,
                 endTime: endTime,
                 phone: selectedMember.phone,
-                type: CoachType.GYM // Hoặc Enum CoachType.GYM nếu bạn import từ enum
+                type: CoachType.GYM
             };
-            await axiosClient.post(
-                '/booking',
-                payload
-            );
-            toast.success("ĐẶT LỊCH THÀNH CÔNG!")
+            await axiosClient.post('/booking', payload);
+            toast.success("ĐẶT LỊCH THÀNH CÔNG!");
             setIsModalOpen(false);
             fetchBookings();
         } catch (error: any) {
-            toast.error("KHÔNG THỂ ĐẶT LỊCH!")
+            toast.error("KHÔNG THỂ ĐẶT LỊCH!");
         }
     };
 
@@ -126,25 +140,25 @@ export default function BookingPage() {
 
         try {
             await axiosClient.delete(`/booking/${selectedBooking.bookingId}`);
-            toast.success("ĐÃ HỦY LỊCH!")
+            toast.success("ĐÃ HỦY LỊCH!");
             setIsDetailsModalOpen(false);
             setSelectedBooking(null);
             fetchBookings();
         } catch (error: any) {
-            toast.success("ĐÃ XẢY RA LỖI!")
+            toast.error("ĐÃ XẢY RA LỖI!");
         }
     };
 
-    // 4. HANDLERS
+    // 4. HANDLERS Đã sửa an toàn (Không mutate state)
     const handlePrev = () => {
         const newDate = new Date(currentDate);
-        newDate.setDate(currentDate.getDate() - (isMobile ? 1 : 7));
+        newDate.setDate(newDate.getDate() - (isMobile ? 1 : 7));
         setCurrentDate(newDate);
     };
 
     const handleNext = () => {
         const newDate = new Date(currentDate);
-        newDate.setDate(currentDate.getDate() + (isMobile ? 1 : 7));
+        newDate.setDate(newDate.getDate() + (isMobile ? 1 : 7));
         setCurrentDate(newDate);
     };
 
@@ -183,7 +197,7 @@ export default function BookingPage() {
                 />
             </div>
 
-            {/* Các Modal sẽ nhận Props từ Container để hiển thị & gọi API */}
+            {/* Modal Components */}
             {isModalOpen && selectedSlot && (
                 <CreateBookingModal
                     isOpen={isModalOpen}

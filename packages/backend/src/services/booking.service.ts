@@ -90,10 +90,10 @@ export class BookingService {
             qb.andWhere('b.startTime >= :startDate', { startDate: filters.startDate });
         }
         if (filters.coachId) {
-            qb.andWhere('b.coachId = :coachId', { coachId: filters.coachId })
+            qb.andWhere('b.coach_id = :coachId', { coachId: filters.coachId })
         }
         if (filters.memberId) {
-            qb.andWhere('b.memberId = :memberId', { memberId: filters.memberId })
+            qb.andWhere('b.member_id = :memberId', { memberId: filters.memberId })
         }
         if (filters.status) {
             qb.andWhere('b.status = :status', { status: filters.status })
