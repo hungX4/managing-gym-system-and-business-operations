@@ -7,8 +7,9 @@
     "scripts": {
         "dev:backend": "npm run dev --workspace=@gym/backend",
         "dev:frontend": "npm run dev --workspace=@gym/frontend",
+        "dev:nestjs": "npm run start:dev --workspace=@gym/backend-nestjs",
         "install:all": "npm install",
-        "dev:all": "npm run dev:backend & npm run dev:frontend"
+        "dev:all": "npm run dev:backend & npm run dev:frontend & npm run dev:nestjs"
     },
     "devDependencies": {
         "@types/bcrypt": "^6.0.0",
