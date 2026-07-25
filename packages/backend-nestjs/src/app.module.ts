@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as path from 'path';
+import { UserModule } from './modules/user/user.module';
 @Module({
   imports: [
     // chỉ định đường dẫn tới file .env của Express cũ
@@ -37,6 +38,7 @@ import * as path from 'path';
         }
       }
     }),
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService],

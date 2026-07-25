@@ -24,6 +24,16 @@
     "types": [
       "node",
       "jest"
+    ],
+    "paths": {
+      "@gym/shared": [
+        "../shared/src/index.ts"
+      ]
+    },
+    "rootDir": "../",
+    "rootDirs": [
+      "./src",
+      "../shared/src"
     ]
   }
 }
