@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as path from 'path';
 import { UserModule } from './modules/user/user.module';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
 @Module({
   imports: [
     // chỉ định đường dẫn tới file .env của Express cũ
@@ -32,7 +33,7 @@ import { UserModule } from './modules/user/user.module';
           password: config.get<string>('DB_PASSWORD'),
           database: config.get<string>('DB_NAME'),
           autoLoadEntities: true,
-
+          namingStrategy: new SnakeNamingStrategy(),
           synchronize: false, // Giữ false để không đè nát DB cũ}
 
         }

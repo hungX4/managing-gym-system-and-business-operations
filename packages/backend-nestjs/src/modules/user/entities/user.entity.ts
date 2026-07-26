@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToOne, OneToMany } from "typeorm";
 import { Role } from "@gym/shared";
-// import { CoachProfile } from "./CoachProfile";
-// import { MemberSubscription } from "./MemberSubscription";
+import { CoachProfile } from "./coachProfile.entity";
+import { MemberSubscription } from "src/modules/subscription/entities/subscription.entity";
 // import { Booking } from "./Booking";
 // import { Salary } from "./Salary";
 // import { WorkLog } from "./Worklog";
@@ -40,14 +40,14 @@ export class User {
     @Column({ nullable: true })
     avatarId!: string; //Cloudinary public_id để xóa ảnh
 
-    // @OneToOne(() => CoachProfile, (profile) => (profile.user))
-    // coachProfile: CoachProfile;
+    @OneToOne(() => CoachProfile, (profile) => (profile.user))
+    coachProfile!: CoachProfile;
 
-    // @OneToMany(() => MemberSubscription, (sub) => sub.member)
-    // boughtSubscriptions: MemberSubscription[];
+    @OneToMany(() => MemberSubscription, (sub) => sub.member)
+    boughtSubscriptions!: MemberSubscription[];
 
-    // @OneToMany(() => MemberSubscription, (sub) => sub.seller)
-    // soldSubscriptions: MemberSubscription[];
+    @OneToMany(() => MemberSubscription, (sub) => sub.seller)
+    soldSubscriptions!: MemberSubscription[];
 
     // @OneToMany(() => Booking, (booking) => booking.coach)
     // coachBooking: Booking[];
