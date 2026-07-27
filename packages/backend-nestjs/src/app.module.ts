@@ -6,6 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as path from 'path';
 import { UserModule } from './modules/user/user.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
+import { SubscriptionModule } from './modules/subscription/subscription.module';
+import { TrialLeadModule } from './modules/lead/lead.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { BookingModule } from './modules/booking/booking.module';
+import { AttendanceModule } from './modules/attendance/attendance.module';
 @Module({
   imports: [
     // chỉ định đường dẫn tới file .env của Express cũ
@@ -39,7 +44,12 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
         }
       }
     }),
-    UserModule
+    UserModule,
+    SubscriptionModule,
+    TrialLeadModule,
+    AuthModule,
+    BookingModule,
+    AttendanceModule
   ],
   controllers: [AppController],
   providers: [AppService],

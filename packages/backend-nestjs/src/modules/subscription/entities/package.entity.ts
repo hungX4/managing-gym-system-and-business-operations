@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { MemberSubscription } from "./subscription.entity";
+import { MemberSubscription } from "./member-subscription.entity";
 import { PackageType } from "@gym/shared";
 
 @Entity('package')

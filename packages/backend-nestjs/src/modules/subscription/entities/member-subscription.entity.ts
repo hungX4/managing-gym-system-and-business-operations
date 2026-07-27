@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, Pri
 import { MemberSubscriptionStatus, PaymentMethod } from "@gym/shared";
 import { Package } from "./package.entity";
 import { User } from "../../user/entities/user.entity";
-// import { UsageLog } from "./UsageLog";
+import { UsageLog } from "src/modules/attendance/entities/usage-log.entity";
 
 @Entity('member_subscription')
 export class MemberSubscription {
@@ -48,6 +48,6 @@ export class MemberSubscription {
     @CreateDateColumn()
     createdAt!: Date;
 
-    // @OneToMany(() => UsageLog, (log) => log.subscription)
-    // usageLogs: UsageLog[];
+    @OneToMany(() => UsageLog, (log) => log.subscription)
+    usageLogs?: UsageLog[];
 }

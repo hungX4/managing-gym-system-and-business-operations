@@ -1,12 +1,12 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToOne, OneToMany } from "typeorm";
 import { Role } from "@gym/shared";
 import { CoachProfile } from "./coachProfile.entity";
-import { MemberSubscription } from "src/modules/subscription/entities/subscription.entity";
-// import { Booking } from "./Booking";
+import { MemberSubscription } from "src/modules/subscription/entities/member-subscription.entity";
+import { Booking } from "src/modules/booking/entities/booking.entity";
 // import { Salary } from "./Salary";
-// import { WorkLog } from "./Worklog";
-// import { UsageLog } from "./UsageLog";
-// import { TrialLead } from "./TrialLead";
+import { WorkLog } from "src/modules/attendance/entities/work-log.entity";
+import { UsageLog } from "src/modules/attendance/entities/usage-log.entity";
+import { TrialLead } from "src/modules/lead/entities/trial-lead.entity";
 
 @Entity('user')
 export class User {
@@ -49,21 +49,21 @@ export class User {
     @OneToMany(() => MemberSubscription, (sub) => sub.seller)
     soldSubscriptions!: MemberSubscription[];
 
-    // @OneToMany(() => Booking, (booking) => booking.coach)
-    // coachBooking: Booking[];
+    @OneToMany(() => Booking, (booking) => booking.coach)
+    coachBooking?: Booking[];
 
-    // @OneToMany(() => Booking, (booking) => booking.member)
-    // memberBooking: Booking[];
+    @OneToMany(() => Booking, (booking) => booking.member)
+    memberBooking?: Booking[];
 
     // @OneToMany(() => Salary, (salary) => salary.employee)
     // salary: Salary[];
 
-    // @OneToMany(() => WorkLog, (log) => log.coach)
-    // workLogs: WorkLog[];
+    @OneToMany(() => WorkLog, (log) => log.coach)
+    workLogs?: WorkLog[];
 
-    // @OneToMany(() => UsageLog, (log) => log.member)
-    // usageLogs: UsageLog[];
+    @OneToMany(() => UsageLog, (log) => log.member)
+    usageLogs?: UsageLog[];
 
-    // @OneToMany(() => TrialLead, (trialLead) => trialLead.assignedTo)
-    // trialLeads: TrialLead[];
+    @OneToMany(() => TrialLead, (trialLead) => trialLead.assignedTo)
+    trialLeads!: TrialLead[];
 }
