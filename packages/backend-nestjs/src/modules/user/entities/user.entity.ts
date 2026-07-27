@@ -3,7 +3,7 @@ import { Role } from "@gym/shared";
 import { CoachProfile } from "./coachProfile.entity";
 import { MemberSubscription } from "src/modules/subscription/entities/member-subscription.entity";
 import { Booking } from "src/modules/booking/entities/booking.entity";
-// import { Salary } from "./Salary";
+import { Salary } from "src/modules/payroll/entities/salary.entity";
 import { WorkLog } from "src/modules/attendance/entities/work-log.entity";
 import { UsageLog } from "src/modules/attendance/entities/usage-log.entity";
 import { TrialLead } from "src/modules/lead/entities/trial-lead.entity";
@@ -55,8 +55,8 @@ export class User {
     @OneToMany(() => Booking, (booking) => booking.member)
     memberBooking?: Booking[];
 
-    // @OneToMany(() => Salary, (salary) => salary.employee)
-    // salary: Salary[];
+    @OneToMany(() => Salary, (salary) => salary.employee)
+    salary?: Salary[];
 
     @OneToMany(() => WorkLog, (log) => log.coach)
     workLogs?: WorkLog[];

@@ -11,6 +11,7 @@ import { TrialLeadModule } from './modules/lead/lead.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BookingModule } from './modules/booking/booking.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
+import { PayrollModule } from './modules/payroll/payroll.module';
 @Module({
   imports: [
     // chỉ định đường dẫn tới file .env của Express cũ
@@ -49,7 +50,8 @@ import { AttendanceModule } from './modules/attendance/attendance.module';
     TrialLeadModule,
     AuthModule,
     BookingModule,
-    AttendanceModule
+    AttendanceModule,
+    PayrollModule
   ],
   controllers: [AppController],
   providers: [AppService],
