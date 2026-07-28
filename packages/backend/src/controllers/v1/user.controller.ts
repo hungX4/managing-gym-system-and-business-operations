@@ -3,7 +3,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { UserService } from '../../services/user.service';
 import { MemberSearchRequestDto } from '@gym/shared';
-import cloudinary from '../../config/cloudinary';
 import { deleteCloudinaryImage } from '../../utils/cloudinary.util';
 export class UserController {
 
