@@ -1,16 +1,16 @@
 import { Role } from "../enums";
 
 //request
-export interface RegisterRequestDto {
-    passwordRaw: string,
-    fullName: string,
-    phone: string,
+export class RegisterRequestDto {
+    passwordRaw: string
+    fullName: string
+    phone: string
     gmail: string
 }
 
-export interface LoginRequestDto {
-    phone: string,
-    passwordRaw: string,
+export class LoginRequestDto {
+    phone: string
+    passwordRaw: string
     deviceId?: string
 }
 
@@ -20,7 +20,7 @@ export interface RefreshTokenDto {
     // refreshToken đọc từ cookie, không nhận trong body
 }
 
-export interface JwtPayload {
+export class JwtPayload {
     sub: string //user_id
     phone: string
     roles: Role
@@ -30,18 +30,18 @@ export interface JwtPayload {
 }
 
 //response
-export interface UserProfileDto {
-    userId: string,
-    fullName: string,
-    phone: string,
-    gmail: string,
-    role: Role,
-    avatarUrl: string
+export class UserProfileDto {
+    userId: string
+    fullName: string
+    phone: string
+    gmail: string
+    role: Role
+    avatarUrl?: string
 }
 
-export interface AuthResponseDto {
-    accessToken: string,
-    expiredIn: number,
+export class AuthResponseDto {
+    accessToken: string
+    expiredIn: number
     userData: UserProfileDto
 }
 

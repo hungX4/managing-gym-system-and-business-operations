@@ -35,19 +35,19 @@ export class User {
     createAt!: Date;
 
     @Column({ nullable: true })
-    avatarUrl!: string; //link CDN để hiển thị ảnh
+    avatarUrl?: string; //link CDN để hiển thị ảnh
 
     @Column({ nullable: true })
-    avatarId!: string; //Cloudinary public_id để xóa ảnh
+    avatarId?: string; //Cloudinary public_id để xóa ảnh
 
     @OneToOne(() => CoachProfile, (profile) => (profile.user))
-    coachProfile!: CoachProfile;
+    coachProfile?: CoachProfile;
 
     @OneToMany(() => MemberSubscription, (sub) => sub.member)
     boughtSubscriptions!: MemberSubscription[];
 
     @OneToMany(() => MemberSubscription, (sub) => sub.seller)
-    soldSubscriptions!: MemberSubscription[];
+    soldSubscriptions?: MemberSubscription[];
 
     @OneToMany(() => Booking, (booking) => booking.coach)
     coachBooking?: Booking[];
