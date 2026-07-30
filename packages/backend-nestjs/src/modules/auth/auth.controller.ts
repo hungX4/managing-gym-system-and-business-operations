@@ -10,7 +10,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard'; // Đường dẫn tới
 
 const COOKIE_OPTIONS: CookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: false,
     sameSite: 'strict',
     path: '/api/v1/auth/refresh',
     maxAge: 30 * 24 * 3600 * 1000,
@@ -53,6 +53,7 @@ export class AuthController {
         @Res({ passthrough: true }) res: Response
     ) {
         try {
+            console.log("👉 Đang check Cookie: ", req.cookies);
             const refreshToken = req.cookies?.refreshToken;
             const { userId, deviceId = 'default' } = body;
 

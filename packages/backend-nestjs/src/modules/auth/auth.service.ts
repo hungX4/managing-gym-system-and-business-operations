@@ -39,9 +39,9 @@ export class AuthService {
     async login(dto: LoginRequestDto): Promise<AuthResponseDto & { refreshToken: string }> {
         const { phone, passwordRaw, deviceId = 'default' } = dto;
 
-        const user = await this.userReposistory.createQueryBuilder("User")
-            .where('User.phone= :phone', { phone })
-            .addSelect('User.passwordHash')
+        const user = await this.userReposistory.createQueryBuilder("user")
+            .where('user.phone= :phone', { phone })
+            .addSelect('user.passwordHash')
             .getOne();
 
         if (!user) {

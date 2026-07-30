@@ -8,15 +8,25 @@ import { AuthController } from "./auth.controller";
 import { TokenService } from "./token.service";
 import { AuthService } from "./auth.service";
 import { JwtStrategy } from "./strategies/jwt.strategy";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 
 @Module({
     imports: [TypeOrmModule.forFeature([RefreshToken, User]),
         PassportModule,
     //jwt global config for auth module
-    JwtModule.register({
-        secret: process.env.JWT_SECRET,
-        signOptions: {
-            expiresIn: process.env.JWT_ACCESS_EXPIRED as any
+    // Cấu hình JwtModule theo kiểu Async
+    JwtModule.registerAsync({
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: async (configService: ConfigService) => {
+            const expiresIn = configService.get<string>('JWT_ACCESS_EXPIRED') || '1h';
+            return {
+                // Lấy secret từ env một cách an toàn
+                secret: configService.get<string>('JWT_SECRET'),
+                signOptions: {
+                    expiresIn: expiresIn as any,
+                },
+            };
         },
     }),
     ],
