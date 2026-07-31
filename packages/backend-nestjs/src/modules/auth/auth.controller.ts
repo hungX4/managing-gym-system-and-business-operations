@@ -53,7 +53,7 @@ export class AuthController {
         @Res({ passthrough: true }) res: Response
     ) {
         try {
-            console.log("👉 Đang check Cookie: ", req.cookies);
+            //console.log("👉 Đang check Cookie: ", req.cookies);
             const refreshToken = req.cookies?.refreshToken;
             const { userId, deviceId = 'default' } = body;
 
