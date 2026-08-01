@@ -74,16 +74,16 @@ export class UserService {
         });
     }
 
-    // async updateUser(userId: string, data: Partial<User>) {
-    //     const user = await this.userReposistory.findOneBy({ userId: userId as any });
+    async updateUser(userId: string, data: Partial<User>) {
+        const user = await this.userReposistory.findOneBy({ userId: userId as any });
 
-    //     // Sử dụng Exception chuẩn của NestJS thay vì throw Error thông thường
-    //     if (!user) throw new NotFoundException('USER_NOT_FOUND');
+        // Sử dụng Exception chuẩn của NestJS thay vì throw Error thông thường
+        if (!user) throw new NotFoundException('USER_NOT_FOUND');
 
-    //     if (Object.keys(data).length === 0) return user;
+        if (Object.keys(data).length === 0) return user;
 
-    //     Object.assign(user, data);
+        Object.assign(user, data);
 
-    //     return await this.userReposistory.save(user);
-    // }
+        return await this.userReposistory.save(user);
+    }
 }
