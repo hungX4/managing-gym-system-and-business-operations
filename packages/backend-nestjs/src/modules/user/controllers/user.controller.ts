@@ -1,7 +1,7 @@
 import { Controller, Get, Param, ParseIntPipe, Query, UseGuards } from "@nestjs/common";
 import { UserService } from "../services/user.service";
 import { JwtAuthGuard } from "src/modules/auth/guards/jwt-auth.guard";
-import { Roles } from "src/modules/auth/guards/roles.decorator.guard";
+import { Roles } from "src/modules/auth/decorator/roles.decorator";
 import { Role } from "@gym/shared";
 import { RolesGuard } from "src/modules/auth/guards/roles.guad.guard";
 

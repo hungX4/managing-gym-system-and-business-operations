@@ -7,6 +7,7 @@ import type { Request, Response, CookieOptions } from 'express';
 import { RegisterRequestDto, LoginRequestDto } from '@gym/shared';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard'; // Đường dẫn tới Guard đã tạo
+import { Public } from './decorator/public.decorator';
 
 const COOKIE_OPTIONS: CookieOptions = {
     httpOnly: true,
@@ -20,10 +21,12 @@ const CLEAR_COOKIE_OPTIONS: CookieOptions = {
     path: '/api/v1/auth/refresh',
 };
 
+@UseGuards(JwtAuthGuard)
 @Controller('auth') // Route gốc: /auth
 export class AuthController {
     constructor(private readonly authService: AuthService) { }
 
+    @Public()
     @Post('register')
     async register(
         @Body() dto: RegisterRequestDto,
@@ -34,6 +37,7 @@ export class AuthController {
         return response; // Tự động trả về HTTP 201 Created
     }
 
+    @Public()
     @Post('login')
     @HttpCode(HttpStatus.OK) // Thay đổi HTTP 201 mặc định thành 200 OK
     async login(
@@ -71,7 +75,6 @@ export class AuthController {
     }
 
     @Post('logout')
-    @UseGuards(JwtAuthGuard) // Bắt buộc phải có token hợp lệ
     @HttpCode(HttpStatus.OK)
     async logout(
         @Req() req: any,
@@ -88,7 +91,6 @@ export class AuthController {
     }
 
     @Post('logout-all')
-    @UseGuards(JwtAuthGuard) // Bắt buộc phải có token hợp lệ
     @HttpCode(HttpStatus.OK)
     async logoutAll(
         @Req() req: any,
