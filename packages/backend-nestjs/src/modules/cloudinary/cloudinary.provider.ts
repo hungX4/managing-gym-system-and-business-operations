@@ -6,9 +6,9 @@ export const CloudinaryProvider = {
     inject: [ConfigService], // Tiêm ConfigService để lấy biến môi trường từ .env
     useFactory: (configService: ConfigService) => {
         return cloudinary.config({
-            cloud_name: configService.get(process.env.CLOUDINARY_CLOUD_NAME as string),
-            api_key: configService.get(process.env.CLOUDINARY_API_KEY as string),
-            api_secret: configService.get(process.env.CLOUDINARY_API_SECRET as string),
+            cloud_name: configService.get<string>('CLOUDINARY_CLOUD_NAME'),
+            api_key: configService.get<string>('CLOUDINARY_API_KEY'),
+            api_secret: configService.get<string>('CLOUDINARY_API_SECRET'),
         });
     },
 };
