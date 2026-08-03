@@ -70,4 +70,43 @@ export class UserController {
         };
     }
 
+    // GET /api/v1/coaches/me (Dùng cho Coach xem profile của chính mình)
+    @Get('coach/me')
+    async getCoachProfile(@Req() req: any) {
+        const userId = req.user?.sub;
+        return await this.userService.getCoachProfile(userId);
+    }
+
+    // PUT /api/v1/coaches/me (Dùng cho Coach tự cập nhật thông tin)
+    @Patch('me')
+    @UseInterceptors(FileInterceptor('file')) // NestJS Multer Interceptor
+    async updateCoachProfile(
+        @Req() req: any,
+        @Body() body: { fullName?: string; phone?: string; bio?: string },
+        @UploadedFile() file: Express.Multer.File,
+    ) {
+        const userId = req.user?.sub;
+        const { fullName, phone, bio } = body;
+
+        const updateData: any = { fullName, phone, bio };
+
+        // Xử lý file upload
+        if (file) {
+            const currentCoach = await this.userService.getUserById(userId);
+
+            await this.cloudinaryService.deleteImage(currentCoach?.avatarId);
+
+            // (Lưu ý: thuộc tính filename hay path phụ thuộc vào Multer Storage configuration của bạn)
+            updateData.avatarUrl = file.path;
+            updateData.avatarId = file.filename;
+        }
+
+        const result = await this.userService.updateMyProfile(userId, updateData);
+
+        return {
+            message: 'Cập nhật thông tin cá nhân thành công!',
+            data: result,
+        };
+    }
+
 }

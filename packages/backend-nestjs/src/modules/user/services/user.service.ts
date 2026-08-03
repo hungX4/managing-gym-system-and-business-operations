@@ -9,7 +9,9 @@ import { CoachProfile } from "../entities/coachProfile.entity";
 export class UserService {
     constructor(
         @InjectRepository(User)
-        private readonly userReposistory: Repository<User>
+        private readonly userReposistory: Repository<User>,
+        @InjectRepository(CoachProfile)
+        private readonly profileRepo: Repository<CoachProfile>,
     ) { }
 
     //search by name
@@ -85,5 +87,70 @@ export class UserService {
         Object.assign(user, data);
 
         return await this.userReposistory.save(user);
+    }
+
+    //LẤY THÔNG TIN CÁ NHÂN CỦA COACH ĐANG ĐĂNG NHẬP
+    async getCoachProfile(userId: string): Promise<CoachResponseDto> {
+        const coach = await this.userReposistory.findOne({
+            where: { userId: userId as any, role: Role.COACH },
+            relations: ['coachProfile'],
+        });
+
+        if (!coach) {
+            throw new NotFoundException('COACH_NOT_FOUND');
+        }
+
+        return this.mapToDto(coach);
+    }
+
+    // Hàm private hỗ trợ map dữ liệu (DRY)
+    private mapToDto(coach: User): CoachResponseDto {
+        return {
+            userId: coach.userId,
+            fullName: coach.fullName,
+            phone: coach.phone,
+            avatarUrl: coach.avatarUrl || null,
+            profileId: coach.coachProfile?.profileId || null,
+            coachType: coach.coachProfile?.type || null,
+            coachLevel: coach.coachProfile?.level || null,
+            bio: coach.coachProfile?.bio || null,
+        };
+    }
+
+    // 3. COACH TỰ CẬP NHẬT THÔNG TIN
+    async updateMyProfile(userId: string, data: any): Promise<CoachResponseDto> {
+        const coach = await this.userReposistory.findOne({
+            where: { userId: userId as any, role: Role.COACH },
+            relations: ['coachProfile'],
+        });
+
+        if (!coach) {
+            throw new NotFoundException('COACH_NOT_FOUND');
+        }
+
+        // Cập nhật thông tin cá nhân cơ bản
+        if (data.fullName) coach.fullName = data.fullName;
+        if (data.phone) coach.phone = data.phone;
+        if (data.avatarUrl) {
+            coach.avatarUrl = data.avatarUrl;
+            coach.avatarId = data.avatarId;
+        }
+
+        await this.userReposistory.save(coach);
+
+        // Cập nhật Profile chuyên môn (CHỈ CHO SỬA BIO)
+        if (coach.coachProfile) {
+            if (data.bio !== undefined) coach.coachProfile.bio = data.bio;
+            await this.profileRepo.save(coach.coachProfile);
+        } else {
+            // Nếu chưa có profile, tạo mới
+            const newProfile = this.profileRepo.create({
+                bio: data.bio,
+                user: coach,
+            });
+            await this.profileRepo.save(newProfile);
+        }
+
+        return this.getCoachProfile(userId);
     }
 }
