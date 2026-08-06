@@ -78,7 +78,7 @@ export class UserController {
     }
 
     // PUT /api/v1/coaches/me (Dùng cho Coach tự cập nhật thông tin)
-    @Patch('me')
+    @Patch('coach/me')
     @UseInterceptors(FileInterceptor('file')) // NestJS Multer Interceptor
     async updateCoachProfile(
         @Req() req: any,

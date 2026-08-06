@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "../entities/user.entity";
@@ -126,6 +126,19 @@ export class UserService {
 
         if (!coach) {
             throw new NotFoundException('COACH_NOT_FOUND');
+        }
+
+        // 🔥 2. THÊM ĐOẠN KIỂM TRA TRÙNG SỐ ĐIỆN THOẠI TẠI ĐÂY 🔥
+        if (data.phone && data.phone !== coach.phone) {
+            // Tìm xem SĐT mới gửi lên đã có người khác dùng chưa
+            const existingUser = await this.userReposistory.findOne({
+                where: { phone: data.phone }
+            });
+
+            // Nếu tìm thấy và ID người sở hữu KHÔNG PHẢI là chính coach này
+            if (existingUser && existingUser.userId !== coach.userId) {
+                throw new ConflictException('Số điện thoại này đã được sử dụng bởi người dùng khác!');
+            }
         }
 
         // Cập nhật thông tin cá nhân cơ bản
