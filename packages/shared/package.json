@@ -9,5 +9,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "shared types, enums, and DTO for gym system"
+  "description": "shared types, enums, and DTO for gym system",
+  "dependencies": {
+    "class-validator": "^0.15.1"
+  }
 }

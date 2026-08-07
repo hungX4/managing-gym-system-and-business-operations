@@ -1,3 +1,4 @@
+import { IsOptional, IsString } from "class-validator";
 import { CoachLevel, CoachType } from "../enums";
 
 //request
@@ -5,6 +6,38 @@ export interface MemberSearchRequestDto {
     keyword: string
 }
 
+export class UpdateCoachDto {
+    @IsString()
+    @IsOptional()
+    fullName?: string;
+
+    @IsString()
+    @IsOptional()
+    phone?: string;
+
+    @IsString()
+    @IsOptional()
+    gmail?: string;
+
+    // Các trường từ CoachProfile
+    @IsString()
+    @IsOptional()
+    bio?: string;
+}
+
+export class UpdateUserDto {
+    @IsString()
+    @IsOptional()
+    fullName?: string;
+
+    @IsString()
+    @IsOptional()
+    phone?: string;
+
+    @IsString()
+    @IsOptional()
+    gmail?: string;
+}
 //response
 export interface MemberSearchResponseDto {
     memberId: number,

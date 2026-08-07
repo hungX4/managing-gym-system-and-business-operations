@@ -2,7 +2,7 @@ import { BadRequestException, Body, Controller, Get, Param, ParseIntPipe, Patch,
 import { UserService } from "../services/user.service";
 import { JwtAuthGuard } from "src/modules/auth/guards/jwt-auth.guard";
 import { Roles } from "src/modules/auth/decorator/roles.decorator";
-import { Role } from "@gym/shared";
+import { Role, UpdateCoachDto, UpdateUserDto } from "@gym/shared";
 import { RolesGuard } from "src/modules/auth/guards/roles.guad.guard";
 import { CloudinaryService } from "src/modules/cloudinary/cloudinary.service";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -42,32 +42,46 @@ export class UserController {
     @UseInterceptors(FileInterceptor('file'))
     async updateUserProfile(
         @CurrentUser('sub') userId: string,
-        @Body() body: any,
+        @Body() body: UpdateUserDto,
         @UploadedFile() file: Express.Multer.File
     ) {
         const { fullName, gmail, phone } = body;
+        let oldAvatarId: string | null = null;
         const updateData: any = { fullName, gmail, phone };
         // console.log(file);
         if (file) {
             const currentUser = await this.userService.getUserById(userId);
-
-            // Xóa ảnh cũ thông qua CloudinaryService 
-            await this.cloudinaryService.deleteImage(currentUser?.avatarId);
+            oldAvatarId = currentUser?.avatarId ?? null;
 
             // Gán dữ liệu ảnh mới từ Multer (Nếu dùng multer-storage-cloudinary, file sẽ có path và filename)
             updateData.avatarUrl = file.path;
             updateData.avatarId = file.filename || (file as any).public_id;
         }
 
-        if (Object.keys(updateData).length === 0) {
-            throw new BadRequestException({ message: "No data provided for update" });
+        try {
+            if (Object.keys(updateData).length === 0) {
+                throw new BadRequestException({ message: "No data provided for update" });
+            }
+
+            const updatedUser = await this.userService.updateUser(userId, updateData);
+
+            if (file && oldAvatarId) {
+                this.cloudinaryService.deleteImage(oldAvatarId).catch(err =>
+                    console.error("Lỗi khi xóa ảnh cũ!!")
+                )
+            }
+
+            return {
+                message: "Updated Successfully!!",
+                data: updatedUser
+            };
+        } catch (error) {
+            if (file && file.filename) {
+                await this.cloudinaryService.deleteImage(file.filename);
+            }
+            throw error;
         }
 
-        const updatedUser = await this.userService.updateUser(userId, updateData);
-        return {
-            message: "Updated Successfully!!",
-            data: updatedUser
-        };
     }
 
     // GET /api/v1/coaches/me (Dùng cho Coach xem profile của chính mình)
@@ -82,30 +96,41 @@ export class UserController {
     @UseInterceptors(FileInterceptor('file')) // NestJS Multer Interceptor
     async updateCoachProfile(
         @CurrentUser('sub') userId: string,
-        @Body() body: { fullName?: string; phone?: string; bio?: string },
+        @Body() body: UpdateCoachDto,
         @UploadedFile() file: Express.Multer.File,
     ) {
-        const { fullName, phone, bio } = body;
-
-        const updateData: any = { fullName, phone, bio };
+        const { fullName, phone, gmail, bio } = body;
+        let oldAvatarId: string | null = null;
+        const updateData: any = { fullName, phone, gmail, bio };
 
         // Xử lý file upload
         if (file) {
             const currentCoach = await this.userService.getUserById(userId);
+            oldAvatarId = currentCoach?.avatarId ?? null;
 
-            await this.cloudinaryService.deleteImage(currentCoach?.avatarId);
-
-            // (Lưu ý: thuộc tính filename hay path phụ thuộc vào Multer Storage configuration của bạn)
+            //thuộc tính filename, path phụ thuộc vào Multer Storage configuration
             updateData.avatarUrl = file.path;
             updateData.avatarId = file.filename;
         }
 
-        const result = await this.userService.updateMyProfile(userId, updateData);
+        try {
+            const result = await this.userService.updateMyProfile(userId, updateData);
+            if (file && oldAvatarId) {
+                this.cloudinaryService.deleteImage(oldAvatarId).catch(err =>
+                    console.error("Có lỗi khi xóa ảnh cũ!!")
+                )
+            }
 
-        return {
-            message: 'Cập nhật thông tin cá nhân thành công!',
-            data: result,
-        };
+            return {
+                message: 'Cập nhật thông tin cá nhân thành công!',
+                data: result,
+            };
+        } catch (error) {
+            if (file && file.filename) {
+                await this.cloudinaryService.deleteImage(file.filename);
+                throw error;
+            }
+        }
     }
 
 }
