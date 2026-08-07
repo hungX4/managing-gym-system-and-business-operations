@@ -128,7 +128,7 @@ export class UserService {
             throw new NotFoundException('COACH_NOT_FOUND');
         }
 
-        // 🔥 2. THÊM ĐOẠN KIỂM TRA TRÙNG SỐ ĐIỆN THOẠI TẠI ĐÂY 🔥
+        // KIỂM TRA TRÙNG SỐ ĐIỆN THOẠI
         if (data.phone && data.phone !== coach.phone) {
             // Tìm xem SĐT mới gửi lên đã có người khác dùng chưa
             const existingUser = await this.userReposistory.findOne({

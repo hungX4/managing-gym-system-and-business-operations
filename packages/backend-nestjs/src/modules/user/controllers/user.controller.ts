@@ -6,6 +6,7 @@ import { Role } from "@gym/shared";
 import { RolesGuard } from "src/modules/auth/guards/roles.guad.guard";
 import { CloudinaryService } from "src/modules/cloudinary/cloudinary.service";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { CurrentUser } from "../decorator/user.decorator";
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('user')
@@ -40,18 +41,17 @@ export class UserController {
     @Patch('me')
     @UseInterceptors(FileInterceptor('file'))
     async updateUserProfile(
-        @Req() req: Request & { user?: any },
+        @CurrentUser('sub') userId: string,
         @Body() body: any,
         @UploadedFile() file: Express.Multer.File
     ) {
-        const userId = req.user?.sub as string;
         const { fullName, gmail, phone } = body;
         const updateData: any = { fullName, gmail, phone };
         // console.log(file);
         if (file) {
             const currentUser = await this.userService.getUserById(userId);
 
-            // Xóa ảnh cũ thông qua CloudinaryService thay vì import function trực tiếp[cite: 5, 9]
+            // Xóa ảnh cũ thông qua CloudinaryService 
             await this.cloudinaryService.deleteImage(currentUser?.avatarId);
 
             // Gán dữ liệu ảnh mới từ Multer (Nếu dùng multer-storage-cloudinary, file sẽ có path và filename)
@@ -81,11 +81,10 @@ export class UserController {
     @Patch('coach/me')
     @UseInterceptors(FileInterceptor('file')) // NestJS Multer Interceptor
     async updateCoachProfile(
-        @Req() req: any,
+        @CurrentUser('sub') userId: string,
         @Body() body: { fullName?: string; phone?: string; bio?: string },
         @UploadedFile() file: Express.Multer.File,
     ) {
-        const userId = req.user?.sub;
         const { fullName, phone, bio } = body;
 
         const updateData: any = { fullName, phone, bio };

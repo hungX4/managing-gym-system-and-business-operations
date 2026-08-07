@@ -11,8 +11,10 @@ export class CloudinaryService {
             return null;
         }
 
+        this.logger.debug(cloudinary.config().cloud_name);
         try {
             const result = await cloudinary.uploader.destroy(publicId, { invalidate: true });
+            //this.logger.log(`Kết quả xoá ảnh ${publicId}:`, result);
             return result;
         } catch (error) {
             this.logger.error(`Lỗi khi xoá ảnh ${publicId} trên Cloudinary!`, error);
