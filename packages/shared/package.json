@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "shared types, enums, and DTO for gym system",
   "dependencies": {
+    "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1"
   }
 }

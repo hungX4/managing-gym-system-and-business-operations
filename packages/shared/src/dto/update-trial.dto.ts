@@ -15,3 +15,13 @@ export class UpdateTrialLeadDto {
     @IsOptional()
     adminNote?: string; // Note nội bộ của nhân viên (VD: "Khách hẹn cuối tuần qua")
 }
+
+export class GetLeadsFilterDto {
+    @IsOptional()
+    @IsEnum(TrialStatus)
+    status?: TrialStatus;
+
+    @IsOptional()
+    //@Type(() => Number) //Tự động convert query string "123" -> number 123
+    assignedToId?: string;
+}
