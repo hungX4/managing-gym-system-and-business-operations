@@ -3,7 +3,7 @@ import { CoachType, BookingStatus } from '../enums'
 //request
 export interface CreateBookingRequestDto {
     coachId: string,
-    memberId: number,
+    memberId: string,
     startTime: Date,
     endTime: Date,
     phone: string,

@@ -6,7 +6,7 @@ import { JwtService } from "@nestjs/jwt";
 import { User } from "../user/entities/user.entity";
 import { AuthResponseDto, JwtPayload } from "@gym/shared";
 import * as crypto from 'crypto';
-import { buildExpiry } from "../common/utils/time.util";
+import { buildExpiry } from "../../common/utils/time.util";
 
 @Injectable()
 export class TokenService {

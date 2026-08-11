@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "../entities/user.entity";
@@ -71,9 +71,14 @@ export class UserService {
     }
 
     async getUserById(id: string) {
-        return await this.userReposistory.findOne({
+        const member = await this.userReposistory.findOne({
             where: { userId: id as any }
         });
+
+        if (!member) throw new NotFoundException('MEMBER_NOT_FOUND');
+        if (member.role !== Role.MEMBER) throw new BadRequestException('USER_IS_NOT_MEMBER');
+
+        return member
     }
 
     async updateUser(userId: string, data: Partial<User>) {
