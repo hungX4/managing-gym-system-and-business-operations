@@ -10,3 +10,4 @@ export * from './dto/usage.dto';
 export * from './dto/salary-config';
 export * from './dto/create-trial.dto';
 export * from './dto/update-trial.dto';
+export * from './dto/pagination.dto'

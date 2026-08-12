@@ -63,3 +63,8 @@ export enum TrialStatus {
     CONVERTED = 'CONVERTED',
     FAILED = 'FAILED'
 }
+
+export enum UsageLogStatus {
+    SELFCHECKIN = 'SELFCHECKIN',
+    COACHCHECKIN = 'COACHCHECKIN'
+}

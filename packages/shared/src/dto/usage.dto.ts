@@ -1,10 +1,13 @@
 // packages/shared/src/dtos/usage.dto.ts
 
+import { UsageLogStatus, WorkLogStatus } from "../enums";
+
 export interface SubscriptionHistoryResponseDto {
     usageLogId: number;
     checkinTime: Date;
+    memberName: string;
+    memberPhone: string;
     packageName: string;
     coachName?: string; // Có nếu là tập với PT
-    status: string;     // COMPLETED, LATE_CANCEL hoặc CHECKIN (nếu là tự tập)
-    note: string;       // "Tập cùng PT", "Khách hủy muộn", "Tự tập"...
+    status: UsageLogStatus | WorkLogStatus;     // COMPLETED, LATE_CANCEL hoặc CHECKIN (nếu là tự tập)
 }
