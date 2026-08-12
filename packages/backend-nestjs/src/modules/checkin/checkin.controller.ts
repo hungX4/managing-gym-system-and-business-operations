@@ -41,22 +41,4 @@ export class CheckinController {
         }
         return await this.checkinService.markBookingAsCompleted(dto);
     }
-
-    // GET /api/v1/checkin/history/:id
-    @Get('history/:id')
-    async getHistory(@Param('id') userId: string) {
-        if (!userId) {
-            throw new BadRequestException("THIẾU USERID");
-        }
-        return await this.checkinService.getUsageLogByUserId(userId);
-    }
-
-    // GET /api/v1/checkin/logs?date=YYYY-MM-DD
-    @Get('logs')
-    async getLogsByDate(@Query('date') date: string) {
-        if (!date) {
-            throw new BadRequestException("Vui lòng cung cấp tham số ngày (date).");
-        }
-        return await this.checkinService.getLogsByDate(date);
-    }
 }
