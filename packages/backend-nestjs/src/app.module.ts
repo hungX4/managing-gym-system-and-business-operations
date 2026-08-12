@@ -12,6 +12,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { BookingModule } from './modules/booking/booking.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
 import { PayrollModule } from './modules/payroll/payroll.module';
+import { CheckinModule } from './modules/checkin/checkin.module';
 @Module({
   imports: [
     // chỉ định đường dẫn tới file .env của Express cũ
@@ -39,6 +40,8 @@ import { PayrollModule } from './modules/payroll/payroll.module';
           password: config.get<string>('DB_PASSWORD'),
           database: config.get<string>('DB_NAME'),
           autoLoadEntities: true,
+          timezone: '+07:00',
+          //dateStrings: true, //Trả về nguyên bản chuỗi "YYYY-MM-DD HH:mm:ss"
           namingStrategy: new SnakeNamingStrategy(),
           synchronize: false, // Giữ false để không đè nát DB cũ}
 
@@ -51,7 +54,8 @@ import { PayrollModule } from './modules/payroll/payroll.module';
     AuthModule,
     BookingModule,
     AttendanceModule,
-    PayrollModule
+    PayrollModule,
+    CheckinModule
   ],
   controllers: [AppController],
   providers: [AppService],

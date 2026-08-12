@@ -6,6 +6,7 @@ import { MemberSubscription } from "../subscription/entities/member-subscription
 import { Booking } from "../booking/entities/booking.entity";
 import { UsageLog } from "../attendance/entities/usage-log.entity";
 import { WorkLog } from "../attendance/entities/work-log.entity";
+import { formatLocalDateTime } from "src/common/utils/time.util";
 
 @Injectable()
 export class CheckinService {
@@ -53,7 +54,7 @@ export class CheckinService {
         return {
             message: "Check-in tự tập thành công!",
             memberName: activeSub.member.fullName,
-            checkinTime: usageLog.checkinTime
+            checkinTime: formatLocalDateTime(usageLog.checkinTime)
         };
     }
 
@@ -160,7 +161,7 @@ export class CheckinService {
 
             return {
                 usageLogId: log.usageLogId,
-                checkinTime: log.checkinTime,
+                checkinTime: formatLocalDateTime(log.checkinTime),
                 memberName: log.member.fullName,
                 memberPhone: log.member.phone,
                 packageName: log.subscription.package.name,
@@ -206,7 +207,7 @@ export class CheckinService {
 
             return {
                 usageLogId: log.usageLogId,
-                checkinTime: log.checkinTime,
+                checkinTime: formatLocalDateTime(log.checkinTime),
                 memberName: log.member.fullName,
                 memberPhone: log.member.phone,
                 packageName: log.subscription.package.name,

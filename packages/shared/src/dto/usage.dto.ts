@@ -4,7 +4,7 @@ import { UsageLogStatus, WorkLogStatus } from "../enums";
 
 export interface SubscriptionHistoryResponseDto {
     usageLogId: number;
-    checkinTime: Date;
+    checkinTime: string;
     memberName: string;
     memberPhone: string;
     packageName: string;

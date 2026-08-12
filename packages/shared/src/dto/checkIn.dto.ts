@@ -8,8 +8,7 @@ export interface CheckInRequestDto {
 }
 
 export interface MemberCheckinRequestDto {
-    phone?: string;
-    name?: string
+    memberId: string
 }
 
 export interface ClassCheckinRequestDto {

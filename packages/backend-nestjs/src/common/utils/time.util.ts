@@ -7,3 +7,11 @@ const buildExpiry = (ttl: string): Date => {
 }
 
 export { buildExpiry }
+
+// Hàm format Date giữ nguyên giờ địa phương (YYYY-MM-DD HH:mm:ss)
+export const formatLocalDateTime = (date: Date): string => {
+    if (!date) return '';
+    const offset = date.getTimezoneOffset() * 60000;
+    const localDate = new Date(date.getTime() - offset);
+    return localDate.toISOString().slice(0, 19).replace('T', ' ');
+}
