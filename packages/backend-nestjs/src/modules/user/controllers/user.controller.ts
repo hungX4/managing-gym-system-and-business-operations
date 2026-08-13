@@ -39,23 +39,23 @@ export class UserController {
     }
 
     @Patch('me')
-    @UseInterceptors(FileInterceptor('file'))
+    @UseInterceptors(FileInterceptor('avatar'))
     async updateUserProfile(
         @CurrentUser('sub') userId: string,
         @Body() body: UpdateUserDto,
-        @UploadedFile() file: Express.Multer.File
+        @UploadedFile() avatar: Express.Multer.File
     ) {
         const { fullName, gmail, phone } = body;
         let oldAvatarId: string | null = null;
         const updateData: any = { fullName, gmail, phone };
         // console.log(file);
-        if (file) {
+        if (avatar) {
             const currentUser = await this.userService.getUserById(userId);
             oldAvatarId = currentUser?.avatarId ?? null;
 
             // Gán dữ liệu ảnh mới từ Multer (Nếu dùng multer-storage-cloudinary, file sẽ có path và filename)
-            updateData.avatarUrl = file.path;
-            updateData.avatarId = file.filename || (file as any).public_id;
+            updateData.avatarUrl = avatar.path;
+            updateData.avatarId = avatar.filename || (avatar as any).public_id;
         }
 
         try {
@@ -65,7 +65,7 @@ export class UserController {
 
             const updatedUser = await this.userService.updateUser(userId, updateData);
 
-            if (file && oldAvatarId) {
+            if (avatar && oldAvatarId) {
                 this.cloudinaryService.deleteImage(oldAvatarId).catch(err =>
                     console.error("Lỗi khi xóa ảnh cũ!!")
                 )
@@ -76,8 +76,8 @@ export class UserController {
                 data: updatedUser
             };
         } catch (error) {
-            if (file && file.filename) {
-                await this.cloudinaryService.deleteImage(file.filename);
+            if (avatar && avatar.filename) {
+                await this.cloudinaryService.deleteImage(avatar.filename);
             }
             throw error;
         }

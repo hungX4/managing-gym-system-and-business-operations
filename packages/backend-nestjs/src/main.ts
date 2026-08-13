@@ -15,6 +15,11 @@ async function bootstrap() {
   //     forbidNonWhitelisted: true, // NẾU CÓ FIELD LẠ -> BÁO LỖI 400 BAD REQUEST NGAY
   //   }),
   // );
+  app.enableCors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  });
+
   app.use(cookieParser());
   await app.listen(process.env.PORT ?? 3000);
 }

@@ -8,7 +8,7 @@ import { RolesGuard } from '../auth/guards/roles.guad.guard';
 import { Roles } from '../auth/decorator/roles.decorator';
 
 @Controller('attendance') // Đổi prefix sang attendance
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 export class AttendanceController {
     constructor(private readonly attendanceService: AttendanceService) { }
 
