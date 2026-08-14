@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useNavbar } from '../../hooks/useNavbar';
-import { MAIN_NAV_LINKS, DROPDOWN_LINKS, AllowedRoles } from '../../config/navigation';
+import { MAIN_NAV_LINKS, DROPDOWN_LINKS } from '../../config/navigation';
 
 
 const Navbar = () => {
@@ -14,7 +14,7 @@ const Navbar = () => {
 
                     {/* Logo - Bấm vào để về Home */}
                     <div
-                        className="flex-shrink-0 flex items-center font-bold text-xl tracking-widest uppercase cursor-pointer"
+                        className="flex-shrink-0 flex items-cente   r font-bold text-xl tracking-widest uppercase cursor-pointer"
                         onClick={() => navigate('/')}
                     >
                         <span className='text-white'>FIT</span><span className="text-red-600">STATION</span>

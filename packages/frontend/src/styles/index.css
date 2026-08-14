@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/* Khóa màu đen tuyệt đối cho toàn bộ ứng dụng */
+html,
+body,
+#root {
+    background-color: #000000 !important;
+    /* hoặc #111111 tùy tone nền gốc của bạn */
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
 /* Các code css khác của bạn ở dưới... */
 @layer utilities {
 

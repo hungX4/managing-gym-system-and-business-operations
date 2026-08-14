@@ -17,6 +17,7 @@ import TrialLeadManager from '../components/admin/TrialLeadManager';
 import ProfilePage from '../pages/ProfilePage';
 import PaymentSuccess from '../pages/PaymentSuccessPage';
 import CoachProfileSettings from '../pages/CoachProfilePage';
+import UserAttendanceHistory from '../pages/UserAttendancePage';
 
 export default function AppRoutes() {
     return (
@@ -45,6 +46,8 @@ export default function AppRoutes() {
 
             <Route path='/profile' element={<ProfilePage />} />
             <Route path='/coach-profile' element={<CoachProfileSettings />} />
+            <Route path='/history' element={<UserAttendanceHistory />} />
+
             {/* for admin */}
             <Route element={<ProtectedRoute allowedRoles={[Role.ADMIN]} />}>
                 <Route path="/admin" element={<AdminDashboard />}>

@@ -13,7 +13,7 @@ const App: React.FC = () => {
         <ScrollToTop />
         <Navbar />
 
-        <main className="min-h-screen bg-gray-50">
+        <main className="min-h-screen pt-16">
           <AppRoutes />
         </main>
 

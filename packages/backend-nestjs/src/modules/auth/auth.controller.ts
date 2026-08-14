@@ -21,7 +21,7 @@ const CLEAR_COOKIE_OPTIONS: CookieOptions = {
     path: '/api/v1/auth/refresh',
 };
 
-@UseGuards(JwtAuthGuard)
+
 @Controller('auth') // Route gốc: /auth
 export class AuthController {
     constructor(private readonly authService: AuthService) { }
@@ -73,7 +73,7 @@ export class AuthController {
             throw error;
         }
     }
-
+    @UseGuards(JwtAuthGuard)
     @Post('logout')
     @HttpCode(HttpStatus.OK)
     async logout(
@@ -89,7 +89,7 @@ export class AuthController {
 
         return { message: 'Logged out successfully' };
     }
-
+    @UseGuards(JwtAuthGuard)
     @Post('logout-all')
     @HttpCode(HttpStatus.OK)
     async logoutAll(
