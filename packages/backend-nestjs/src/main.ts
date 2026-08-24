@@ -9,12 +9,13 @@ async function bootstrap() {
   //global prefix
   app.setGlobalPrefix('api/v1');
   //pipe
-  // app.useGlobalPipes(
-  //   new ValidationPipe({
-  //     whitelist: true, // Xóa các field không được khai báo trong DTO
-  //     forbidNonWhitelisted: true, // NẾU CÓ FIELD LẠ -> BÁO LỖI 400 BAD REQUEST NGAY
-  //   }),
-  // );
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: false, // Xóa các field không được khai báo trong DTO
+      forbidNonWhitelisted: false,
+      transform: true // NẾU CÓ FIELD LẠ -> BÁO LỖI 400 BAD REQUEST NGAY
+    }),
+  );
   app.enableCors({
     origin: 'http://localhost:5173',
     credentials: true,
