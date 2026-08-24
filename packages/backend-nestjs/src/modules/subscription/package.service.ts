@@ -2,8 +2,8 @@ import { Injectable, ConflictException, NotFoundException } from '@nestjs/common
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Package } from './entities/package.entity';
-import { PackageType } from '@gym/shared';
-import { CreatePackageRequestDto } from '@gym/shared/src/dto/package.dto';
+import { PackageResponseDto, PackageType } from '@gym/shared';
+import { CreatePackageRequest } from './dto/package.dto';
 
 @Injectable()
 export class PackageService {
@@ -12,7 +12,7 @@ export class PackageService {
         private readonly packageRepo: Repository<Package>
     ) { }
 
-    async createPackage(dto: CreatePackageRequestDto) {
+    async createPackage(dto: CreatePackageRequest): Promise<PackageResponseDto> {
         const existingPackage = await this.packageRepo.findOne({
             where: { name: dto.name.trim() }
         });
@@ -35,7 +35,7 @@ export class PackageService {
         return await this.packageRepo.save(newPackage);
     }
 
-    async getAllPackages() {
+    async getAllPackages(): Promise<PackageResponseDto[]> {
         return await this.packageRepo.find({
             order: { packageId: 'DESC' }
         });

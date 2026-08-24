@@ -11,7 +11,7 @@ async function bootstrap() {
   //pipe
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: false, // Xóa các field không được khai báo trong DTO
+      whitelist: true, // Xóa các field không được khai báo trong DTO
       forbidNonWhitelisted: false,
       transform: true // NẾU CÓ FIELD LẠ -> BÁO LỖI 400 BAD REQUEST NGAY
     }),

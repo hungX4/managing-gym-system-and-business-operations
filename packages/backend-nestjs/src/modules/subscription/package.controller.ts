@@ -1,6 +1,6 @@
 import { Controller, Post, Get, Patch, Body, Param, ParseIntPipe } from '@nestjs/common';
 import { PackageService } from './package.service';
-import { type CreatePackageRequestDto } from '@gym/shared';
+import { CreatePackageRequest } from './dto/package.dto';
 
 @Controller('packages') // Khai báo base route tại đây
 export class PackageController {
@@ -8,7 +8,7 @@ export class PackageController {
     constructor(private readonly packageService: PackageService) { }
 
     @Post()
-    async createPackage(@Body() dto: CreatePackageRequestDto) {
+    async createPackage(@Body() dto: CreatePackageRequest) {
         console.log("Dữ liệu sau khi qua class-validator:", dto);
         const result = await this.packageService.createPackage(dto);
 
