@@ -3,7 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Package } from './entities/package.entity';
 import { PackageResponseDto, PackageType } from '@gym/shared';
-import { CreatePackageRequest } from './dto/package.dto';
+import { CreatePackageRequest, PackageResponse } from './dto/package.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class PackageService {
@@ -13,6 +14,7 @@ export class PackageService {
     ) { }
 
     async createPackage(dto: CreatePackageRequest): Promise<PackageResponseDto> {
+        //if package name existed
         const existingPackage = await this.packageRepo.findOne({
             where: { name: dto.name.trim() }
         });
@@ -32,13 +34,21 @@ export class PackageService {
             isActive: true
         });
 
-        return await this.packageRepo.save(newPackage);
+        const savedPackage = await this.packageRepo.save(newPackage);
+
+        return plainToInstance(PackageResponse, savedPackage, {
+            excludeExtraneousValues: true //lọc dữ liệu rác
+        });
     }
 
     async getAllPackages(): Promise<PackageResponseDto[]> {
-        return await this.packageRepo.find({
+        const packageList = await this.packageRepo.find({
             order: { packageId: 'DESC' }
         });
+
+        return plainToInstance(PackageResponse, packageList, {
+            excludeExtraneousValues: true
+        })
     }
 
     async togglePackageStatus(packageId: number) {

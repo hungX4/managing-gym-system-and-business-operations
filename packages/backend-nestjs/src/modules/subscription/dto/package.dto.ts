@@ -1,7 +1,7 @@
 // backend/src/packages/dto/create-package.dto.ts
 import { IsString, IsNotEmpty, IsNumber, Min, IsInt, IsEnum, ValidateIf } from 'class-validator';
-import { Type } from 'class-transformer';
-import { CreatePackageRequestDto, PackageType } from '@gym/shared';
+import { Expose, Type } from 'class-transformer';
+import { CreatePackageRequestDto, PackageResponseDto, PackageType } from '@gym/shared';
 
 export class CreatePackageRequest implements CreatePackageRequestDto {
     @IsString()
@@ -27,5 +27,28 @@ export class CreatePackageRequest implements CreatePackageRequestDto {
 
     @IsEnum(PackageType)
     type!: PackageType;
+}
+
+export class PackageResponse implements PackageResponseDto {
+    @Expose()
+    packageId!: number;
+
+    @Expose()
+    name!: string;
+
+    @Expose()
+    price!: number;
+
+    @Expose()
+    durationDays!: number;
+
+    @Expose()
+    totalSession?: number | null;
+
+    @Expose()
+    type!: PackageType;
+
+    @Expose()
+    isActive!: boolean;
 }
 

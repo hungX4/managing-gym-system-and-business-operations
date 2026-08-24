@@ -1,6 +1,5 @@
-import { IsEnum, IsInt, IsNotEmpty, IsNumber, IsString, Min, ValidateIf } from "class-validator";
 import { PackageType } from "../enums";
-import { Type } from "class-transformer";
+
 
 //request
 export interface CreatePackageRequestDto {
@@ -17,7 +16,7 @@ export interface PackageResponseDto {
     name: string
     price: number
     durationDays: number
-    totalSession: number | null
+    totalSession?: number | null | undefined
     type: PackageType
     isActive: boolean
 }
