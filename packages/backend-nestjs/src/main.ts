@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
+import { TransformResponseInterceptor } from './common/interceptors/response.interceptor';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   //global prefix
@@ -16,6 +17,7 @@ async function bootstrap() {
       transform: true // NẾU CÓ FIELD LẠ -> BÁO LỖI 400 BAD REQUEST NGAY
     }),
   );
+  app.useGlobalInterceptors(new TransformResponseInterceptor());
   app.enableCors({
     origin: 'http://localhost:5173',
     credentials: true,

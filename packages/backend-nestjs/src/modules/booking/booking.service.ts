@@ -53,7 +53,7 @@ export class BookingService {
 
         const booking = this.bookingRepo.create({
             coach: {
-                userId: coach.userId
+                userId: coach.coachId
             },
             member: member,
             startTime: dto.startTime,

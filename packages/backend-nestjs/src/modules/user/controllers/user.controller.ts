@@ -2,11 +2,12 @@ import { BadRequestException, Body, Controller, Get, Param, ParseIntPipe, Patch,
 import { UserService } from "../services/user.service";
 import { JwtAuthGuard } from "src/modules/auth/guards/jwt-auth.guard";
 import { Roles } from "src/modules/auth/decorator/roles.decorator";
-import { Role, UpdateCoachDto, UpdateUserDto } from "@gym/shared";
+import { Role } from "@gym/shared";
 import { RolesGuard } from "src/modules/auth/guards/roles.guad.guard";
 import { CloudinaryService } from "src/modules/cloudinary/cloudinary.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { CurrentUser } from "../decorator/user.decorator";
+import { UpdateCoach, UpdateUser } from "../dto/user.dto";
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('user')
@@ -42,7 +43,7 @@ export class UserController {
     @UseInterceptors(FileInterceptor('avatar'))
     async updateUserProfile(
         @CurrentUser('sub') userId: string,
-        @Body() body: UpdateUserDto,
+        @Body() body: UpdateUser,
         @UploadedFile() avatar: Express.Multer.File
     ) {
         const { fullName, gmail, phone } = body;
@@ -96,7 +97,7 @@ export class UserController {
     @UseInterceptors(FileInterceptor('file')) // NestJS Multer Interceptor
     async updateCoachProfile(
         @CurrentUser('sub') userId: string,
-        @Body() body: UpdateCoachDto,
+        @Body() body: UpdateCoach,
         @UploadedFile() file: Express.Multer.File,
     ) {
         const { fullName, phone, gmail, bio } = body;

@@ -4,6 +4,8 @@ import { Repository } from "typeorm";
 import { User } from "../entities/user.entity";
 import { CoachResponseDto, MemberSearchResponseDto, Role } from "@gym/shared";
 import { CoachProfile } from "../entities/coachProfile.entity";
+import { CoachResponse, MemberSearchResponse } from "../dto/user.dto";
+import { plainToInstance } from "class-transformer";
 
 @Injectable()
 export class UserService {
@@ -24,7 +26,7 @@ export class UserService {
             .andWhere('(user.phone LIKE :keyword OR user.fullName LIKE :keyword)', { keyword: `%${keyword}%` })
             .take(5)
             .getMany();
-        return members.map(user => {
+        const mappedData = members.map(user => {
             const activeSubs = user.boughtSubscriptions || [];
 
             // Tính tổng buổi PT còn lại
@@ -45,29 +47,21 @@ export class UserService {
                 latestEndDate: latestEndDate ? new Date(latestEndDate).toISOString() : null
             };
         });
+
+        return plainToInstance(MemberSearchResponse, mappedData, { excludeExtraneousValues: true });
     }
 
     async getAllUsers() {
         return await this.userReposistory.find();
     }
 
-    async getAllCoaches(): Promise<CoachResponseDto[]> {
+    async getAllCoaches(): Promise<CoachResponse[]> {
         const coaches = await this.userReposistory.find({
             where: { role: Role.COACH },
             relations: ['coachProfile'],
         })
 
-        return coaches.map(coach => ({
-            userId: coach.userId,
-            fullName: coach.fullName,
-            phone: coach.phone,
-            avatarUrl: coach.avatarUrl || null,
-            profileId: coach.coachProfile?.profileId || null,
-            coachType: coach.coachProfile?.type || null,
-            coachLevel: coach.coachProfile?.level || null,
-            bio: coach.coachProfile?.bio || null
-
-        }))
+        return plainToInstance(CoachResponse, coaches, { excludeExtraneousValues: true });
     }
 
     async getUserById(id: string) {
@@ -95,7 +89,7 @@ export class UserService {
     }
 
     //LẤY THÔNG TIN CÁ NHÂN CỦA COACH ĐANG ĐĂNG NHẬP
-    async getCoachProfile(userId: string): Promise<CoachResponseDto> {
+    async getCoachProfile(userId: string): Promise<CoachResponse> {
         const coach = await this.userReposistory.findOne({
             where: { userId: userId as any, role: Role.COACH },
             relations: ['coachProfile'],
@@ -105,25 +99,14 @@ export class UserService {
             throw new NotFoundException('COACH_NOT_FOUND');
         }
 
-        return this.mapToDto(coach);
+        return plainToInstance(CoachResponse, coach, { excludeExtraneousValues: true });
     }
 
     // Hàm private hỗ trợ map dữ liệu (DRY)
-    private mapToDto(coach: User): CoachResponseDto {
-        return {
-            userId: coach.userId,
-            fullName: coach.fullName,
-            phone: coach.phone,
-            avatarUrl: coach.avatarUrl || null,
-            profileId: coach.coachProfile?.profileId || null,
-            coachType: coach.coachProfile?.type || null,
-            coachLevel: coach.coachProfile?.level || null,
-            bio: coach.coachProfile?.bio || null,
-        };
-    }
+
 
     // 3. COACH TỰ CẬP NHẬT THÔNG TIN
-    async updateMyProfile(userId: string, data: any): Promise<CoachResponseDto> {
+    async updateMyProfile(userId: string, data: any): Promise<CoachResponse> {
         const coach = await this.userReposistory.findOne({
             where: { userId: userId as any, role: Role.COACH },
             relations: ['coachProfile'],
