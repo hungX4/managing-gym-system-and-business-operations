@@ -5,7 +5,7 @@ import CalendarGrid from '../components/booking/CalenderGrid'
 import CreateBookingModal from '../components/booking/CreateBookingModal';
 import BookingDetailsModal from '../components/booking/BookingDetailsModals';
 import toast from 'react-hot-toast';
-import { BookingResponseDto, CoachType, CreateBookingRequestDto } from '@gym/shared';
+import { type BookingResponseDto, CoachType, type CreateBookingRequestDto, type MemberSearchRequestDto, type MemberSearchResponseDto } from '@gym/shared';
 
 export default function BookingPage() {
     // 1. STATE MANAGEMENT
@@ -67,14 +67,14 @@ export default function BookingPage() {
             const coachId = localStorage.getItem('userId'); // Lấy ID của Coach hiện tại
 
             // Truyền param lên Backend để Server tự động lọc lịch
-            const res = await axiosClient.get<BookingResponseDto[]>('/booking', {
+            const res = await axiosClient.get<any, BookingResponseDto[]>('/bookings', {
                 params: {
                     startDate,
                     endDate,
                     coachId // Database sẽ chỉ trả về lịch của đúng PT này
                 }
             });
-            setBookings(res.data.filter((b: any) => b.status !== 'CANCELLED'));
+            setBookings(res || [].filter((b: any) => b.status !== 'CANCELLED'));
         } catch (error) {
             console.error("Lỗi lấy lịch:", error);
             toast.error("KHÔNG TẢI ĐƯỢC LỊCH!");
@@ -93,8 +93,8 @@ export default function BookingPage() {
             if (searchKeyword.trim().length > 0) {
                 setIsSearching(true);
                 try {
-                    const res = await axiosClient.get(`/user/search?keyword=${searchKeyword}`);
-                    setSearchResults(res.data);
+                    const res = await axiosClient.get<any, any[]>(`/user/search?keyword=${searchKeyword}`);
+                    setSearchResults(res || []);
                 } catch (error) {
                     console.error("Lỗi tìm kiếm:", error);
                     toast.error("LỖI TÌM KIẾM!!!");
@@ -125,7 +125,7 @@ export default function BookingPage() {
                 phone: selectedMember.phone,
                 type: CoachType.GYM
             };
-            await axiosClient.post('/booking', payload);
+            await axiosClient.post('/bookings', payload);
             toast.success("ĐẶT LỊCH THÀNH CÔNG!");
             setIsModalOpen(false);
             fetchBookings();

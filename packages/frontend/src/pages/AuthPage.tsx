@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosClient from '../api/axiosClient';
 import {
-    LoginRequestDto,
-    RegisterRequestDto,
-    AuthResponseDto
+    type LoginRequestDto,
+    type RegisterRequestDto,
+    type AuthResponseDto
 } from "@gym/shared";
 import toast from 'react-hot-toast';
 
@@ -49,12 +49,13 @@ export default function AuthPage() {
                     passwordRaw: formData.passwordRaw,
                 };
 
-                const response = await axiosClient.post<AuthResponseDto>(
+                const response: any = await axiosClient.post<any, AuthResponseDto>(
                     'auth/login',
                     loginPayLoad
                 );
 
-                const { accessToken, userData } = response.data;
+                const { accessToken, userData } = response;
+                //console.log('👉 Response lõi từ Backend:', response);
 
                 // Lưu token và thông tin user vào localStorage
                 localStorage.setItem('accessToken', accessToken);
@@ -72,12 +73,12 @@ export default function AuthPage() {
                     gmail: formData.gmail
                 }
 
-                const response = await axiosClient.post<AuthResponseDto>(
+                const response: any = await axiosClient.post<AuthResponseDto>(
                     '/auth/register',
                     registerPayload
                 );
 
-                const { accessToken, userData } = response.data;
+                const { accessToken, userData } = response;
 
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('userData', JSON.stringify(userData));

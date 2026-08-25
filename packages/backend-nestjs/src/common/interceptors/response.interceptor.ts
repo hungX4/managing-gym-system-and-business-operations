@@ -9,7 +9,7 @@ export interface StandardResponse<T> {
 }
 
 @Injectable()
-export class TransformResponseInterceptor<T> implements NestInterceptor<any, any> {
+export class TransformResponseInterceptor<T> implements NestInterceptor<T, StandardResponse<T>> {
     intercept(context: ExecutionContext, next: CallHandler): Observable<StandardResponse<T>> {
         const response = context.switchToHttp().getResponse();
         const statusCode = response.statusCode;

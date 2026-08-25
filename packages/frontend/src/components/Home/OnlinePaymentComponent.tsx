@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 // Nhớ sửa lại đường dẫn import axiosClient cho đúng với project của bạn
 import axiosClient from '../../api/axiosClient';
+import toast from 'react-hot-toast';
 
 // Dùng đúng chuẩn DTO bạn cung cấp
 interface PackageResponseDto {
@@ -34,10 +35,10 @@ const OnlinePaymentComponent = () => {
         const fetchPackages = async () => {
             try {
                 // Đảm bảo Backend có API GET /packages để lấy danh sách gói tập
-                const res = await axiosClient.get('/packages');
+                const res = await axiosClient.get<any, PackageResponseDto[]>('/packages');
 
                 // Chỉ lấy những gói đang Active và là loại MEMBERSHIP
-                const availablePackages = res.data
+                const availablePackages = (res || [])
                     .filter(
                         (pkg: PackageResponseDto) => pkg.isActive && pkg.type === 'MEMBERSHIP'
                     )
@@ -71,14 +72,14 @@ const OnlinePaymentComponent = () => {
                 startDate: new Date().toISOString()
             };
 
-            const res = await axiosClient.post('/online-payment/buy-online', payload);
+            const res = await axiosClient.post<any, { url: string }>('/online-payment/buy-online', payload);
 
-            if (res.data && res.data.url) {
-                window.location.href = res.data.url;
+            if (res && res.url) {
+                window.location.href = res.url;
             }
         } catch (error: any) {
             console.error("Lỗi tạo thanh toán:", error);
-            alert(error.response?.data?.message || "Có lỗi xảy ra khi tạo giao dịch. Vui lòng thử lại!");
+            toast(error.response?.data?.message || "Có lỗi xảy ra khi tạo giao dịch. Vui lòng thử lại!");
         } finally {
             setIsBuying(null);
         }

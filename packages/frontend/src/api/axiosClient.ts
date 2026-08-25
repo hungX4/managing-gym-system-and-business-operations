@@ -19,12 +19,18 @@ axiosClient.interceptors.request.use((config) => {
     return Promise.reject(error);
 }));
 
+
+
 // 2. RESPONSE INTERCEPTOR: Xử lý khi Token hết hạn (Lỗi 401)
 let refreshTokenPromise: any = null;
 
 axiosClient.interceptors.response.use(
     (response) => {
-        return response;
+        // BÓC VỎ RESPONSE
+        if (response.data && response.data.data !== undefined) {
+            return response.data.data;
+        }
+        return response.data;
     },
     async (error) => {
         const originalRequest = error.config;
@@ -55,7 +61,7 @@ axiosClient.interceptors.response.use(
                     { userId: userId },
                     { withCredentials: true }
                 ).then(res => {
-                    const newAccessToken = res.data.accessToken;
+                    const newAccessToken = res.data.userData.accessToken
                     localStorage.setItem('accessToken', newAccessToken);
                     return newAccessToken;
                 }).catch(refreshError => {
