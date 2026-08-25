@@ -14,6 +14,7 @@ import { CreateTrialLeadDto, GetLeadsFilterDto, Role, UpdateTrialLeadDto } from 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guad.guard';
 import { Roles } from '../auth/decorator/roles.decorator';
+import { CreateTrialLead } from './dto/lead.dto';
 
 @Controller('trial-leads')
 export class LeadController {
@@ -21,7 +22,7 @@ export class LeadController {
 
     // POST /trial-leads/web (Web đăng ký dùng thử)
     @Post('web')
-    async createWebLead(@Body() data: CreateTrialLeadDto) {
+    async createWebLead(@Body() data: CreateTrialLead) {
         const newLead = await this.LeadService.createNewData(data);
         return {
             message: 'Gửi yêu cầu thành công',

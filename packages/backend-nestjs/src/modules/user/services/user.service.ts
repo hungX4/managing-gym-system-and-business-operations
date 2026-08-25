@@ -4,7 +4,7 @@ import { Repository } from "typeorm";
 import { User } from "../entities/user.entity";
 import { CoachResponseDto, MemberSearchResponseDto, Role } from "@gym/shared";
 import { CoachProfile } from "../entities/coachProfile.entity";
-import { CoachResponse, MemberSearchResponse } from "../dto/user.dto";
+import { CoachResponse, MemberSearchResponse, UserResponse } from "../dto/user.dto";
 import { plainToInstance } from "class-transformer";
 
 @Injectable()
@@ -75,7 +75,7 @@ export class UserService {
         return member
     }
 
-    async updateUser(userId: string, data: Partial<User>) {
+    async updateUser(userId: string, data: Partial<User>): Promise<UserResponse> {
         const user = await this.userReposistory.findOneBy({ userId: userId as any });
 
         // Sử dụng Exception chuẩn của NestJS thay vì throw Error thông thường

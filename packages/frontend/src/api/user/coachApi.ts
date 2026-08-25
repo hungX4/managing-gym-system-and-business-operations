@@ -1,9 +1,11 @@
+import type { CoachResponseDto } from '@gym/shared';
 import axiosClient from '../axiosClient';
 
 export const coachApi = {
     // Public: Lấy danh sách HLV
-    getAllCoaches: () => {
-        return axiosClient.get('/coach');
+    getCoaches: async () => {
+        const response = await axiosClient.get<any, CoachResponseDto[]>('/user/coaches');
+        return response;
     },
 
     // Private: HLV lấy thông tin của mình

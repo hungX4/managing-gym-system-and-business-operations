@@ -3,7 +3,8 @@ import { TrialLead } from "./entities/trial-lead.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "../user/entities/user.entity";
-import { CreateTrialLeadDto, GetLeadsFilterDto, TrialStatus, UpdateTrialLeadDto } from "@gym/shared";
+import { GetLeadsFilterDto, TrialStatus, UpdateTrialLeadDto } from "@gym/shared";
+import { CreateTrialLead } from "./dto/lead.dto";
 
 @Injectable()
 export class LeadService {
@@ -16,7 +17,7 @@ export class LeadService {
     ) { }
 
     //save new client data
-    async createNewData(data: CreateTrialLeadDto) {
+    async createNewData(data: CreateTrialLead) {
         const newData = this.leadRepo.create({
             fullName: data.fullName,
             phoneNumber: data.phoneNumber,

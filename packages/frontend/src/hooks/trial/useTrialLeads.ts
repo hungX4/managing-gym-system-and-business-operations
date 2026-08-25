@@ -3,6 +3,7 @@ import { trialLeadApi } from '../../api/trial/trialLead.api';
 import { userApi } from '../../api/user/user.api';
 import toast from 'react-hot-toast';
 import { TrialStatus } from '@gym/shared';
+import { coachApi } from '../../api/user/coachApi';
 
 export const useTrialLeads = () => {
     const [leads, setLeads] = useState<any[]>([]);
@@ -27,7 +28,7 @@ export const useTrialLeads = () => {
     // Hàm lấy danh sách HLV
     const fetchCoaches = useCallback(async () => {
         try {
-            const data = await userApi.getCoaches();
+            const data = await coachApi.getCoaches();
             setCoaches(data);
         } catch (error) {
             console.error('Lỗi tải danh sách HLV:', error);

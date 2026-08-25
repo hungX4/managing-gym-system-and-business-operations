@@ -50,7 +50,7 @@ const ProfilePage = () => {
             }
 
             const res = await userApi.updateUserProfile(data);
-            const updatedUser = res.data.data;
+            const updatedUser = res;
 
             localStorage.setItem('userData', JSON.stringify(updatedUser));
             if (setUserData) setUserData(updatedUser);

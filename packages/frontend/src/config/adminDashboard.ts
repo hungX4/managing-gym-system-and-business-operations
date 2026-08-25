@@ -54,7 +54,7 @@ export const ADMIN_DASHBOARD: ADMIN_DASHBOARD[] = [
         )
     },
     {
-        id: 'TRIAL',
+        id: 'SALARY',
         path: '/admin/salary',
         label: 'Chốt lương',
         role: Role.ADMIN,
@@ -76,7 +76,7 @@ export const ADMIN_DASHBOARD: ADMIN_DASHBOARD[] = [
         )
     },
     {
-        id: 'TRIAL',
+        id: 'PACKAGE',
         path: '/admin/package',
         label: 'Thêm gói tập',
         role: Role.ADMIN,
