@@ -1,3 +1,4 @@
+import type { AuthResponseDto } from "@gym/shared";
 import axios from "axios";
 
 const axiosClient = axios.create({
@@ -56,12 +57,12 @@ axiosClient.interceptors.response.use(
                 }
 
                 // Gán promise đang gọi API vào biến khoá
-                refreshTokenPromise = axiosClient.post(
-                    `${axiosClient.defaults.baseURL}/auth/refresh`,
+                refreshTokenPromise = axiosClient.post<any, AuthResponseDto>(
+                    `/auth/refresh`,
                     { userId: userId },
                     { withCredentials: true }
                 ).then(res => {
-                    const newAccessToken = res.data.userData.accessToken
+                    const newAccessToken = res.accessToken;
                     localStorage.setItem('accessToken', newAccessToken);
                     return newAccessToken;
                 }).catch(refreshError => {
