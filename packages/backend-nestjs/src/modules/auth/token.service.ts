@@ -4,9 +4,10 @@ import { RefreshToken } from "./enitites/refresh-token.entity";
 import { Repository } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
 import { User } from "../user/entities/user.entity";
-import { AuthResponseDto, JwtPayload } from "@gym/shared";
 import * as crypto from 'crypto';
 import { buildExpiry } from "../../common/utils/time.util";
+import { AuthResponse, JwtPayload, UserProfile } from "./dto/auth.dto";
+import { plainToInstance } from "class-transformer";
 
 @Injectable()
 export class TokenService {
@@ -16,7 +17,7 @@ export class TokenService {
         private readonly jwtService: JwtService
     ) { }
 
-    async issueTokens(user: User, deviceId = 'default'): Promise<AuthResponseDto & { refreshToken: string }> {
+    async issueTokens(user: User, deviceId = 'default'): Promise<AuthResponse & { refreshToken: string }> {
         const payload: JwtPayload = {
             sub: user.userId,
             phone: user.phone,
@@ -44,17 +45,14 @@ export class TokenService {
         const decode = this.jwtService.decode(accessToken) as any;
         const expiredIn = decode.exp - decode.iat;
 
+        const userData = plainToInstance(UserProfile, user, {
+            excludeExtraneousValues: true,
+        });
+
         return {
             accessToken,
             expiredIn,
-            userData: {
-                userId: user.userId,
-                fullName: user.fullName,
-                gmail: user.gmail,
-                phone: user.phone,
-                role: user.role,
-                avatarUrl: user.avatarUrl
-            },
+            userData,
             refreshToken: rawToken
         };
     }
@@ -63,7 +61,7 @@ export class TokenService {
         userId: string,
         deviceId = 'default',
         oldToken: string
-    ): Promise<AuthResponseDto & { refreshToken: string }> {
+    ): Promise<AuthResponse & { refreshToken: string }> {
 
         const stored = await this.rtRepo.findOne({
             where: { token: oldToken, userId, deviceId },

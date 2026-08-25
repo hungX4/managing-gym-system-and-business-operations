@@ -3,8 +3,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "../user/entities/user.entity";
 import { Repository } from "typeorm";
 import { TokenService } from "./token.service";
-import { AuthResponseDto, LoginRequestDto, RegisterRequestDto, Role } from "@gym/shared";
 import * as bcrypt from 'bcrypt';
+import { AuthResponse, LoginRequest, RegisterRequest } from "./dto/auth.dto";
+import { Role } from "@gym/shared";
 @Injectable()
 export class AuthService {
     constructor(
@@ -13,7 +14,7 @@ export class AuthService {
         private readonly tokenService: TokenService
     ) { }
 
-    async register(data: RegisterRequestDto): Promise<AuthResponseDto & { refreshToken: string }> {
+    async register(data: RegisterRequest): Promise<AuthResponse & { refreshToken: string }> {
         const existingUser = await this.userReposistory.findOne({ where: { phone: data.phone } });
         if (existingUser) {
             throw new ConflictException('PHONE_NUMBER_ALREADY_IN_USE!');
@@ -36,7 +37,7 @@ export class AuthService {
         return this.tokenService.issueTokens(newUser);
     }
 
-    async login(dto: LoginRequestDto): Promise<AuthResponseDto & { refreshToken: string }> {
+    async login(dto: LoginRequest): Promise<AuthResponse & { refreshToken: string }> {
         const { phone, passwordRaw, deviceId = 'default' } = dto;
 
         const user = await this.userReposistory.createQueryBuilder("user")
@@ -56,7 +57,7 @@ export class AuthService {
         return this.tokenService.issueTokens(user, deviceId);
     }
 
-    async refresh(userId: string, deviceId = 'default', oldToken: string): Promise<AuthResponseDto & { refreshToken: string }> {
+    async refresh(userId: string, deviceId = 'default', oldToken: string): Promise<AuthResponse & { refreshToken: string }> {
         return await this.tokenService.rotateTokens(userId, deviceId, oldToken);
     }
 

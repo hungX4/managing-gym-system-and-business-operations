@@ -4,10 +4,10 @@ import {
     UnauthorizedException, UseGuards, Headers
 } from '@nestjs/common';
 import type { Request, Response, CookieOptions } from 'express';
-import { RegisterRequestDto, LoginRequestDto } from '@gym/shared';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard'; // Đường dẫn tới Guard đã tạo
 import { Public } from './decorator/public.decorator';
+import { LoginRequest, RegisterRequest } from './dto/auth.dto';
 
 const COOKIE_OPTIONS: CookieOptions = {
     httpOnly: true,
@@ -29,7 +29,7 @@ export class AuthController {
     @Public()
     @Post('register')
     async register(
-        @Body() dto: RegisterRequestDto,
+        @Body() dto: RegisterRequest,
         @Res({ passthrough: true }) res: Response
     ) {
         const { refreshToken, ...response } = await this.authService.register(dto);
@@ -41,7 +41,7 @@ export class AuthController {
     @Post('login')
     @HttpCode(HttpStatus.OK) // Thay đổi HTTP 201 mặc định thành 200 OK
     async login(
-        @Body() dto: LoginRequestDto,
+        @Body() dto: LoginRequest,
         @Res({ passthrough: true }) res: Response
     ) {
         const { refreshToken, ...response } = await this.authService.login(dto);

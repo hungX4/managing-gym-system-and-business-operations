@@ -34,7 +34,7 @@ const OnlinePaymentComponent = () => {
         const fetchPackages = async () => {
             try {
                 // Đảm bảo Backend có API GET /packages để lấy danh sách gói tập
-                const res = await axiosClient.get('/package');
+                const res = await axiosClient.get('/packages');
 
                 // Chỉ lấy những gói đang Active và là loại MEMBERSHIP
                 const availablePackages = res.data
