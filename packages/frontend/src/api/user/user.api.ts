@@ -12,9 +12,9 @@ export const userApi = {
     },
     getUserAttendanceHistory: async (userId: string, page: number = 1, limit: number = 10) => {
         // Truyền page và limit qua query params (axios sẽ tự động build thành ?page=1&limit=10)
-        const response = await axiosClient.get(`/attendance/history/${userId}`, {
+        const response = await axiosClient.get<any, any>(`/attendance/history/${userId}`, {
             params: { page, limit }
         });
-        return response.data;
+        return response;
     }
 }

@@ -29,6 +29,12 @@ axiosClient.interceptors.response.use(
     (response) => {
         // BÓC VỎ RESPONSE
         if (response.data && response.data.data !== undefined) {
+            if (response.data.meta) {
+                return {
+                    items: response.data.data,
+                    meta: response.data.meta
+                };
+            }
             return response.data.data;
         }
         return response.data;

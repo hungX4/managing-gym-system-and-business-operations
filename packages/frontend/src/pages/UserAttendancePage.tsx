@@ -28,7 +28,7 @@ export default function UserAttendanceHistory() {
         setIsLoading(true);
         try {
             const response = await userApi.getUserAttendanceHistory(userId, currentPage, 10);
-            setUsageLogs(response.data);
+            setUsageLogs(response.items);
             setMeta(response.meta);
         } catch (error: any) {
             console.error("Lỗi lấy lịch sử:", error);

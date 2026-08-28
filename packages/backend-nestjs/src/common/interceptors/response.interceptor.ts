@@ -6,6 +6,7 @@ export interface StandardResponse<T> {
     statusCode: number;
     message: string;
     data: T;
+    meta?: any;
 }
 
 @Injectable()
@@ -23,6 +24,7 @@ export class TransformResponseInterceptor<T> implements NestInterceptor<T, Stand
                     statusCode,
                     message: isCustomFormat && data.message ? data.message : 'Success',
                     data: isCustomFormat && data.data !== undefined ? data.data : data,
+                    ...(data && data.meta ? { meta: data.meta } : {}),
                 };
             }),
         );
