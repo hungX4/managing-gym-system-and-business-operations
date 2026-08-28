@@ -1,12 +1,12 @@
 // src/pages/admin/PackageManagementPage.tsx
 import React, { useState, useEffect } from 'react';
-import axiosClient from '../api/axiosClient';
 import toast from 'react-hot-toast';
 import CreatePackageForm from '../components/admin/package/CreatePackageForm';
-import { PackageType } from '@gym/shared';
+import { PackageType, type PackageResponseDto } from '@gym/shared';
+import { PackageApi } from '../api/packgage/package.api';
 
 export default function PackagePage() {
-    const [packages, setPackages] = useState<any[]>([]);
+    const [packages, setPackages] = useState<PackageResponseDto[]>([]);
     const [filterType, setFilterType] = useState<string>('ALL');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -14,8 +14,8 @@ export default function PackagePage() {
     const fetchPackages = async () => {
         setIsLoading(true);
         try {
-            const res = await axiosClient.get('/package');
-            setPackages(res.data);
+            const res = await PackageApi.getAllPackages();
+            setPackages(res);
         } catch (error) {
             toast.error('Không thể tải danh sách gói tập');
         } finally {
@@ -30,11 +30,11 @@ export default function PackagePage() {
     // 2. GỌI API ĐỔI TRẠNG THÁI
     const handleToggleStatus = async (packageId: number) => {
         try {
-            const res = await axiosClient.patch(`/package/${packageId}/status`);
-            toast.success(res.data.message);
+            const res = await PackageApi.toggleStatus(packageId);
+            toast.success("Cập nhật thành công!");
             // Cập nhật lại state mượt mà không cần load lại cả trang
             setPackages(prev => prev.map(pkg =>
-                pkg.packageId === packageId ? { ...pkg, isActive: res.data.data.isActive } : pkg
+                pkg.packageId === packageId ? { ...pkg, isActive: res.isActive } : pkg
             ));
         } catch (error: any) {
             toast.error(error.response?.data?.message || 'Lỗi khi đổi trạng thái');

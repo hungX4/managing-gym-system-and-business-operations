@@ -59,6 +59,9 @@ export class PackageService {
         }
 
         pkg.isActive = !pkg.isActive;
-        return await this.packageRepo.save(pkg);
+        const updatedPkg = await this.packageRepo.save(pkg);
+        return plainToInstance(PackageResponse, updatedPkg, {
+            excludeExtraneousValues: true //lọc dữ liệu rác
+        });
     }
 }
