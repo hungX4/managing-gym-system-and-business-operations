@@ -20,7 +20,7 @@ const TrialLeadManager = () => {
         setEditForm({
             status: lead.status || TrialStatus.UNCONTACTED,
             adminNote: lead.adminNote || '',
-            assignedToId: lead.assignedTo?.id?.toString() || ''
+            assignedToId: lead.assignedTo?.userId?.toString() || ''
         });
         setIsModalOpen(true);
     };
@@ -29,7 +29,7 @@ const TrialLeadManager = () => {
         const success = await updateLead(selectedLead.id, {
             status: editForm.status,
             adminNote: editForm.adminNote,
-            assignedToId: editForm.assignedToId ? Number(editForm.assignedToId) : null,
+            assignedToId: editForm.assignedToId ? editForm.assignedToId : null,
         });
         if (success) setIsModalOpen(false);
     };
@@ -83,7 +83,7 @@ const TrialLeadManager = () => {
                             ) : leads.length === 0 ? (
                                 <tr><td colSpan={6} className="text-center py-10">Không có dữ liệu</td></tr>
                             ) : (
-                                leads.map((lead) => (
+                                leads.map((lead: (typeof leads)[number]) => (
                                     <tr key={lead.id} className="hover:bg-neutral-800/50 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="font-bold text-white text-base">{lead.fullName}</div>

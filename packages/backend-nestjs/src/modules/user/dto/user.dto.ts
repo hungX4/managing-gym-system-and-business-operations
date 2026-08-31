@@ -68,7 +68,7 @@ export class MemberSearchResponse implements MemberSearchResponseDto {
 
 export class CoachResponse implements CoachResponseDto {
     @Expose()
-    coachId!: string
+    userId!: string
 
     @Expose()
     fullName!: string;

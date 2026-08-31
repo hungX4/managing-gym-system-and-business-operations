@@ -10,11 +10,11 @@ import {
     UseGuards
 } from '@nestjs/common';
 import { LeadService } from './lead.service';
-import { CreateTrialLeadDto, GetLeadsFilterDto, Role, UpdateTrialLeadDto } from '@gym/shared';
+import { GetLeadsFilterDto, Role } from '@gym/shared';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guad.guard';
 import { Roles } from '../auth/decorator/roles.decorator';
-import { CreateTrialLead } from './dto/lead.dto';
+import { CreateTrialLead, UpdateTrialLead } from './dto/lead.dto';
 
 @Controller('trial-leads')
 export class LeadController {
@@ -44,12 +44,9 @@ export class LeadController {
     @Patch(':id')
     async updateLeadDetails(
         @Param('id', ParseIntPipe) leadId: number, // 💡 ParseIntPipe tự động ép /:id sang kiểu number
-        @Body() data: UpdateTrialLeadDto,
+        @Body() data: UpdateTrialLead,
     ) {
-        const updatedLead = await this.LeadService.updateLead(leadId, data);
-        return {
-            message: 'Cập nhật thành công',
-            data: updatedLead
-        };
+        console.log(leadId, data)
+        return await this.LeadService.updateLead(leadId, data);
     }
 }

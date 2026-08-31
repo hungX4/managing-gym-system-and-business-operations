@@ -32,6 +32,7 @@ export interface MemberSearchResponseDto {
 
 //coach search
 export interface CoachResponseDto {
+    userId: string;
     fullName: string;
     phone: string;
     avatarUrl?: string | null;

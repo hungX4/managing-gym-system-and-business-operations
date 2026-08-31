@@ -1,6 +1,6 @@
-import { CreateTrialLeadDto } from '@gym/shared';
+import { CreateTrialLeadDto, TrialStatus, UpdateTrialLeadDto } from '@gym/shared';
 import { Transform } from 'class-transformer';
-import { IsString, IsNotEmpty, IsOptional, IsEmail, Matches } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsEmail, Matches, IsEnum } from 'class-validator';
 //create trial lead for new user
 export class CreateTrialLead implements CreateTrialLeadDto {
     @IsString()
@@ -19,4 +19,18 @@ export class CreateTrialLead implements CreateTrialLeadDto {
     @IsString()
     @IsOptional()
     note?: string; // Khách hàng tự note trên web (VD: "Tôi muốn giảm cân")
+}
+
+export class UpdateTrialLead implements UpdateTrialLeadDto {
+    @IsEnum(TrialStatus)
+    @IsOptional()
+    status?: TrialStatus;
+
+    @IsString()
+    @IsOptional()
+    assignedToId?: string; // Giao cho nhân viên nào chăm sóc
+
+    @IsString()
+    @IsOptional()
+    adminNote?: string; // Note nội bộ của nhân viên (VD: "Khách hẹn cuối tuần qua")
 }

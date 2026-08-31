@@ -2,11 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { trialLeadApi } from '../../api/trial/trialLead.api';
 import { userApi } from '../../api/user/user.api';
 import toast from 'react-hot-toast';
-import { TrialStatus } from '@gym/shared';
+import { GetLeadsFilterDto, TrialStatus, type TrialLeadResponseDto } from '@gym/shared';
 import { coachApi } from '../../api/user/coachApi';
 
 export const useTrialLeads = () => {
-    const [leads, setLeads] = useState<any[]>([]);
+    const [leads, setLeads] = useState<any>([]);
     const [coaches, setCoaches] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [filterStatus, setFilterStatus] = useState<TrialStatus | ''>('');
@@ -15,7 +15,7 @@ export const useTrialLeads = () => {
     const fetchLeads = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await trialLeadApi.getLead(filterStatus ? { status: filterStatus } : {});
+            const data: TrialLeadResponseDto[] = await trialLeadApi.getLead(filterStatus ? { status: filterStatus } : {});
             setLeads(data);
         } catch (error) {
             console.error('Lỗi khi tải danh sách KH:', error);
@@ -30,6 +30,7 @@ export const useTrialLeads = () => {
         try {
             const data = await coachApi.getCoaches();
             setCoaches(data);
+            console.log(data)
         } catch (error) {
             console.error('Lỗi tải danh sách HLV:', error);
         }

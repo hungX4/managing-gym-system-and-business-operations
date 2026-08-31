@@ -2,17 +2,9 @@
 import { IsEnum, IsOptional, IsNumber, IsString } from 'class-validator';
 import { TrialStatus } from '../enums';
 
-export class UpdateTrialLeadDto {
-    @IsEnum(TrialStatus)
-    @IsOptional()
+export interface UpdateTrialLeadDto {
     status?: TrialStatus;
-
-    @IsString()
-    @IsOptional()
     assignedToId?: string; // Giao cho nhân viên nào chăm sóc
-
-    @IsString()
-    @IsOptional()
     adminNote?: string; // Note nội bộ của nhân viên (VD: "Khách hẹn cuối tuần qua")
 }
 
@@ -24,4 +16,24 @@ export class GetLeadsFilterDto {
     @IsOptional()
     //@Type(() => Number) //Tự động convert query string "123" -> number 123
     assignedToId?: string;
+}
+
+export interface AssignedCoachDto {
+    userId: number;
+    fullName: string;
+    phone: string;
+    avatarUrl?: string | null;
+}
+
+export interface TrialLeadResponseDto {
+    id: number;
+    fullName: string;
+    phoneNumber: string;
+    email: string | null;
+    status: TrialStatus; // Dùng enum để đồng bộ với state
+    guestNote: string | null;
+    adminNote: string;
+    assignedTo: AssignedCoachDto | null; // Nếu chưa giao thì BE thường trả về null
+    createdAt: string;
+    updatedAt: string;
 }
