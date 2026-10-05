@@ -1,6 +1,6 @@
 import { CoachLevel, CoachResponseDto, CoachType, MemberSearchRequestDto, MemberSearchResponseDto, UpdateCoachDto, UserResponseDto } from "@gym/shared";
 import { PartialType } from "@nestjs/mapped-types"
-import { Exclude, Expose } from "class-transformer";
+import { Exclude, Expose, Transform } from "class-transformer";
 import { IsEmail, IsOptional, IsString } from "class-validator";
 
 export class MemberSearchRequest implements MemberSearchRequestDto {
@@ -83,15 +83,19 @@ export class CoachResponse implements CoachResponseDto {
     gmail?: string
 
     @Expose()
+    @Transform(({ obj }) => obj.coachProfile?.profileId ?? null)
     profileId!: number | null;
 
     @Expose()
+    @Transform(({ obj }) => obj.coachProfile?.type ?? null)
     coachType!: CoachType | null;
 
     @Expose()
+    @Transform(({ obj }) => obj.coachProfile?.level ?? null)
     coachLevel!: CoachLevel | null;
 
     @Expose()
+    @Transform(({ obj }) => obj.coachProfile?.bio ?? null)
     bio!: string | null;
 }
 

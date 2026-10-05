@@ -29,7 +29,7 @@ export class BookingService {
         }
 
         const coach = await this.userService.getCoachProfile(dto.coachId);
-
+        console.log(coach)
         if (dto.type === CoachType.GYM && coach.coachType !== CoachType.GYM) {
             throw new BadRequestException('COACH_TYPE_MISMATCH');
         }

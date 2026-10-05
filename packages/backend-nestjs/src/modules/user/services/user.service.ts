@@ -98,7 +98,6 @@ export class UserService {
         if (!coach) {
             throw new NotFoundException('COACH_NOT_FOUND');
         }
-
         return plainToInstance(CoachResponse, coach, { excludeExtraneousValues: true });
     }
 
