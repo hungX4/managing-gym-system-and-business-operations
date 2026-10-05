@@ -130,7 +130,15 @@ export default function BookingPage() {
             setIsModalOpen(false);
             fetchBookings();
         } catch (error: any) {
-            toast.error("KHÔNG THỂ ĐẶT LỊCH!");
+            // Lấy message trả về từ NestJS Exception Filter
+            const serverMessage = error.response?.data?.message;
+
+            if (serverMessage === 'COACH_NOT_FOUND') {
+                toast.error("Tài khoản này không phải là huấn luyện viên!");
+            } else {
+                // Ưu tiên hiển thị message cụ thể từ backend nếu có, nếu không thì fallback về câu mặc định
+                toast.error(serverMessage || "KHÔNG THỂ ĐẶT LỊCH!");
+            }
         }
     };
 
