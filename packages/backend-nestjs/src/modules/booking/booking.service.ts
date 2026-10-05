@@ -132,8 +132,7 @@ export class BookingService {
             throw new BadRequestException('BOOKING_ALREADY_PROCESSED');
         }
 
-        booking.status = BookingStatus.CANCELLED;
-        await this.bookingRepo.save(booking);
+        await this.bookingRepo.remove(booking);
     }
 
     //hepler map entity -> dto

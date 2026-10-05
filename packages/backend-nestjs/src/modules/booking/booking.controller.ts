@@ -39,14 +39,11 @@ export class BookingController {
         return await this.bookingService.getById(bookingId);
     }
 
-    @Patch(':id/cancel')
+    @Delete(':id')
     async cancel(
         @Param('id', ParseIntPipe) id: number,
         @CurrentUser('sub') requesterId: string
     ) {
-        // Parse requesterId sang kiểu số nếu hàm cancel bên Service đang nhận vào number
-        console.log(id, "-", requesterId);
-        console.log(typeof id, typeof requesterId);
         await this.bookingService.cancel(id, Number(requesterId));
         return { message: 'Huỷ lịch thành công' };
     }

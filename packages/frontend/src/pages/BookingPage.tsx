@@ -139,7 +139,7 @@ export default function BookingPage() {
         if (!window.confirm("Bạn có chắc chắn muốn huỷ lịch tập này?")) return;
 
         try {
-            await axiosClient.delete(`/booking/${selectedBooking.bookingId}`);
+            await axiosClient.delete(`/bookings/${selectedBooking.bookingId}`);
             toast.success("ĐÃ HỦY LỊCH!");
             setIsDetailsModalOpen(false);
             setSelectedBooking(null);
