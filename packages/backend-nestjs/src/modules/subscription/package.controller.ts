@@ -16,7 +16,7 @@ export class PackageController {
     @Post()
     async createPackage(@Body() dto: CreatePackageRequest) {
         console.log("Dữ liệu sau khi qua class-validator:", dto);
-        const result = await this.packageService.createPackage(dto);
+        return await this.packageService.createPackage(dto);
     }
 
     @Get()

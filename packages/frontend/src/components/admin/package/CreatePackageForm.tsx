@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { CreatePackageRequestDto, PackageType } from '@gym/shared';
+import { type CreatePackageRequestDto, PackageType } from '@gym/shared';
 import axiosClient from '../../../api/axiosClient';
 export default function CreatePackageForm({ onSuccess }: { onSuccess?: () => void }) {
     const [isLoading, setIsLoading] = useState(false);
@@ -55,10 +55,9 @@ export default function CreatePackageForm({ onSuccess }: { onSuccess?: () => voi
                 durationDays: Number(formData.durationDays)
             };
 
-            const res = await axiosClient.post('/package', payload);
+            const res = await axiosClient.post('/packages', payload);
 
-            toast.success(res.data.message || 'Tạo gói tập thành công!');
-
+            toast.success(res.data || 'Tạo gói tập thành công!');
             // Reset form sau khi thành công
             setFormData({
                 name: '',
