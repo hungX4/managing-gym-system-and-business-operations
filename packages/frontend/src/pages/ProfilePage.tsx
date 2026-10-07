@@ -65,7 +65,7 @@ const ProfilePage = () => {
 
     return (
         // Đổi background nền tổng thể thành màu Đen Tuyền (Black)
-        <div className="min-h-screen bg-[#050505] text-gray-100 pt-28 pb-12 px-4 sm:px-6 lg:px-8 font-sans">
+        <div className="min-h-screen bg-[#050505] text-gray-100 pt-8 pb-12 px-4 sm:px-6 lg:px-8 font-sans">
             <div className="max-w-6xl mx-auto">
 
                 {/* Khung chứa nội dung chính với nền xám rất tối và viền tinh tế */}

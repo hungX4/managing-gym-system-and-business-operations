@@ -186,7 +186,7 @@ export default function BookingPage() {
     };
 
     return (
-        <div className="flex flex-col h-screen pt-16 bg-[#0a0a0a] text-white overflow-hidden">
+        <div className="flex flex-col h-screen bg-[#0a0a0a] text-white overflow-hidden">
             <div className="flex flex-col flex-1 p-3 md:p-6 overflow-hidden">
                 <CalendarToolbar
                     isMobile={isMobile}

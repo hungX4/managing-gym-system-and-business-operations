@@ -39,7 +39,7 @@ export default function CheckinContainer() {
     ];
 
     return (
-        <div className="flex h-screen pt-16 bg-[#0a0a0a] text-white overflow-hidden">
+        <div className="flex h-screen bg-[#0a0a0a] text-white overflow-hidden">
 
             {/* 1. SIDEBAR BÊN TRÁI (Bật/Tắt mượt mà) */}
             <div

@@ -10,7 +10,7 @@ export default function AdminLayout() {
     const activeMenuItem = ADMIN_DASHBOARD.find(item => item.path === currentPath) || ADMIN_DASHBOARD[0];
 
     return (
-        <div className="flex h-screen pt-16 bg-[#0a0a0a] text-white overflow-hidden">
+        <div className="flex h-screen bg-[#0a0a0a] text-white overflow-hidden">
             {/* Bọc thêm 1 div relative ở đây để làm mốc tọa độ cho nút Toggle lơ lửng */}
             <div className="relative flex w-full h-full">
 

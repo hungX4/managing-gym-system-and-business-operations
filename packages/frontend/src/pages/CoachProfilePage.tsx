@@ -89,7 +89,7 @@ const CoachProfileSettings: React.FC = () => {
     };
 
     return (
-        <div className=" pt-18 min-h-screen bg-gray-950 py-12 px-4 sm:px-6 lg:px-8">
+        <div className=" min-h-screen bg-gray-950 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl mx-auto bg-gray-900 rounded-3xl shadow-2xl overflow-hidden border border-gray-800">
                 <div className="px-8 py-6 border-b border-gray-800">
                     <h2 className="text-2xl font-black text-white uppercase tracking-wider">Hồ Sơ Chuyên Môn</h2>
