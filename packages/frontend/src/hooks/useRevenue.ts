@@ -14,8 +14,8 @@ export const useRevenue = () => {
             setLoading(true);
             try {
                 const result = await revenueApi.getDashboardData(selectedMonth, selectedYear);
-                if (result.success) {
-                    setData(result.data);
+                if (result) {
+                    setData(result);
                 }
             } catch (error) {
                 // Có thể thêm logic show toast notification báo lỗi ở đây

@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     ComposedChart, Line, Cell
 } from 'recharts';
 import { TrendingUp, DollarSign, Users, Package, ChevronDown, Calendar, Loader2 } from 'lucide-react';
-import axiosClient from '../../api/axiosClient';
 import { useRevenue } from '../../hooks/useRevenue'
 const formatCurrency = (v: number) => new Intl.NumberFormat('vi-VN').format(v) + ' ₫';
 const formatShortCurrency = (v: number) => `${(v / 1000000).toFixed(0)}M`;
