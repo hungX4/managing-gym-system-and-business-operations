@@ -13,6 +13,7 @@ import { BookingModule } from './modules/booking/booking.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
 import { PayrollModule } from './modules/payroll/payroll.module';
 import { CheckinModule } from './modules/checkin/checkin.module';
+import { RevenueModule } from './modules/revenue/revenue.module';
 @Module({
   imports: [
     // chỉ định đường dẫn tới file .env của Express cũ
@@ -55,7 +56,8 @@ import { CheckinModule } from './modules/checkin/checkin.module';
     BookingModule,
     AttendanceModule,
     PayrollModule,
-    CheckinModule
+    CheckinModule,
+    RevenueModule
   ],
   controllers: [AppController],
   providers: [AppService],
