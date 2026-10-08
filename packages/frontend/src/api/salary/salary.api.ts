@@ -12,7 +12,7 @@ export const SalaryApi = {
     // Lấy danh sách lương (Tính nháp hoặc đã chốt)
     getSalaries: async (params: GetSalaryQueryDto): Promise<SalaryResponseDto[]> => {
         const response = await axiosClient.get<ApiResponse<SalaryResponseDto[]>>('/salary', { params });
-        return response.data.data;
+        return response as unknown as SalaryResponseDto[];
     },
 
     // Chốt lương tháng
@@ -29,6 +29,6 @@ export const SalaryApi = {
 
     getSalaryDetails: async (params: { coachId: number, month: number, year: number }) => {
         const response = await axiosClient.get('/salary/details', { params });
-        return response.data;
+        return response;
     }
 };

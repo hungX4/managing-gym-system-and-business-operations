@@ -4,8 +4,8 @@ import {
     Role,
     CoachType,
     CoachLevel,
-    UpdateSalaryConfigDto,
-    UpdateSalaryConfigItemDto
+    type UpdateSalaryConfigDto,
+    type UpdateSalaryConfigItemDto
 } from '@gym/shared'; // Hoặc import từ file DTO của bạn
 import axiosClient from '../../../api/axiosClient';
 import toast from 'react-hot-toast';
@@ -39,9 +39,9 @@ const SalaryConfigComponent: React.FC = () => {
     const fetchConfigs = async () => {
         try {
             setIsFetching(true);
-            const res = await axiosClient.get('/salaryconfig');
+            const res = await axiosClient.get('/salary-config') as any[];
             console.log("Dữ liệu API trả về (res):", res);
-            const backendData = res.data.data;
+            const backendData = res;
 
             // Map data từ Backend, gắn thêm tempId để làm Key cho UI
             const mappedData: SalaryConfigUI[] = backendData.map((item: UpdateSalaryConfigItemDto) => ({
@@ -94,18 +94,17 @@ const SalaryConfigComponent: React.FC = () => {
         setConfigs(configs.filter(config => config.tempId !== id));
     };
 
-    // 4. GỌI API THẬT (LƯU DỮ LIỆU - DÙNG DTO)
     const handleSave = async () => {
         setLoading(true);
         try {
             // Ép kiểu từ State UI sang UpdateSalaryConfigItemDto
             const payloadItems: UpdateSalaryConfigItemDto[] = configs.map(item => {
 
-                // Tạo base item theo chuẩn DTO
+                // Tạo base item theo chuẩn DTO (Chống NaN)
                 const baseItem: UpdateSalaryConfigItemDto = {
                     configId: item.configId,
                     role: item.role as Role,
-                    baseSalary: Number(item.baseSalary),
+                    baseSalary: Number(item.baseSalary) || 0,
                 };
 
                 // Nếu là COACH thì ép kiểu Type, Level và Price
@@ -115,11 +114,11 @@ const SalaryConfigComponent: React.FC = () => {
                     }
                     baseItem.coachType = item.coachType as CoachType;
                     baseItem.coachLevel = item.coachLevel as CoachLevel;
-                    baseItem.pricePerSession = Number(item.pricePerSession);
+                    baseItem.pricePerSession = Number(item.pricePerSession) || 0;
                 } else {
-                    // Gắn rõ null cho các Role khác để Backend đỡ phải đoán
-                    baseItem.coachType = null;
-                    baseItem.coachLevel = null;
+                    // Gắn undefined thay vì null để JSON tự bỏ qua field thừa
+                    baseItem.coachType = undefined;
+                    baseItem.coachLevel = undefined;
                     baseItem.pricePerSession = 0;
                 }
 
@@ -132,13 +131,21 @@ const SalaryConfigComponent: React.FC = () => {
             };
 
             // Bắn API PUT
-            await axiosClient.put('/salaryconfig', finalPayload);
+            await axiosClient.put('/salary-config', finalPayload);
 
             toast.success("Lưu cấu hình lương thành công!");
             fetchConfigs(); // Tải lại data mới nhất sau khi lưu thành công
 
         } catch (error: any) {
-            toast.error("Lỗi khi lưu: " + (error.response?.data?.message || error.message));
+            console.error("Lỗi save config:", error);
+
+            // Bắt message từ NestJS (Xử lý trường hợp message dạng Mảng)
+            const apiMessage = error.response?.data?.message;
+            const errorMessage = Array.isArray(apiMessage)
+                ? apiMessage.join(' | ')
+                : (apiMessage || error.message || "Lỗi không xác định");
+
+            toast.error("Lỗi khi lưu: " + errorMessage);
         } finally {
             setLoading(false);
         }

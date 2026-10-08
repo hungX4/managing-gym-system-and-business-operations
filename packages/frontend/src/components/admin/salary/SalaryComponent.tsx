@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SalaryApi } from '../../../api/salary/salary.api';
-import { SalaryResponseDto, SalaryStatus } from '@gym/shared';
+import { SalaryStatus } from '@gym/shared';
 import toast from 'react-hot-toast';
 import { SalaryDetailsModal } from './SalaryDetailModal';
 
