@@ -9,6 +9,9 @@ export class MemberSubscription {
     @PrimaryGeneratedColumn()
     subscriptionId!: number;
 
+    @Column()
+    memberId!: number;
+
     @ManyToOne(() => User, (user) => user.boughtSubscriptions)
     @JoinColumn({ name: 'member_id' })
     member!: User;
