@@ -135,7 +135,7 @@ const HeroCarousel: React.FC = () => {
                         <div className="relative h-full flex items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:max-w-none xl:mx-0 xl:pl-16 xl:pr-16
     2xl:pl-24 2xl:pr-24">
                             {/* Bỏ cursor-grab ở đây vì đã đưa lên thẻ div ngoài cùng */}
-                            <div className="w-full md:w-2/3 pt-16 ">
+                            <div className="w-full md:w-2/3">
                                 <div className="mb-6 relative pointer-events-none flex flex-col gap-y-1 md:gap-y-3 xl:gap-y-6 2xl:gap-y-8">
 
                                     <h2 className="text-4xl md:text-5xl font-light tracking-widest text-gray-300 leading-tight ">

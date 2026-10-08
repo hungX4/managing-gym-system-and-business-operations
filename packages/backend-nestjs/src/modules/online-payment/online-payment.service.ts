@@ -19,7 +19,7 @@ export class OnlinePaymentService {
         private readonly configService: ConfigService,
     ) { }
 
-    async createVnpayUrl(userId: number, dto: BuyPackageOnlineRequestDto, ipAddress: string) {
+    async createVnpayUrl(userId: string, dto: BuyPackageOnlineRequestDto, ipAddress: string) {
         // 1. Kiểm tra gói tập MEMBERSHIP
         const pkg = await this.pkgRepo.findOneBy({
             packageId: dto.packageId,

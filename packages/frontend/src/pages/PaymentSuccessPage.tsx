@@ -27,17 +27,24 @@ const PaymentSuccess = () => {
 
             try {
                 // 2. Vẫn gọi Backend để nó chạy logic cập nhật Database
-                const response = await axiosClient.get(`/online-payment/vnpay-ipn${queryParams}`);
+                const res: any = await axiosClient.get(`/online-payment/vnpay-ipn${queryParams}`);
+
+                // Log để kiểm tra dữ liệu thực tế nhận được từ axiosClient
+                console.log('API Response:', res);
+
+                // Bóc tách RspCode an toàn (hỗ trợ cả khi axiosClient unpack data hoặc chưa unpack)
+                const rspCode = res?.RspCode ?? res?.data?.RspCode;
+                const rspMessage = res?.Message ?? res?.data?.Message;
 
                 // 3. XỬ LÝ LOGIC HIỂN THỊ
                 if (vnp_ResponseCode === '00') {
                     // Trạng thái '00': Khách ĐÃ TRẢ TIỀN thành công
-                    if (response.data.RspCode === '00' || response.data.RspCode === '02') {
+                    if (rspCode === '00' || rspCode === '02') {
                         setStatus('success');
                         setMessage("Gói tập của bạn đã được kích hoạt thành công!");
                     } else {
                         setStatus('failed');
-                        setMessage(response.data.Message || "Giao dịch không thành công.");
+                        setMessage(rspMessage || "Giao dịch không thành công.");
                     }
                 } else {
                     // Nếu khách bấm HỦY (mã 24) hoặc THẺ LỖI, vnp_ResponseCode sẽ khác '00'
