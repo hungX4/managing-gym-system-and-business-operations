@@ -1,4 +1,4 @@
-import { BookingStatus, CheckInRequestDto, CheckInResponseDto, MemberSubscriptionStatus, PackageType, PaginatedResponseDto, SubscriptionHistoryResponseDto, UsageLogStatus, WorkLogStatus, } from "@gym/shared";
+import { BookingStatus, MemberSubscriptionStatus, PackageType, WorkLogStatus, } from "@gym/shared";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { Between, DataSource, MoreThan, Repository } from "typeorm";
@@ -7,6 +7,12 @@ import { Booking } from "../booking/entities/booking.entity";
 import { UsageLog } from "../attendance/entities/usage-log.entity";
 import { WorkLog } from "../attendance/entities/work-log.entity";
 import { formatLocalDateTime } from "src/common/utils/time.util";
+import { plainToInstance } from "class-transformer";
+import { SelfCheckinResponseDto } from "./dto/self-checkin-response.dto";
+import { SelfCheckinRequestDto } from "./dto/self-checkin-request.dto";
+import { PtCheckinRequestDto } from "./dto/pt-checkin-request.dto";
+import { PtCheckinResponseDto } from "./dto/pt-checkin-response.dto";
+import { CheckinLogResponseDto } from "./dto/checkin-log-response.dto";
 
 @Injectable()
 export class CheckinService {
@@ -24,18 +30,18 @@ export class CheckinService {
         private readonly subRepo: Repository<MemberSubscription>,
     ) { }
 
-    async selfCheckin(memberId: string) {
+    async selfCheckin(dto: SelfCheckinRequestDto): Promise<SelfCheckinResponseDto> {
         // Phi thẳng vào bảng Subscription, join với Member để lấy tên
         const activeSub = await this.subRepo.findOne({
             where: {
-                member: { userId: memberId as any },
+                member: { userId: dto.memberId as any },
                 status: MemberSubscriptionStatus.ACTIVE,
                 endDate: MoreThan(new Date()),
                 package: {
                     type: PackageType.MEMBERSHIP
                 }
             },
-            relations: ['member'] // Join để lấy thông tin member
+            relations: ['member', 'package'] // Join để lấy thông tin member
         });
 
         if (!activeSub) {
@@ -51,14 +57,16 @@ export class CheckinService {
 
         await this.usageLogRepo.save(usageLog);
 
-        return {
+        const result = {
             message: "Check-in tự tập thành công!",
             memberName: activeSub.member.fullName,
-            checkinTime: formatLocalDateTime(usageLog.checkinTime)
+            packageName: activeSub.package.name
         };
+
+        return plainToInstance(SelfCheckinResponseDto, result, { excludeExtraneousValues: true });
     }
 
-    async markBookingAsCompleted(dto: CheckInRequestDto): Promise<CheckInResponseDto> {
+    async markBookingAsCompleted(dto: PtCheckinRequestDto): Promise<PtCheckinResponseDto> {
         const { bookingId, subscriptionId, status } = dto;
 
         return await this.dataSource.transaction(async (manager) => {
@@ -132,6 +140,32 @@ export class CheckinService {
                 remainingSession: subscription.remainingSession,
                 earned_amount: sessionValue
             };
+        });
+    }
+
+    async getLogsByDate(dateString: string): Promise<CheckinLogResponseDto[]> {
+        const startOfDay = new Date(`${dateString}T00:00:00.000`);
+        const endOfDay = new Date(`${dateString}T23:59:59.999`);
+
+        const logs = await this.usageLogRepo.find({
+            where: {
+                checkinTime: Between(startOfDay, endOfDay),
+                subscription: {
+                    package: { type: PackageType.MEMBERSHIP }
+                }
+            },
+            relations: [
+                'member',
+                'subscription',
+                'subscription.package',
+                'workLog',
+                'workLog.coach'
+            ],
+            order: { checkinTime: 'DESC' }
+        });
+
+        return plainToInstance(CheckinLogResponseDto, logs, {
+            excludeExtraneousValues: true,
         });
     }
 }
