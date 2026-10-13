@@ -2,24 +2,38 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axiosClient from '../../../api/axiosClient';
 import toast from 'react-hot-toast';
-import { MemberCheckinRequestDto, PackageType } from '@gym/shared';
+import { type MemberCheckinRequestDto, type MemberSearchRequestDto } from '@gym/shared';
 
 export default function MemberCheckinContainer() {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [usageLogs, setUsageLogs] = useState<any[]>([]);
 
-    // 🌟 STATE CHO SEARCH API
+    // 🌟 STATE CHO SEARCH API & USER ĐƯỢC CHỌN
     const [searchKeyword, setSearchKeyword] = useState('');
+    const [selectedUser, setSelectedUser] = useState<any | null>(null);
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [isSearching, setIsSearching] = useState(false);
-    const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    // 1. 🔍 HÀM GỌI API TÌM KIẾM HỘI VIÊN (Debounce)
+    const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const searchContainerRef = useRef<HTMLDivElement>(null);
+
+    // 🟢 Đóng dropdown khi click ra ngoài vùng tìm kiếm
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+                setSearchResults([]);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    // 1. 🔍 HÀM GỌI API TÌM KIẾM HỘI VIÊN (Debounce 500ms)
     const handleSearchInput = (value: string) => {
         setSearchKeyword(value);
+        setSelectedUser(null); // Reset user đã chọn nếu nhập lại ô tìm kiếm
 
-        // Xóa timeout cũ nếu người dùng vẫn đang gõ
         if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
 
         if (!value.trim()) {
@@ -27,13 +41,12 @@ export default function MemberCheckinContainer() {
             return;
         }
 
-        // Đợi 500ms sau khi ngừng gõ mới gọi API để đỡ quá tải Server
         searchTimeoutRef.current = setTimeout(async () => {
             setIsSearching(true);
             try {
-                // ĐIỀN API SEARCH CỦA BẠN VÀO ĐÂY (Giả định: GET /users/search?keyword=...)
-                const res = await axiosClient.get(`/user/search?keyword=${value}`);
-                setSearchResults(res.data);
+                const res: any = await axiosClient.get(`/user/search?keyword=${encodeURIComponent(value.trim())}`);
+                const data = Array.isArray(res) ? res : (res?.data || []);
+                setSearchResults(data);
             } catch (error) {
                 console.error("Lỗi tìm kiếm:", error);
                 setSearchResults([]);
@@ -43,29 +56,41 @@ export default function MemberCheckinContainer() {
         }, 500);
     };
 
-    // Khi lễ tân click chọn 1 user từ danh sách gợi ý
+    // 🟢 Khi chọn 1 user từ danh sách gợi ý
     const handleSelectUser = (user: any) => {
-        setSearchKeyword(user.phone); // Điền SĐT vào ô input
+        setSelectedUser(user);
+        // Hiển thị tên & SĐT rõ ràng lên thanh tìm kiếm
+        setSearchKeyword(`${user.fullName || user.name} - ${user.phone}`);
         setSearchResults([]); // Ẩn danh sách gợi ý
     };
-
 
     // 2. 🎯 HÀM THỰC HIỆN CHECK-IN
     const handleCheckin = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
-        if (!searchKeyword.trim()) return toast.error("Vui lòng nhập số điện thoại để check-in!");
+
+        // Ưu tiên lấy memberId/userId từ user được chọn, nếu gõ trực tiếp ID thì lấy searchKeyword
+        const memberId = selectedUser?.userId || selectedUser?.memberId || selectedUser?.id || searchKeyword.trim();
+
+        if (!memberId) {
+            return toast.error("Vui lòng chọn hội viên từ danh sách gợi ý để check-in!");
+        }
 
         setIsLoading(true);
-        setSearchResults([]); // Ẩn kết quả search nếu đang mở
+        setSearchResults([]);
 
         try {
-            // Checkin theo số điện thoại đang có trong ô input
-            const payload: MemberCheckinRequestDto = { phone: searchKeyword.trim() };
-            await axiosClient.post('/checkin/self', payload);
+            // 🟢 Truyền đúng payload { memberId } sang NestJS API
+            const payload: MemberCheckinRequestDto = { memberId: String(memberId) };
+            const res: any = await axiosClient.post('/checkin/self', payload);
 
-            toast.success('Check-in thành công!');
-            setSearchKeyword(''); // Reset ô input
-            fetchDailyLogs(); // Load lại bảng danh sách
+            toast.success(res?.message || 'Check-in thành công!');
+
+            // Reset ô input & state sau khi checkin xong
+            setSearchKeyword('');
+            setSelectedUser(null);
+
+            // Reload lại danh sách log trong ngày
+            fetchDailyLogs();
         } catch (error: any) {
             toast.error(error.response?.data?.message || 'Lỗi check-in!');
         } finally {
@@ -76,17 +101,21 @@ export default function MemberCheckinContainer() {
     // 3. 📋 HÀM LẤY DANH SÁCH LOG TRONG NGÀY
     const fetchDailyLogs = async () => {
         try {
-            const dateStr = selectedDate.toISOString().split('T')[0];
-            const res = await axiosClient.get(`/checkin/logs?date=${dateStr}`);
+            // Format ngày local YYYY-MM-DD tránh lỗi múi giờ UTC
+            const year = selectedDate.getFullYear();
+            const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+            const day = String(selectedDate.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
 
-            // Chỉ lấy MEMBERSHIP
-            const filteredLogs = res.data.filter((log: any) =>
-                log.type === PackageType.MEMBERSHIP
-            );
+            const res: any = await axiosClient.get(`/checkin/logs?date=${dateStr}`);
 
-            setUsageLogs(filteredLogs);
+            // Bóc tách mảng an toàn
+            const logsData = Array.isArray(res) ? res : (Array.isArray(res?.data) ? res.data : []);
+
+            setUsageLogs(logsData);
         } catch (error) {
             console.error("Lỗi lấy lịch sử:", error);
+            setUsageLogs([]);
         }
     };
 
@@ -110,9 +139,9 @@ export default function MemberCheckinContainer() {
                 </div>
 
                 {/* 🔍 Thanh Tìm Kiếm & Check-in */}
-                <div className="relative w-full md:w-auto">
+                <div ref={searchContainerRef} className="relative w-full md:w-80">
                     <form onSubmit={handleCheckin} className="flex items-center w-full">
-                        <div className="relative group w-full md:w-64">
+                        <div className="relative group w-full">
                             {/* Icon Search */}
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 group-focus-within:text-red-500 transition-colors">
                                 {isSearching ? (
@@ -126,15 +155,15 @@ export default function MemberCheckinContainer() {
                                 type="text"
                                 value={searchKeyword}
                                 onChange={(e) => handleSearchInput(e.target.value)}
-                                placeholder="Tên hoặc SĐT..."
-                                className="bg-[#111111] border border-gray-800 text-sm rounded-l-lg py-2.5 pl-10 pr-4 w-full outline-none focus:border-red-600 transition-all"
+                                placeholder="Nhập tên hoặc số điện thoại..."
+                                className="bg-[#111111] border border-gray-800 text-sm rounded-l-lg py-2.5 pl-10 pr-4 w-full outline-none focus:border-red-600 transition-all text-white font-medium placeholder:text-gray-600"
                             />
                         </div>
 
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="bg-red-600 hover:bg-red-700 text-white text-sm font-bold px-5 py-2.5 rounded-r-lg transition-colors border border-red-600 shrink-0"
+                            className="bg-red-600 hover:bg-red-700 text-white text-sm font-bold px-5 py-2.5 rounded-r-lg transition-colors border border-red-600 shrink-0 disabled:opacity-50"
                         >
                             {isLoading ? '...' : 'XÁC NHẬN'}
                         </button>
@@ -142,18 +171,18 @@ export default function MemberCheckinContainer() {
 
                     {/* 🔽 Dropdown Hiển Thị Kết Quả Tìm Kiếm */}
                     {searchResults.length > 0 && (
-                        <div className="absolute top-full left-0 mt-1 w-full md:w-64 bg-[#1a1a1a] border border-gray-700 rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto">
+                        <div className="absolute top-full left-0 mt-1 w-full bg-[#1a1a1a] border border-gray-700 rounded-lg shadow-2xl z-50 max-h-60 overflow-y-auto">
                             {searchResults.map((user) => (
                                 <div
-                                    key={user.userId}
+                                    key={user.userId || user.memberId || user.id}
                                     onClick={() => handleSelectUser(user)}
-                                    className="px-4 py-3 hover:bg-gray-800 cursor-pointer border-b border-gray-800 last:border-0 transition-colors flex justify-between items-center"
+                                    className="px-4 py-3 hover:bg-red-600/10 hover:border-l-4 hover:border-red-600 cursor-pointer border-b border-gray-800/80 last:border-0 transition-all flex justify-between items-center"
                                 >
                                     <div>
-                                        <p className="text-sm font-bold text-white">{user.fullName}</p>
-                                        <p className="text-xs text-gray-400">{user.phone}</p>
+                                        <p className="text-sm font-bold text-white">{user.fullName || user.name}</p>
+                                        <p className="text-xs text-gray-400 mt-0.5">{user.phone}</p>
                                     </div>
-                                    <span className="text-[10px] bg-gray-700 px-2 py-1 rounded text-gray-300">Chọn</span>
+                                    <span className="text-[10px] bg-gray-800 border border-gray-700 px-2 py-1 rounded text-gray-300 font-semibold">Chọn</span>
                                 </div>
                             ))}
                         </div>
@@ -161,7 +190,7 @@ export default function MemberCheckinContainer() {
                 </div>
             </div>
 
-            {/* ... PHẦN BẢNG USAGE_LOG */}
+            {/* BẢNG USAGE_LOG */}
             <div className="bg-[#111111] border border-gray-800 rounded-xl flex flex-col overflow-hidden shadow-2xl">
                 {/* Thanh điều hướng ngày */}
                 <div className="p-4 border-b border-gray-800 flex items-center justify-between bg-[#161616]">
@@ -209,7 +238,7 @@ export default function MemberCheckinContainer() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className="text-[11px] bg-gray-800 text-gray-300 px-2 py-0.5 rounded border border-gray-700">
-                                                {log.type}
+                                                {log.packageName || log.type}
                                             </span>
                                         </td>
                                     </tr>

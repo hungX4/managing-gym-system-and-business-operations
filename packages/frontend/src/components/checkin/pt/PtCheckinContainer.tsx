@@ -3,7 +3,7 @@ import axiosClient from '../../../api/axiosClient';
 import CheckinGrid from './CheckinGrid';
 import SlotListModal from './SlotList';
 import ConfirmCheckinModal from './ConfirmCheckinModal';
-import { BookingResponseDto, CheckInRequestDto, CheckInResponseDto } from '@gym/shared';
+import { type BookingResponseDto, type CheckInRequestDto, type CheckInResponseDto } from '@gym/shared';
 import { WorkLogStatus } from '@gym/shared';
 import toast from 'react-hot-toast';
 
@@ -63,13 +63,13 @@ export default function CheckinPage() {
 
             // 2. SỬ DỤNG CONFIG PARAMS CỦA AXIOS (AN TOÀN HƠN)
             // Lưu ý: Đảm bảo Backend đón nhận đúng tên khóa (startDate, endDate)
-            const res = await axiosClient.get<BookingResponseDto[]>('/booking', {
+            const res = await axiosClient.get<any, BookingResponseDto[]>('/bookings', {
                 params: {
                     startDate,
                     endDate
                 }
             });
-            setBookings(res.data);
+            setBookings(res);
         } catch (error) {
             console.error("Lỗi lấy lịch:", error);
         }
