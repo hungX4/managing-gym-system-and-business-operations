@@ -73,7 +73,7 @@ export default function UserAttendanceHistory() {
 
     return (
         /* ÉP KHUÔN VỪA KHÍT 1 MÀN HÌNH (100dvh) */
-        <div className="h-[100dvh] w-full bg-black text-gray-200 sm:pt-20 pb-3 px-2 sm:px-6 flex flex-col overflow-hidden">
+        <div className="h-[100dvh] w-full bg-black text-gray-200 sm:pt-4 pb-3 px-2 sm:px-6 flex flex-col overflow-hidden">
 
             {/* TITLE BAR (Đã bỏ chữ "Lịch sử tập luyện", căn gọn gàng) */}
             <div className="flex items-center justify-between mb-2.5 px-1 shrink-0">

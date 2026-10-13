@@ -115,16 +115,15 @@ export default function CheckinPage() {
     };
 
     return (
-        <div className="flex flex-col h-screen pt-16 bg-[#0a0a0a] text-white overflow-hidden">
+        <div className="flex flex-col h-screen bg-[#0a0a0a] text-white overflow-hidden">
             <div className="flex flex-col flex-1 p-3 md:p-6 overflow-hidden">
 
                 {/* Thanh Tiêu Đề Điều Hướng Đơn Giản */}
-                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-4 shrink-0">
+                <div className="flex flex-col lg:flex-row justify-between items-center gap-4 shrink-0">
                     <div>
-                        <h1 className="text-xl md:text-2xl font-bold uppercase tracking-wider">
-                            Quản Lý <span className="text-red-600">Check-in PT</span>
-                        </h1>
-                        <p className="text-gray-400 text-sm mt-1">Xác nhận lịch tập cho hội viên.</p>
+                        <h3 className="text-base md:text-xl font-bold uppercase tracking-wider leading-tight">
+                            Xác nhận lịch tập cho hội viên
+                        </h3>
                     </div>
 
                     <div className="flex items-center justify-between w-full lg:w-auto bg-[#111111] border border-gray-800 rounded-lg shadow px-2 py-1.5 shrink-0">
