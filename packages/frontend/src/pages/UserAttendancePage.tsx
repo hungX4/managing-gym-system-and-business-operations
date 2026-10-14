@@ -46,19 +46,19 @@ export default function UserAttendanceHistory() {
         switch (status) {
             case UsageLogStatus.SELFCHECKIN:
                 return (
-                    <span className="text-[10px] sm:text-[11px] bg-blue-900/30 text-blue-400 px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded border border-blue-800/50 font-bold whitespace-nowrap">
+                    <span className="text-[10px] sm:text-[11px] text-blue-400 px-1.5 py-0.5 sm:px-2.5 sm:py-1 font-bold whitespace-nowrap">
                         TỰ TẬP
                     </span>
                 );
             case UsageLogStatus.COACHCHECKIN:
                 return (
-                    <span className="text-[10px] sm:text-[11px] bg-green-900/30 text-green-400 px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded border border-green-800/50 font-bold whitespace-nowrap">
+                    <span className="text-[10px] sm:text-[11px] text-green-400 px-1.5 py-0.5 sm:px-2.5 sm:py-1 font-bold whitespace-nowrap">
                         TẬP VỚI PT
                     </span>
                 );
             case WorkLogStatus.LATE_CANCEL:
                 return (
-                    <span className="text-[10px] sm:text-[11px] bg-red-900/30 text-red-400 px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded border border-red-800/50 font-bold whitespace-nowrap">
+                    <span className="text-[10px] sm:text-[11px] text-red-400 px-1.5 py-0.5 sm:px-2.5 sm:py-1  font-bold whitespace-nowrap">
                         LATE CANCEL
                     </span>
                 );
@@ -116,16 +116,16 @@ export default function UserAttendanceHistory() {
                                 usageLogs.map((log) => (
                                     <tr key={log.usageLogId} className="hover:bg-white/5 transition-colors group">
                                         {/* Thời gian */}
-                                        <td className="px-2.5 sm:px-6 py-2.5 sm:py-3.5">
-                                            <div className="text-xs sm:text-sm font-mono text-red-500 font-bold">
+                                        <td className="px-2.5 sm:px-6 py-2.5 sm:py-3.5 ">
+                                            <div className="text-xs sm:text-sm font-mono text-white font-medium  group-hover:text-red-400">
                                                 {log.checkinTime.split(' ')[1]}
                                             </div>
-                                            <div className="text-[10px] sm:text-xs text-gray-500 mt-0.5">
+                                            <div className="text-[10px] sm:text-xs text-gray-300 mt-0.5  group-hover:text-red-400">
                                                 {log.checkinTime.split(' ')[0]}
                                             </div>
                                         </td>
                                         {/* Gói tập */}
-                                        <td className="px-2.5 sm:px-6 py-2.5 sm:py-3.5 text-xs sm:text-sm font-bold text-gray-300 group-hover:text-red-400 transition-colors max-w-[100px] sm:max-w-none truncate">
+                                        <td className="px-2.5 sm:px-6 py-2.5 sm:py-3.5 text-xs sm:text-sm font-medium text-gray-300 group-hover:text-red-400 transition-colors max-w-[100px] sm:max-w-none truncate">
                                             {log.packageName}
                                         </td>
                                         {/* Trạng thái */}
@@ -133,10 +133,10 @@ export default function UserAttendanceHistory() {
                                             {renderStatusBadge(log.status)}
                                         </td>
                                         {/* HLV */}
-                                        <td className="px-2.5 sm:px-6 py-2.5 sm:py-3.5 text-xs sm:text-sm text-gray-400">
+                                        <td className="px-2.5 sm:px-6 py-2.5 sm:py-3.5 text-xs sm:text-sm font-medium text-gray-400  group-hover:text-white">
                                             {log.coachName ? (
                                                 <span className="flex items-center gap-1.5 max-w-[80px] sm:max-w-none truncate">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0"></span>
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 shrink-0"></span>
                                                     <span className="truncate">{log.coachName}</span>
                                                 </span>
                                             ) : (
