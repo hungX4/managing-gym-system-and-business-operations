@@ -89,7 +89,7 @@ export const SalaryComponent: React.FC = () => {
     };
 
     return (
-        <div className=" p-8 md:pt-22 bg-gray-50 min-h-screen font-sans text-gray-800">
+        <div className=" p-8  bg-gray-50 min-h-screen font-sans text-gray-800">
             {/* HEADER */}
             <div className="xs:mt-12 flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                 <div>

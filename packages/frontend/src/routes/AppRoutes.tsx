@@ -38,11 +38,6 @@ export default function AppRoutes() {
             {/* Route Đăng nhập / Đăng ký */}
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
-            <Route element={<ProtectedRoute allowedRoles={[Role.ADMIN]} />}>
-                <Route path='/package' element={<PackagePage />} />
-                <Route path='/salaryconfig' element={<SalaryConfigurationPage />} />
-                <Route path='/salary' element={<SalaryComponent />} />
-            </Route>
 
             <Route path='/profile' element={<ProfilePage />} />
             <Route path='/coach-profile' element={<CoachProfileSettings />} />
@@ -68,7 +63,7 @@ export default function AppRoutes() {
 
             <Route element={<ProtectedRoute allowedRoles={[Role.STAFF, Role.ADMIN, Role.COACH]} />}>
                 {/* Route mua goi tập offline */}
-                <Route path="/offline-sub" element={<OfflineSucscriptionPage />} />
+                <Route path=" " element={<OfflineSucscriptionPage />} />
             </Route>
         </Routes>
     );

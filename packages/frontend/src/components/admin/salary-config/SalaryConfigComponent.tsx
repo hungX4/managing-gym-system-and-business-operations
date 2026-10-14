@@ -155,15 +155,15 @@ const SalaryConfigComponent: React.FC = () => {
     // UI RENDER
     // ==========================================
     if (isFetching) {
-        return <div className="min-h-screen bg-black text-white p-8 flex items-center justify-center">Đang tải dữ liệu...</div>;
+        return <div className="min-h-screen bg-black text-white  flex items-center justify-center">Đang tải dữ liệu...</div>;
     }
 
     return (
-        <div className="min-h-screen bg-black text-white p-8 font-sans pt-22">
+        <div className="min-h-screen bg-black text-white p-8 font-sans">
 
             {/* HEADER TONE ĐỎ ĐEN */}
             <div className="mb-8 border-b border-zinc-800 pb-4">
-                <h1 className="text-4xl font-bold uppercase tracking-wide">
+                <h1 className="text-3xl font-bold uppercase tracking-wide">
                     CẤU HÌNH <span className="text-red-600">LƯƠNG</span>
                 </h1>
                 <p className="text-zinc-400 mt-2">Quản lý và cập nhật mức lương tiêu chuẩn cho hệ thống FitStation.</p>

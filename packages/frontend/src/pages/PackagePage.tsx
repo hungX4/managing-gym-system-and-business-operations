@@ -58,7 +58,7 @@ export default function PackagePage() {
 
     return (
         // pt-24 để né cái NavBar fixed (h-16 = 64px, thêm khoảng cách cho thoáng)
-        <div className="min-h-screen bg-[#0a0a0a] text-white pt-24 pb-12 px-4 md:px-8 font-sans">
+        <div className="min-h-screen bg-[#0a0a0a] text-white pb-12 px-4 md:px-8 font-sans">
             <div className="max-w-6xl mx-auto space-y-8">
 
                 {/* COMPONENT FORM THÊM MỚI (Truyền fetchPackages vào onSuccess để tạo xong thì bảng tự update) */}
