@@ -26,6 +26,7 @@ export default function AdminLayout() {
                             {ADMIN_DASHBOARD.map((item) => {
                                 const isActive = currentPath === item.path;
 
+
                                 return (
                                     <Link
                                         key={item.id}

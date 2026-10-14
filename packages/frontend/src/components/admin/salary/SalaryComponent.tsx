@@ -80,13 +80,89 @@ export const SalaryComponent: React.FC = () => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount || 0);
     };
 
+    // HÀM XUẤT EXCEL CHUẨN UTF-8
+    const handleExportExcel = () => {
+        if (!salaries || salaries.length === 0) {
+            toast.error("Không có dữ liệu lương để xuất Excel!");
+            return;
+        }
+
+        const tableContent = `
+            <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+            <head>
+                <meta charset="utf-8" />
+                <!--[if gte mso 9]>
+                <xml>
+                    <x:ExcelWorkbook>
+                        <x:ExcelWorksheets>
+                            <x:ExcelWorksheet>
+                                <x:Name>Bảng lương T${month}-${year}</x:Name>
+                                <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+                            </x:ExcelWorksheet>
+                        </x:ExcelWorksheets>
+                    </x:ExcelWorkbook>
+                </xml>
+                <![endif]-->
+                <style>
+                    td, th { padding: 8px; text-align: left; }
+                    .header { background-color: #dc2626; color: #ffffff; font-weight: bold; }
+                    .text-right { text-align: right; }
+                    .text-center { text-align: center; }
+                    .bold { font-weight: bold; }
+                </style>
+            </head>
+            <body>
+                <h2>BẢNG LƯƠNG NGHỆ THUẬT FITSTATION - THÁNG ${month}/${year}</h2>
+                <table border="1" cellspacing="0" cellpadding="5">
+                    <thead>
+                        <tr class="header">
+                            <th class="text-center">STT</th>
+                            <th>Nhân viên</th>
+                            <th class="text-right">Lương cứng (VNĐ)</th>
+                            <th class="text-right">Lương dạy (VNĐ)</th>
+                            <th class="text-right">Hoa hồng (VNĐ)</th>
+                            <th class="text-right">Thưởng (VNĐ)</th>
+                            <th class="text-right">Tổng thu nhập (VNĐ)</th>
+                            <th class="text-center">Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${salaries.map((item, idx) => `
+                            <tr>
+                                <td class="text-center">${idx + 1}</td>
+                                <td class="bold">${item.coachName || ''}</td>
+                                <td class="text-right">${item.baseSalary || 0}</td>
+                                <td class="text-right">${item.teachingIncome || 0}</td>
+                                <td class="text-right">${item.salesCommission || 0}</td>
+                                <td class="text-right">${item.staffBonus || 0}</td>
+                                <td class="text-right bold" style="color: #dc2626;">${item.totalIncome || 0}</td>
+                                <td class="text-center">${item.status === 'PAID' ? 'ĐÃ CHI' : item.status === 'PENDING' ? 'CHỜ CHI' : 'NHÁP'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </body>
+            </html>
+        `;
+
+        const blob = new Blob(['\uFEFF' + tableContent], { type: 'application/vnd.ms-excel;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Bang_Luong_FitStation_Thang_${month}_${year}.xls`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        toast.success("Đã xuất file Excel thành công!");
+    };
+
     const openDetailsModal = (coach: any) => {
         setSelectedCoach(coach);
         setIsDetailsModalOpen(true);
     };
 
     return (
-        /* Xóa min-h-screen ở đây - Để h-auto để không ép tạo chiều cao riêng */
         <div className="p-6 md:p-8 bg-black w-full h-auto font-sans text-zinc-100">
             {/* HEADER */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 bg-[#121212] p-6 rounded-xl border border-zinc-800 shadow-2xl">
@@ -99,22 +175,23 @@ export const SalaryComponent: React.FC = () => {
                     </p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4">
+                <div className="flex flex-wrap items-center gap-3">
+                    {/* BỘ CHỌN THÁNG */}
                     <div className="flex items-center bg-black border border-zinc-800 rounded-lg p-1">
                         <button
                             onClick={handlePrevMonth}
-                            className="p-2 hover:bg-zinc-800 rounded text-zinc-400 hover:text-white transition"
+                            className="p-2 hover:bg-zinc-800 rounded text-zinc-400 hover:text-red-500 transition"
                         >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
-                        <div className="px-4 font-bold min-w-[130px] text-center text-red-500 text-sm">
+                        <div className="px-4 font-bold min-w-[130px] text-center text-white text-sm">
                             Tháng {month} / {year}
                         </div>
                         <button
                             onClick={handleNextMonth}
-                            className="p-2 hover:bg-zinc-800 rounded text-zinc-400 hover:text-white transition"
+                            className="p-2 hover:bg-zinc-800 rounded text-zinc-400 hover:text-red-500 transition"
                         >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
@@ -122,15 +199,32 @@ export const SalaryComponent: React.FC = () => {
                         </button>
                     </div>
 
+                    {/* NÚT XUẤT EXCEL */}
+                    <button
+                        onClick={handleExportExcel}
+                        disabled={!hasData || isLoading}
+                        className={`px-4 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider transition-all duration-300 flex items-center gap-2 border ${!hasData || isLoading
+                            ? 'bg-zinc-900 text-zinc-600 border-zinc-800 cursor-not-allowed'
+                            : ' text-white border-zinc-800 hover:bg-red-500 hover:text-white hover:border-red-500 shadow-lg  active:scale-95 cursor-pointer'
+                            }`}
+                        title="Xuất bảng lương ra file Excel"
+                    >
+                        <svg className="w-4 h-4 text-white group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Xuất File
+                    </button>
+
+                    {/* NÚT CHỐT LƯƠNG - TONE ĐỎ ĐEN RED-500 */}
                     <button
                         onClick={() => setIsConfirmModalOpen(true)}
                         disabled={!canFinalize}
-                        className={`px-6 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider transition-all duration-300 flex items-center gap-2
-                            ${isFinalized
-                                ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 cursor-not-allowed'
-                                : !isPastMonth || !hasData
-                                    ? 'bg-zinc-900 text-zinc-600 border border-zinc-800 cursor-not-allowed'
-                                    : 'bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-600/30 active:scale-95'}`}
+                        className={`px-6 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider transition-all duration-300 flex items-center gap-2 border ${isFinalized
+                            ? 'bg-red-950/20 text-red-500/70 border-red-900/40 cursor-not-allowed'
+                            : !isPastMonth || !hasData
+                                ? 'bg-zinc-900 text-zinc-600 border-zinc-800 cursor-not-allowed'
+                                : 'bg-red-500 hover:bg-red-600 text-white border-red-500 shadow-lg shadow-red-500/25 active:scale-95 cursor-pointer'
+                            }`}
                     >
                         {isFinalized ? "Đã Khóa Sổ" : !isPastMonth ? "Chưa hết tháng" : "Chốt Lương Tháng Này"}
                     </button>
@@ -139,7 +233,6 @@ export const SalaryComponent: React.FC = () => {
 
             {/* BẢNG DỮ LIỆU */}
             <div className="bg-[#121212] rounded-xl border border-zinc-800 overflow-hidden shadow-2xl">
-                {/* Chỉ giữ overflow-x-auto cho trường hợp màn hình nhỏ thiếu ngang, KHÔNG dùng overflow-y */}
                 <div className="overflow-x-auto">
                     <table className="w-full text-left whitespace-nowrap">
                         <thead className="bg-[#18181b] border-b border-zinc-800 text-zinc-400 text-xs font-bold uppercase tracking-wider">
@@ -192,10 +285,10 @@ export const SalaryComponent: React.FC = () => {
                                     </td>
                                     <td className="p-4 text-center border-r border-zinc-800/50">
                                         <span className={`px-2.5 py-1 rounded text-[10px] font-black tracking-wider border ${item.status === 'PAID'
-                                                ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60' :
-                                                item.status === 'PENDING'
-                                                    ? 'bg-amber-950/60 text-amber-400 border-amber-800/80' :
-                                                    'bg-zinc-800 text-zinc-400 border-zinc-700'
+                                            ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60' :
+                                            item.status === 'PENDING'
+                                                ? 'bg-amber-950/60 text-amber-400 border-amber-800/80' :
+                                                'bg-zinc-800 text-zinc-400 border-zinc-700'
                                             }`}>
                                             {item.status === 'PAID' ? 'ĐÃ CHI' : item.status === 'PENDING' ? 'CHỜ CHI' : 'NHÁP'}
                                         </span>
@@ -219,7 +312,7 @@ export const SalaryComponent: React.FC = () => {
                 </div>
             </div>
 
-            {/* MODAL XÁC NHẬN */}
+            {/* MODAL XÁC NHẬN CHỐT LƯƠNG */}
             {isConfirmModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
                     <div className="bg-[#121212] border border-zinc-800 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-200">
