@@ -27,6 +27,18 @@ export const SalaryDetailsModal: React.FC<SalaryDetailsModalProps> = ({
     const [isLoading, setIsLoading] = useState(false);
     const [isPaying, setIsPaying] = useState(false);
 
+    // Khóa cuộn trang chính khi Modal đang mở để tránh lồng scrollbar
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isOpen]);
+
     useEffect(() => {
         if (isOpen && coachId) {
             fetchDetails();
@@ -40,8 +52,6 @@ export const SalaryDetailsModal: React.FC<SalaryDetailsModalProps> = ({
         setIsLoading(true);
         try {
             const response = await SalaryApi.getSalaryDetails({ coachId: coachId!, month, year });
-
-            // XỬ LÝ ĐÚNG CẤU TRÚC DATA TRẢ VỀ (Bọc trong trường data)
             const payload = response.data || response;
 
             setDetailsData({
@@ -68,96 +78,110 @@ export const SalaryDetailsModal: React.FC<SalaryDetailsModalProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+            <div className="bg-[#121212] rounded-2xl border border-zinc-800 shadow-2xl w-full max-w-5xl max-h-[88vh] overflow-hidden flex flex-col">
 
                 {/* HEADER */}
-                <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <div className="p-6 border-b border-zinc-800 flex justify-between items-center bg-black/60 shrink-0">
                     <div>
-                        <h2 className="text-xl font-bold text-gray-900">Sao kê chi tiết lương</h2>
-                        <p className="text-sm text-gray-500 mt-1">
-                            Nhân viên: <span className="font-bold text-red-600 uppercase">{coachName}</span> • Tháng {month}/{year}
+                        <h2 className="text-xl font-black uppercase text-white tracking-wider">Sao kê chi tiết lương</h2>
+                        <p className="text-xs text-zinc-400 mt-1 font-medium">
+                            Nhân viên: <span className="font-bold text-red-500 uppercase">{coachName}</span> • Tháng {month}/{year}
                         </p>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full transition-colors text-gray-400">
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button
+                        onClick={onClose}
+                        className="p-2 hover:bg-zinc-800 rounded-full transition-colors text-zinc-400 hover:text-white"
+                        title="Đóng cửa sổ"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
 
-                <div className="overflow-y-auto flex-1 p-6">
-                    {/* --- 1. TỔNG HỢP CON SỐ (SUMMARY) --- */}
+                {/* BODY CÓ SCROLLBAR TỰ ĐỊNH DẠNG MỎNG ĐẸP */}
+                <div className="overflow-y-auto flex-1 p-6 bg-black/30 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-800 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-red-600">
+                    {/* --- 1. TỔNG HỢP CON SỐ --- */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                        <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
-                            <p className="text-[10px] font-bold text-blue-600 uppercase mb-1">Tổng số buổi dạy</p>
-                            <p className="text-lg font-bold text-blue-900">{salaryData?.totalTeachingSessions || salaryData?.totalSessions || 0} buổi</p>
+                        <div className="p-4 bg-black rounded-xl border border-zinc-800">
+                            <p className="text-[10px] font-bold text-red-500 uppercase mb-1">Tổng số buổi dạy</p>
+                            <p className="text-xl font-black text-white">{salaryData?.totalTeachingSessions || salaryData?.totalSessions || 0} buổi</p>
                         </div>
-                        <div className="p-4 bg-purple-50 rounded-xl border border-purple-100">
-                            <p className="text-[10px] font-bold text-purple-600 uppercase mb-1">Tổng doanh số bán</p>
-                            <p className="text-lg font-bold text-purple-900">{formatCurrency(salaryData?.totalSalesAmount)}</p>
+                        <div className="p-4 bg-black rounded-xl border border-zinc-800">
+                            <p className="text-[10px] font-bold text-zinc-400 uppercase mb-1">Tổng doanh số bán</p>
+                            <p className="text-lg font-bold text-white font-mono">{formatCurrency(salaryData?.totalSalesAmount)}</p>
                         </div>
-                        <div className="p-4 bg-amber-50 rounded-xl border border-amber-100">
-                            <p className="text-[10px] font-bold text-amber-600 uppercase mb-1">Lương cứng</p>
-                            <p className="text-lg font-bold text-amber-900">{formatCurrency(salaryData?.baseSalary)}</p>
+                        <div className="p-4 bg-black rounded-xl border border-zinc-800">
+                            <p className="text-[10px] font-bold text-zinc-400 uppercase mb-1">Lương cứng</p>
+                            <p className="text-lg font-bold text-white font-mono">{formatCurrency(salaryData?.baseSalary)}</p>
                         </div>
-                        <div className="p-4 bg-red-600 rounded-xl shadow-md text-white">
+                        <div className="p-4 bg-red-600 text-white rounded-xl shadow-lg shadow-red-600/20 border border-red-500">
                             <p className="text-[10px] font-bold text-red-100 uppercase mb-1">Tổng thực nhận</p>
-                            <p className="text-xl font-extrabold">{formatCurrency(salaryData?.totalIncome)}</p>
+                            <p className="text-xl font-black font-mono">{formatCurrency(salaryData?.totalIncome)}</p>
                         </div>
                     </div>
 
                     {/* --- 2. TABS ĐIỀU HƯỚNG --- */}
-                    <div className="flex border-b border-gray-200 mb-6">
+                    <div className="flex border-b border-zinc-800 mb-6 bg-black rounded-t-xl px-2">
                         <button
                             onClick={() => setActiveTab('TEACHING')}
-                            className={`px-6 py-3 font-bold text-sm transition-all border-b-2 ${activeTab === 'TEACHING' ? 'border-red-600 text-red-600' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+                            className={`px-6 py-3 font-bold text-xs uppercase tracking-wider transition-all border-b-2 ${activeTab === 'TEACHING'
+                                    ? 'border-red-600 text-red-500 bg-red-950/20'
+                                    : 'border-transparent text-zinc-400 hover:text-zinc-200'
+                                }`}
                         >
                             Chi tiết dạy học ({detailsData.teachingDetails?.length || 0})
                         </button>
                         <button
                             onClick={() => setActiveTab('SALES')}
-                            className={`px-6 py-3 font-bold text-sm transition-all border-b-2 ${activeTab === 'SALES' ? 'border-red-600 text-red-600' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+                            className={`px-6 py-3 font-bold text-xs uppercase tracking-wider transition-all border-b-2 ${activeTab === 'SALES'
+                                    ? 'border-red-600 text-red-500 bg-red-950/20'
+                                    : 'border-transparent text-zinc-400 hover:text-zinc-200'
+                                }`}
                         >
                             Chi tiết bán gói ({detailsData.salesDetails?.length || 0})
                         </button>
                     </div>
 
                     {/* --- 3. BẢNG DỮ LIỆU --- */}
-                    <div className="min-h-[300px]">
+                    <div className="min-h-[280px] bg-black rounded-xl border border-zinc-800 overflow-hidden">
                         {isLoading ? (
-                            <div className="flex flex-col items-center justify-center py-20 text-gray-400 gap-2">
-                                <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
-                                <p className="text-sm">Đang lấy dữ liệu sao kê...</p>
+                            <div className="flex flex-col items-center justify-center py-20 text-zinc-500 gap-2">
+                                <div className="w-6 h-6 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
+                                <p className="text-xs">Đang lấy dữ liệu sao kê...</p>
                             </div>
                         ) : activeTab === 'TEACHING' ? (
                             <table className="w-full text-left text-sm border-collapse">
-                                <thead className="text-gray-400 font-bold uppercase text-[10px] tracking-widest border-b border-gray-100 bg-gray-50/50">
+                                <thead className="bg-[#18181b] text-zinc-400 text-[10px] font-bold uppercase tracking-wider border-b border-zinc-800">
                                     <tr>
-                                        <th className="p-3 border-r border-gray-100/50 w-20 text-center">Buổi số</th>
-                                        <th className="p-3 border-r border-gray-100/50">Check-in</th>
-                                        <th className="p-3 border-r border-gray-100/50">Khách hàng</th>
-                                        <th className="p-3 border-r border-gray-100/50 text-right">Hoa hồng nhận</th>
+                                        <th className="p-3 border-r border-zinc-800/80 w-20 text-center">Buổi số</th>
+                                        <th className="p-3 border-r border-zinc-800/80">Check-in</th>
+                                        <th className="p-3 border-r border-zinc-800/80">Khách hàng</th>
+                                        <th className="p-3 border-r border-zinc-800/80 text-right">Hoa hồng nhận</th>
                                         <th className="p-3 text-center">Trạng thái</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-50">
+                                <tbody className="divide-y divide-zinc-800/50">
                                     {detailsData.teachingDetails?.length === 0 ? (
-                                        <tr><td colSpan={5} className="py-12 text-center text-gray-400 italic">Không có dữ liệu buổi dạy.</td></tr>
+                                        <tr><td colSpan={5} className="py-12 text-center text-zinc-500 italic">Không có dữ liệu buổi dạy.</td></tr>
                                     ) : detailsData.teachingDetails.map((log: any, idx) => (
-                                        <tr key={log.workLogId || idx} className="hover:bg-gray-50/50 transition-colors">
-                                            <td className="p-3 border-r border-gray-100/50 font-bold text-gray-500 text-center">{idx + 1}</td>
-                                            <td className="p-3 border-r border-gray-100/50 font-mono">
+                                        <tr key={log.workLogId || idx} className="hover:bg-zinc-900/50 transition-colors">
+                                            <td className="p-3 border-r border-zinc-800/50 font-bold text-zinc-500 text-center">{idx + 1}</td>
+                                            <td className="p-3 border-r border-zinc-800/50 font-mono text-zinc-300 text-xs">
                                                 {new Date(log.checkinTime).toLocaleString('vi-VN')}
                                             </td>
-                                            <td className="p-3 border-r border-gray-100/50 font-bold text-gray-800">
+                                            <td className="p-3 border-r border-zinc-800/50 font-bold text-white">
                                                 {log.booking?.member?.fullName || 'Khách lẻ'}
                                             </td>
-                                            <td className="p-3 border-r border-gray-100/50 text-right font-bold text-blue-600">
+                                            <td className="p-3 border-r border-zinc-800/50 text-right font-bold text-red-500 font-mono">
                                                 {formatCurrency(log.earnAmount)}
                                             </td>
-                                            <td className="p-3 uppercase text-[10px] font-extrabold text-center">
-                                                <span className={`px-2 py-1 rounded ${log.status === 'COMPLETED' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'}`}>
+                                            <td className="p-3 uppercase text-[10px] font-black text-center">
+                                                <span className={`px-2 py-0.5 rounded border ${log.status === 'COMPLETED'
+                                                        ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60'
+                                                        : 'bg-red-950/60 text-red-400 border-red-800/60'
+                                                    }`}>
                                                     {log.status}
                                                 </span>
                                             </td>
@@ -167,25 +191,25 @@ export const SalaryDetailsModal: React.FC<SalaryDetailsModalProps> = ({
                             </table>
                         ) : (
                             <table className="w-full text-left text-sm border-collapse">
-                                <thead className="text-gray-400 font-bold uppercase text-[10px] tracking-widest border-b border-gray-100 bg-gray-50/50">
+                                <thead className="bg-[#18181b] text-zinc-400 text-[10px] font-bold uppercase tracking-wider border-b border-zinc-800">
                                     <tr>
-                                        <th className="p-3 border-r border-gray-100/50">Ngày bán</th>
-                                        <th className="p-3 border-r border-gray-100/50">Gói tập</th>
-                                        <th className="p-3 border-r border-gray-100/50">Khách mua</th>
+                                        <th className="p-3 border-r border-zinc-800/80">Ngày bán</th>
+                                        <th className="p-3 border-r border-zinc-800/80">Gói tập</th>
+                                        <th className="p-3 border-r border-zinc-800/80">Khách mua</th>
                                         <th className="p-3 text-right">Doanh số (Thực thu)</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-50">
+                                <tbody className="divide-y divide-zinc-800/50">
                                     {detailsData.salesDetails?.length === 0 ? (
-                                        <tr><td colSpan={4} className="py-12 text-center text-gray-400 italic">Chưa bán được gói nào trong tháng.</td></tr>
+                                        <tr><td colSpan={4} className="py-12 text-center text-zinc-500 italic">Chưa bán được gói nào trong tháng.</td></tr>
                                     ) : detailsData.salesDetails.map((sale: any, idx) => (
-                                        <tr key={sale.subscriptionId || idx} className="hover:bg-gray-50/50">
-                                            <td className="p-3 border-r border-gray-100/50 font-mono">
+                                        <tr key={sale.subscriptionId || idx} className="hover:bg-zinc-900/50 transition-colors">
+                                            <td className="p-3 border-r border-zinc-800/50 font-mono text-zinc-300 text-xs">
                                                 {new Date(sale.createdAt).toLocaleDateString('vi-VN')}
                                             </td>
-                                            <td className="p-3 border-r border-gray-100/50 font-bold text-blue-600">{sale.package?.name}</td>
-                                            <td className="p-3 border-r border-gray-100/50">{sale.member?.fullName}</td>
-                                            <td className="p-3 text-right font-bold text-gray-900">
+                                            <td className="p-3 border-r border-zinc-800/50 font-bold text-red-500">{sale.package?.name}</td>
+                                            <td className="p-3 border-r border-zinc-800/50 font-medium text-white">{sale.member?.fullName}</td>
+                                            <td className="p-3 text-right font-bold text-white font-mono">
                                                 {formatCurrency(sale.actualPaid)}
                                             </td>
                                         </tr>
@@ -197,10 +221,10 @@ export const SalaryDetailsModal: React.FC<SalaryDetailsModalProps> = ({
                 </div>
 
                 {/* --- 4. FOOTER --- */}
-                <div className="p-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3 items-center">
+                <div className="p-4 bg-black/60 border-t border-zinc-800 flex justify-end gap-3 items-center shrink-0">
                     <button
                         onClick={onClose}
-                        className="px-6 py-2 border border-gray-300 rounded-xl text-gray-700 font-bold hover:bg-white transition-all"
+                        className="px-6 py-2 border border-zinc-800 rounded-lg text-zinc-300 font-bold text-xs uppercase hover:bg-zinc-800 transition-all"
                     >
                         Đóng
                     </button>
@@ -208,7 +232,7 @@ export const SalaryDetailsModal: React.FC<SalaryDetailsModalProps> = ({
                         <button
                             disabled={isPaying}
                             onClick={handleConfirmPayment}
-                            className="px-6 py-2 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-100 flex items-center gap-2"
+                            className="px-6 py-2 bg-emerald-600 text-white rounded-lg font-bold text-xs uppercase hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 transition-all"
                         >
                             {isPaying ? 'Đang thực hiện...' : 'Xác nhận & Thanh toán lương'}
                         </button>

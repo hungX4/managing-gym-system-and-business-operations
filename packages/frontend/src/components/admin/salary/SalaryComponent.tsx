@@ -46,18 +46,16 @@ export const SalaryComponent: React.FC = () => {
     const isPastMonth = year < today.getFullYear() || (year === today.getFullYear() && month < today.getMonth() + 1);
     const hasData = salaries.length > 0;
 
-    // LOGIC CHECK NÚT CHỐT LƯƠNG: Nếu có bất kỳ dòng nào khác ESTIMATED (nghĩa là PENDING hoặc PAID) -> Khóa
     const isFinalized = hasData && salaries.some(s => s.status !== SalaryStatus.ESTIMATED);
     const canFinalize = isPastMonth && !isFinalized && hasData;
 
-    // 1. HÀM GỌI POST: CHỐT LƯƠNG
     const handleFinalize = async () => {
         setIsFinalizing(true);
         try {
             await SalaryApi.finalizeSalary({ month, year });
             setIsConfirmModalOpen(false);
             toast.success("Đã chốt sổ lương thành công!");
-            fetchSalaries(); // Load lại data, BE sẽ trả về PENDING -> isFinalized thành true -> Nút tự tắt!
+            fetchSalaries();
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Lỗi khi chốt lương");
         } finally {
@@ -65,7 +63,6 @@ export const SalaryComponent: React.FC = () => {
         }
     };
 
-    // 2. HÀM GỌI PATCH: TRẢ LƯƠNG
     const handlePaySalary = async (salaryId?: number) => {
         if (!salaryId) return;
         if (!window.confirm("Xác nhận đã chuyển khoản và thanh toán lương cho nhân sự này?")) return;
@@ -73,7 +70,7 @@ export const SalaryComponent: React.FC = () => {
         try {
             await SalaryApi.paySalary(salaryId);
             toast.success("Đã cập nhật trạng thái: Đã thanh toán!");
-            fetchSalaries(); // Load lại data để đổi badge thành ĐÃ THANH TOÁN
+            fetchSalaries();
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Lỗi khi thanh toán");
         }
@@ -89,31 +86,51 @@ export const SalaryComponent: React.FC = () => {
     };
 
     return (
-        <div className=" p-8  bg-gray-50 min-h-screen font-sans text-gray-800">
+        /* Xóa min-h-screen ở đây - Để h-auto để không ép tạo chiều cao riêng */
+        <div className="p-6 md:p-8 bg-black w-full h-auto font-sans text-zinc-100">
             {/* HEADER */}
-            <div className="xs:mt-12 flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 bg-[#121212] p-6 rounded-xl border border-zinc-800 shadow-2xl">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-wide text-gray-900">
+                    <h1 className="text-2xl md:text-3xl font-black uppercase tracking-wider text-white">
                         BẢNG LƯƠNG <span className="text-red-600">HỆ THỐNG</span>
                     </h1>
-                    <p className="text-gray-500 text-sm mt-1">Quản lý thu nhập của nhân sự trong tháng</p>
+                    <p className="text-zinc-400 text-sm mt-1 font-medium">
+                        Quản lý và cập nhật mức lương tiêu chuẩn cho hệ thống FitStation.
+                    </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4">
-                    <div className="flex items-center bg-gray-50 border border-gray-200 rounded-lg p-1">
-                        <button onClick={handlePrevMonth} className="p-2 hover:bg-gray-200 rounded text-gray-600 transition"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg></button>
-                        <div className="px-4 font-bold min-w-[120px] text-center text-red-600">Tháng {month} / {year}</div>
-                        <button onClick={handleNextMonth} className="p-2 hover:bg-gray-200 rounded text-gray-600 transition"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg></button>
+                    <div className="flex items-center bg-black border border-zinc-800 rounded-lg p-1">
+                        <button
+                            onClick={handlePrevMonth}
+                            className="p-2 hover:bg-zinc-800 rounded text-zinc-400 hover:text-white transition"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <div className="px-4 font-bold min-w-[130px] text-center text-red-500 text-sm">
+                            Tháng {month} / {year}
+                        </div>
+                        <button
+                            onClick={handleNextMonth}
+                            className="p-2 hover:bg-zinc-800 rounded text-zinc-400 hover:text-white transition"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
                     </div>
 
                     <button
                         onClick={() => setIsConfirmModalOpen(true)}
                         disabled={!canFinalize}
-                        className={`px-6 py-2.5 rounded-lg font-bold shadow-sm transition-all duration-300 flex items-center gap-2
-                            ${isFinalized ? 'bg-green-100 text-green-700 border border-green-300 cursor-not-allowed' :
-                                !isPastMonth ? 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed' :
-                                    !hasData ? 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed' :
-                                        'bg-red-600 hover:bg-red-700 text-white shadow-red-600/30 hover:shadow-lg'}`}
+                        className={`px-6 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider transition-all duration-300 flex items-center gap-2
+                            ${isFinalized
+                                ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 cursor-not-allowed'
+                                : !isPastMonth || !hasData
+                                    ? 'bg-zinc-900 text-zinc-600 border border-zinc-800 cursor-not-allowed'
+                                    : 'bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-600/30 active:scale-95'}`}
                     >
                         {isFinalized ? "Đã Khóa Sổ" : !isPastMonth ? "Chưa hết tháng" : "Chốt Lương Tháng Này"}
                     </button>
@@ -121,52 +138,64 @@ export const SalaryComponent: React.FC = () => {
             </div>
 
             {/* BẢNG DỮ LIỆU */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-[#121212] rounded-xl border border-zinc-800 overflow-hidden shadow-2xl">
+                {/* Chỉ giữ overflow-x-auto cho trường hợp màn hình nhỏ thiếu ngang, KHÔNG dùng overflow-y */}
                 <div className="overflow-x-auto">
                     <table className="w-full text-left whitespace-nowrap">
-                        <thead className="bg-gray-50 border-b border-gray-200 text-gray-600 text-sm uppercase tracking-wider">
-                            <tr className='bg-red-500'>
-                                <th className="p-4 font-bold border-r border-gray-200/50 text-white">Nhân viên</th>
-                                <th className="p-4 font-bold text-right border-r border-gray-200/50 text-white">Lương cứng</th>
-                                <th className="p-4 font-bold text-right border-r border-gray-200/50 text-white">Lương dạy</th>
-                                <th className="p-4 font-bold text-right border-r border-gray-200/50 text-white">Hoa hồng</th>
-                                <th className="p-4 font-bold text-right border-r border-gray-200/50 text-white">Thưởng</th>
-                                <th className="p-4 font-bold text-right border-r border-gray-200/50 text-white">Tổng thu nhập</th>
-                                <th className="p-4 font-bold text-center border-r border-gray-200/50 text-white">Trạng thái</th>
-                                <th className="p-4 font-bold text-center text-white">Action</th>
+                        <thead className="bg-[#18181b] border-b border-zinc-800 text-zinc-400 text-xs font-bold uppercase tracking-wider">
+                            <tr>
+                                <th className="p-4 border-r border-zinc-800/80">Nhân viên</th>
+                                <th className="p-4 text-right border-r border-zinc-800/80">Lương cứng</th>
+                                <th className="p-4 text-right border-r border-zinc-800/80">Lương dạy</th>
+                                <th className="p-4 text-right border-r border-zinc-800/80">Hoa hồng</th>
+                                <th className="p-4 text-right border-r border-zinc-800/80">Thưởng</th>
+                                <th className="p-4 text-right border-r border-zinc-800/80 text-red-500">Tổng thu nhập</th>
+                                <th className="p-4 text-center border-r border-zinc-800/80">Trạng thái</th>
+                                <th className="p-4 text-center">Hành động</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-zinc-800/60 text-sm">
                             {isLoading ? (
-                                <tr><td colSpan={7} className="p-10 text-center text-gray-400">Đang tải dữ liệu...</td></tr>
+                                <tr>
+                                    <td colSpan={8} className="p-12 text-center text-zinc-500 font-medium">
+                                        <div className="flex justify-center items-center gap-3">
+                                            <div className="w-5 h-5 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
+                                            Đang tải dữ liệu...
+                                        </div>
+                                    </td>
+                                </tr>
                             ) : salaries.length === 0 ? (
-                                <tr><td colSpan={7} className="p-10 text-center text-gray-400">Không có dữ liệu lương trong tháng này.</td></tr>
+                                <tr>
+                                    <td colSpan={8} className="p-12 text-center text-zinc-500 italic">
+                                        Không có dữ liệu lương trong tháng này.
+                                    </td>
+                                </tr>
                             ) : salaries.map((item) => (
-                                <tr key={item.coachId} className="hover:bg-red-50/50 transition-colors">
-                                    <td className="p-4 font-medium text-gray-600 border-r border-gray-200/50">
+                                <tr key={item.coachId} className="hover:bg-zinc-800/40 transition-colors">
+                                    <td className="p-4 font-bold text-white border-r border-zinc-800/50">
                                         {item.coachName}
                                     </td>
-                                    <td className="p-4 font-medium text-right text-gray-600 border-r border-gray-200/50">
+                                    <td className="p-4 text-right text-zinc-300 border-r border-zinc-800/50 font-mono">
                                         {formatCurrency(item.baseSalary)}
                                     </td>
-                                    <td className="p-4 text-right text-gray-600 border-r border-gray-200/50 font-medium">
-
+                                    <td className="p-4 text-right text-zinc-300 border-r border-zinc-800/50 font-mono">
                                         {formatCurrency(item.teachingIncome)}
                                     </td>
-                                    <td className="p-4 text-right text-gray-600 font-medium border-r border-gray-200/50">
-
+                                    <td className="p-4 text-right text-zinc-300 border-r border-zinc-800/50 font-mono">
                                         {formatCurrency(item.salesCommission || 0)}
                                     </td>
-                                    <td className="p-4 text-right text-gray-600 font-medium border-r border-gray-200/50">
+                                    <td className="p-4 text-right text-zinc-300 border-r border-zinc-800/50 font-mono">
                                         {formatCurrency(item.staffBonus || 0)}
                                     </td>
-                                    <td className="p-4 text-right font-medium text-lg text-red-600 border-r border-gray-200/50">
+                                    <td className="p-4 text-right font-black text-red-500 text-base border-r border-zinc-800/50 font-mono">
                                         {formatCurrency(item.totalIncome)}
                                     </td>
-                                    <td className="p-4 text-center border-r border-gray-200/50">
-                                        <span className={`px-2 py-1 rounded text-[10px] font-bold border ${item.status === 'PAID' ? 'bg-green-50 text-green-600 border-green-200' :
-                                            item.status === 'PENDING' ? 'bg-orange-50 text-orange-600 border-orange-200' :
-                                                'bg-gray-100 text-gray-400 border-gray-200'
+                                    <td className="p-4 text-center border-r border-zinc-800/50">
+                                        <span className={`px-2.5 py-1 rounded text-[10px] font-black tracking-wider border ${item.status === 'PAID'
+                                                ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60' :
+                                                item.status === 'PENDING'
+                                                    ? 'bg-amber-950/60 text-amber-400 border-amber-800/80' :
+                                                    'bg-zinc-800 text-zinc-400 border-zinc-700'
                                             }`}>
                                             {item.status === 'PAID' ? 'ĐÃ CHI' : item.status === 'PENDING' ? 'CHỜ CHI' : 'NHÁP'}
                                         </span>
@@ -174,8 +203,12 @@ export const SalaryComponent: React.FC = () => {
                                     <td className="p-4 text-center">
                                         <button
                                             onClick={() => openDetailsModal(item)}
-                                            className="text-blue-600 hover:text-blue-800 font-semibold text-sm underline"
+                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-red-600 hover:bg-red-950/30 font-bold text-xs transition-all"
                                         >
+                                            <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
                                             Chi tiết
                                         </button>
                                     </td>
@@ -186,20 +219,36 @@ export const SalaryComponent: React.FC = () => {
                 </div>
             </div>
 
-            {/* MODAL XÁC NHẬN CHỐT LƯƠNG */}
+            {/* MODAL XÁC NHẬN */}
             {isConfirmModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+                    <div className="bg-[#121212] border border-zinc-800 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                         <div className="p-6 text-center">
-                            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            <div className="w-14 h-14 bg-red-950/60 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-800/50">
+                                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">Xác nhận chốt sổ tháng {month}/{year}?</h3>
-                            <p className="text-gray-500 text-sm">Sau khi chốt, các số liệu sẽ được lưu cố định vào cơ sở dữ liệu và <strong className="text-red-600">không thể thay đổi</strong>.</p>
+                            <h3 className="text-xl font-black text-white mb-2 uppercase">Xác nhận chốt sổ tháng {month}/{year}?</h3>
+                            <p className="text-zinc-400 text-sm leading-relaxed">
+                                Sau khi chốt, các số liệu sẽ được khóa cố định và <strong className="text-red-500">không thể thay đổi</strong>.
+                            </p>
                         </div>
-                        <div className="bg-gray-50 px-6 py-4 flex gap-3 justify-end">
-                            <button disabled={isFinalizing} onClick={() => setIsConfirmModalOpen(false)} className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50">Hủy</button>
-                            <button disabled={isFinalizing} onClick={handleFinalize} className="px-4 py-2 bg-red-600 rounded-lg text-white font-medium hover:bg-red-700">{isFinalizing ? 'Đang xử lý...' : 'Chốt sổ ngay'}</button>
+                        <div className="bg-black/60 px-6 py-4 flex gap-3 justify-end border-t border-zinc-800">
+                            <button
+                                disabled={isFinalizing}
+                                onClick={() => setIsConfirmModalOpen(false)}
+                                className="px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-300 text-xs font-bold uppercase hover:bg-zinc-800 transition"
+                            >
+                                Hủy
+                            </button>
+                            <button
+                                disabled={isFinalizing}
+                                onClick={handleFinalize}
+                                className="px-5 py-2 bg-red-600 rounded-lg text-white text-xs font-bold uppercase hover:bg-red-700 shadow-lg shadow-red-600/30 transition"
+                            >
+                                {isFinalizing ? 'Đang xử lý...' : 'Chốt sổ ngay'}
+                            </button>
                         </div>
                     </div>
                 </div>
