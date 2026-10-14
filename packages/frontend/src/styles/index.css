@@ -67,4 +67,32 @@ body,
         transition: background-color 5000s ease-in-out 0s;
     }
 
+
+    /* Custom Scrollbar toàn hệ thống cho Dark Mode */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #09090b;
+        /* Màu nền tối sát mép màn hình */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #27272a;
+        /* Màu thanh cuộn xám đen mờ */
+        border-radius: 9999px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #dc2626;
+        /* Rê chuột vào sẽ đổi sang màu Đỏ FitStation */
+    }
+
+    /* Hỗ trợ Firefox */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #27272a #09090b;
+    }
 }
