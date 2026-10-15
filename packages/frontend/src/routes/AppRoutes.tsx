@@ -63,7 +63,7 @@ export default function AppRoutes() {
 
             <Route element={<ProtectedRoute allowedRoles={[Role.STAFF, Role.ADMIN, Role.COACH]} />}>
                 {/* Route mua goi tập offline */}
-                <Route path=" " element={<OfflineSucscriptionPage />} />
+                <Route path="subscription" element={<OfflineSucscriptionPage />} />
             </Route>
         </Routes>
     );
