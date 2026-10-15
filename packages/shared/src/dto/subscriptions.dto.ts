@@ -18,7 +18,7 @@ export interface CreateContractRequestDto {
     packageId: number;  // Chọn gói tập nào
     startDate: Date;
     sellerId: string | null;   // Ai là người bán (PT nào, Sale nào)
-    discount: number;   // Nhân viên tự nhập % giảm giá chốt với khách (0 nếu không giảm)
+    discount?: number;   // Nhân viên tự nhập % giảm giá chốt với khách (0 nếu không giảm)
     paymentMethod: PaymentMethod; // Bắt buộc chọn phương thức thanh toán
 }
 //response
