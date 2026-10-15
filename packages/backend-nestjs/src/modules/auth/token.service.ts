@@ -71,19 +71,19 @@ export class TokenService {
         //có thể bị reuse, nên revoke all
         if (!stored) {
             await this.revokeAllUserToken(userId);
-            throw new UnauthorizedException('YOUR_REFRESH_TOKEN_INVALID');
+            throw new UnauthorizedException('INVALID_REFRESH_TOKEN');
         }
 
         //token bi thu hoi => detect reuse attack
         if (stored.isRevoked) {
             await this.revokeAllUserToken(userId);
-            throw new Error('REFRESH_TOKEN_REUSE_DETECTED');
+            throw new UnauthorizedException('REFRESH_TOKEN_REUSE_DETECTED');
         }
 
         //token expired
         if (stored.expiresAt < new Date()) {
             await this.rtRepo.delete({ id: stored.id })
-            throw new Error('REFRESH_TOKEN_EXPIRED')
+            throw new UnauthorizedException('REFRESH_TOKEN_EXPIRED');
         }
 
         //danh dau rt cu da revoke, save de audit/detect reuse

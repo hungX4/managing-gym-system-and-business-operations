@@ -17,7 +17,7 @@ export class AuthService {
     async register(data: RegisterRequest): Promise<AuthResponse & { refreshToken: string }> {
         const existingUser = await this.userReposistory.findOne({ where: { phone: data.phone } });
         if (existingUser) {
-            throw new ConflictException('PHONE_NUMBER_ALREADY_IN_USE!');
+            throw new ConflictException('PHONE_NUMBER_ALREADY_IN_USE');
         };
 
         //hash

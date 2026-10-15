@@ -23,11 +23,7 @@ export class LeadController {
     // POST /trial-leads/web (Web đăng ký dùng thử)
     @Post('web')
     async createWebLead(@Body() data: CreateTrialLead) {
-        const newLead = await this.LeadService.createNewData(data);
-        return {
-            message: 'Gửi yêu cầu thành công',
-            data: newLead
-        };
+        return await this.LeadService.createNewData(data);
     }
 
     // GET /trial-leads (Admin lấy danh sách)

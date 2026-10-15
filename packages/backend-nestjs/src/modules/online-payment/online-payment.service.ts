@@ -27,7 +27,7 @@ export class OnlinePaymentService {
             type: PackageType.MEMBERSHIP,
         });
         if (!pkg) {
-            throw new BadRequestException('Gói tập không tồn tại hoặc không hỗ trợ mua online.');
+            throw new BadRequestException('INVALID_PACKAGE_FOR_ONLINE_PAYMENT');
         }
 
         // 2. Tính toán ngày
@@ -66,7 +66,7 @@ export class OnlinePaymentService {
         );
 
         if (!tmnCode || !secretKey) {
-            throw new InternalServerErrorException('Chưa cấu hình VNP_TMN_CODE hoặc VNP_HASH_SECRET trong file .env');
+            throw new InternalServerErrorException('VNPAY_CONFIG_MISSING');
         }
 
         const vnp_Params: Record<string, any> = {

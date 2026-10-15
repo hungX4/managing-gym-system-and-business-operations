@@ -49,7 +49,7 @@ export class LeadService {
     async updateLead(leadId: number, data: UpdateTrialLeadDto) {
         const lead = await this.leadRepo.findOne({ where: { id: leadId } });
         if (!lead) {
-            throw new NotFoundException('Không tìm thấy dữ liệu khách hàng!');
+            throw new NotFoundException('LEAD_NOT_FOUND');
         }
 
         if (data.status) lead.status = data.status;
@@ -63,7 +63,7 @@ export class LeadService {
             } else {
                 const staff = await this.userRepo.findOne({ where: { userId: data.assignedToId as any } });
                 if (!staff) {
-                    throw new NotFoundException('Không tìm thấy nhân viên được giao!');
+                    throw new NotFoundException('STAFF_NOT_FOUND');
                 }
                 lead.assignedTo = staff;
             }

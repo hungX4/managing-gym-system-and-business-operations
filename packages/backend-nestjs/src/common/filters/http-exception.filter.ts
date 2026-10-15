@@ -11,9 +11,35 @@ const ERROR_DICTIONARY: Record<string, string> = {
     'INVALID_STATUS_TRANSITION': 'Trạng thái chuyển đổi không hợp lệ.',
     'MEMBER_NOT_FOUND_OR_NO_ACTIVE_SUBSCRIPTION': 'Hội viên không tồn tại hoặc không có gói tập đang active.',
 
-    // Auth / System Errors
-    'UNAUTHORIZED': 'Bạn chưa đăng nhập hoặc phiên làm việc đã hết hạn.',
-    'FORBIDDEN': 'Bạn không có quyền thực hiện thao tác này.',
+    // Auth & Token Errors
+    'PHONE_NUMBER_ALREADY_IN_USE': 'Số điện thoại này đã được đăng ký sử dụng.',
+    'INVALID_CREDENTIALS': 'Số điện thoại hoặc mật khẩu không chính xác.',
+    'INVALID_REFRESH_TOKEN': 'Phiên đăng nhập không hợp lệ hoặc đã bị vô hiệu hóa.',
+    'REFRESH_TOKEN_REUSE_DETECTED': 'Cảnh báo an ninh: Phát hiện hành vi sử dụng lại token cũ. Vui lòng đăng nhập lại.',
+    'REFRESH_TOKEN_EXPIRED': 'Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.',
+
+    // Attendance Errors
+    'MISSING_USER_ID': 'Vui lòng cung cấp mã hội viên (userId).',
+    'MISSING_DATE_PARAMETER': 'Vui lòng chọn ngày cần xem nhật ký điểm danh.',
+
+    // Subscription / Package Errors
+    'MEMBER_NOT_FOUND': 'Không tìm thấy thông tin hội viên.',
+    'PACKAGE_NOT_FOUND': 'Không tìm thấy thông tin gói tập.',
+    'SELLER_NOT_QUALIFIED': 'Nhân sự chọn không đủ thẩm quyền hoặc không tồn tại.',
+    'COACHING_REQUIRE_SELLER': 'Gói Coaching bắt buộc phải chỉ định Huấn luyện viên phụ trách.',
+
+    // Online Payment Errors
+    'INVALID_PACKAGE_FOR_ONLINE_PAYMENT': 'Gói tập không tồn tại hoặc không hỗ trợ thanh toán online.',
+    'VNPAY_CONFIG_MISSING': 'Hệ thống thanh toán VNPAY chưa được cấu hình. Vui lòng liên hệ quản trị viên.',
+
+    // Revenue / Admin Errors
+    'INVALID_MONTH': 'Tháng không hợp lệ (chỉ chấp nhận từ tháng 1 đến 12).',
+    'INVALID_YEAR': 'Năm không hợp lệ.',
+    'REVENUE_DATA_NOT_FOUND': 'Không tìm thấy dữ liệu thống kê doanh thu cho thời gian này.',
+
+    // Trial Lead Errors
+    'LEAD_NOT_FOUND': 'Không tìm thấy thông tin khách hàng dùng thử.',
+    'STAFF_NOT_FOUND': 'Không tìm thấy thông tin nhân viên được chỉ định.',
 };
 
 @Catch(HttpException)
