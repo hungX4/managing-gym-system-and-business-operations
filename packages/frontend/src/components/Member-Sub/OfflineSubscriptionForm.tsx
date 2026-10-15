@@ -49,7 +49,6 @@ export default function OfflineSubscriptionForm() {
                     coachApi.getCoaches()
                 ]);
 
-                // Bóc tách dữ liệu an toàn
                 const pkgList = Array.isArray(pkgRes) ? pkgRes : (pkgRes as any)?.data || [];
                 const coachList = Array.isArray(coachRes) ? coachRes : (coachRes as any)?.data || [];
                 setPackages(pkgList.filter((p: PackageResponseDto) => p.isActive));
@@ -74,7 +73,7 @@ export default function OfflineSubscriptionForm() {
 
         const delayDebounceFn = setTimeout(async () => {
             try {
-                const res = await axiosClient.get<any, any[]>(`/user/search?keyword=${keyword}`);;
+                const res = await axiosClient.get<any, any[]>(`/user/search?keyword=${encodeURIComponent(keyword)}`);
                 const memberList = Array.isArray(res) ? res : (res as any)?.data || [];
                 setSearchResults(memberList);
             } catch (error) {
@@ -147,20 +146,26 @@ export default function OfflineSubscriptionForm() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white px-4 sm:px-8 pb-8 pt-24 font-sans">
-            <div className="max-w-3xl mx-auto space-y-6">
+        /* 🟢 Căn giữa vertically, giảm padding top/bottom xuống py-4 md:py-6 */
+        <div className="w-full min-h-[calc(100vh-70px)] flex flex-col justify-center items-center px-4 py-4 md:py-6 text-white font-sans">
 
-                {/* 1. Tìm kiếm hội viên */}
-                <div className="bg-[#111111] border border-neutral-800 p-6 rounded-xl relative shadow-2xl">
-                    <h2 className="text-sm font-bold text-red-500 mb-4 uppercase tracking-wider">1. Tìm kiếm hội viên</h2>
-                    <div className="flex gap-3 items-center">
+            {/* 🟢 Khóa chiều rộng max-w-lg (512px) cho toàn bộ Form không bị thô/phình to */}
+            <div className="w-full max-w-md sm:max-w-lg mx-auto space-y-3.5">
+
+                {/* 1. TÌM KIẾM HỘI VIÊN */}
+                <div className="bg-[#111111] border border-neutral-800/80 p-4 rounded-xl relative shadow-xl">
+                    <h2 className="text-xs font-bold text-red-500 mb-2.5 uppercase tracking-wider">
+                        1. Tìm kiếm hội viên
+                    </h2>
+
+                    <div className="flex gap-2.5 items-center">
                         <div className="relative flex-1">
                             <input
                                 type="text"
                                 placeholder="Nhập SĐT hoặc Tên..."
-                                className={`w-full bg-[#1a1a1a] border rounded-lg px-4 py-3 text-white outline-none transition-all ${selectedMember
+                                className={`w-full bg-[#161616] border rounded-lg px-3.5 py-2 text-xs sm:text-sm text-white outline-none transition-all ${selectedMember
                                     ? 'border-green-500/50 bg-green-500/5'
-                                    : 'border-neutral-700 focus:border-red-500'
+                                    : 'border-neutral-800 focus:border-red-600'
                                     }`}
                                 value={selectedMember ? `${selectedMember.fullName} - ${selectedMember.phone}` : keyword}
                                 onChange={(e) => setKeyword(e.target.value)}
@@ -168,8 +173,8 @@ export default function OfflineSubscriptionForm() {
                             />
 
                             {selectedMember && (
-                                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-green-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
@@ -180,41 +185,51 @@ export default function OfflineSubscriptionForm() {
                             <button
                                 type="button"
                                 onClick={handleClearMember}
-                                className="bg-neutral-800 hover:bg-neutral-700 text-neutral-300 px-4 py-3 rounded-lg text-sm font-medium border border-neutral-700 transition-colors whitespace-nowrap"
+                                className="bg-neutral-800 hover:bg-neutral-700 text-neutral-300 px-3 py-2 rounded-lg text-xs font-medium border border-neutral-700 transition-colors whitespace-nowrap shrink-0"
                             >
                                 Đổi hội viên
                             </button>
                         )}
                     </div>
 
+                    {/* Dropdown Tìm kiếm */}
                     {searchResults.length > 0 && (
-                        <div className="absolute left-6 right-6 top-full mt-2 bg-[#1a1a1a] border border-neutral-600 rounded-lg shadow-2xl z-20 max-h-64 overflow-y-auto">
+                        <div className="absolute left-4 right-4 top-full mt-1 bg-[#1a1a1a] border border-neutral-700 rounded-lg shadow-2xl z-30 max-h-52 overflow-y-auto">
                             {searchResults.map((user) => (
-                                <div key={user.memberId} onClick={() => handleSelectMember(user)} className="p-4 border-b border-neutral-800 hover:bg-neutral-800 cursor-pointer flex justify-between items-center group">
+                                <div
+                                    key={user.memberId}
+                                    onClick={() => handleSelectMember(user)}
+                                    className="p-3 border-b border-neutral-800/80 hover:bg-neutral-800/80 cursor-pointer flex justify-between items-center group transition-colors"
+                                >
                                     <div>
-                                        <p className="font-bold group-hover:text-red-400 transition-colors">{user.fullName}</p>
-                                        <p className="text-neutral-400 text-sm">{user.phone}</p>
+                                        <p className="font-bold text-xs sm:text-sm group-hover:text-red-400 transition-colors">{user.fullName}</p>
+                                        <p className="text-neutral-400 text-[11px]">{user.phone}</p>
                                     </div>
-                                    <div className="text-right flex flex-col items-end gap-1">
-                                        <span className={`px-2 py-1 rounded text-[10px] font-medium ${user.hasActivePackage ? 'bg-green-900/30 text-green-400 border border-green-800/50' : 'bg-red-900/30 text-red-400 border border-red-800/50'}`}>
-                                            {user.hasActivePackage ? 'Đang Active' : 'Không có gói'}
-                                        </span>
-                                    </div>
+                                    <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${user.hasActivePackage
+                                        ? 'bg-green-900/30 text-green-400 border border-green-800/50'
+                                        : 'bg-red-900/30 text-red-400 border border-red-800/50'
+                                        }`}>
+                                        {user.hasActivePackage ? 'Đang Active' : 'Không có gói'}
+                                    </span>
                                 </div>
                             ))}
                         </div>
                     )}
                 </div>
 
-                {/* 2. Thông tin hợp đồng */}
-                <div className={`bg-[#111111] border border-neutral-800 p-6 rounded-xl shadow-2xl transition-all ${!selectedMember ? 'opacity-40 pointer-events-none' : ''}`}>
-                    <h2 className="text-sm font-bold text-red-500 mb-5 uppercase tracking-wider">2. Thông tin hợp đồng</h2>
+                {/* 2. THÔNG TIN HỢP ĐỒNG */}
+                <div className={`bg-[#111111] border border-neutral-800/80 p-4 rounded-xl shadow-xl transition-all ${!selectedMember ? 'opacity-40 pointer-events-none' : ''}`}>
+                    <h2 className="text-xs font-bold text-red-500 mb-3 uppercase tracking-wider">
+                        2. Thông tin hợp đồng
+                    </h2>
 
-                    <form onSubmit={handleSubmit} className="space-y-5">
+                    <form onSubmit={handleSubmit} className="space-y-3">
+
+                        {/* GÓI TẬP */}
                         <div>
-                            <label className="block text-sm text-neutral-400 mb-1">Gói tập đăng ký</label>
+                            <label className="block text-xs text-neutral-400 mb-1 font-medium">Gói tập đăng ký (*)</label>
                             <select
-                                className="w-full bg-[#1a1a1a] border border-neutral-700 rounded-lg px-4 py-3 text-white focus:border-red-500 outline-none appearance-none cursor-pointer"
+                                className="w-full bg-[#161616] border border-neutral-800 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-white focus:border-red-600 outline-none cursor-pointer"
                                 value={formData.packageId}
                                 onChange={(e) => setFormData({ ...formData, packageId: e.target.value, sellerId: '' })}
                                 disabled={loadingPackages}
@@ -230,11 +245,12 @@ export default function OfflineSubscriptionForm() {
                             </select>
                         </div>
 
+                        {/* HLV (CHỈ KHI GÓI LÀ COACHING) */}
                         {isCoachingPackage && (
                             <div className="animate-fadeIn">
-                                <label className="block text-sm text-red-400 font-bold mb-1">Chọn Huấn luyện viên (*)</label>
+                                <label className="block text-xs text-red-400 font-bold mb-1">Chọn Huấn luyện viên (*)</label>
                                 <select
-                                    className="w-full bg-[#111111] border border-gray-800 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none focus:ring-1 focus:ring-red-600 cursor-pointer"
+                                    className="w-full bg-[#161616] border border-gray-800 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-white focus:border-red-600 outline-none cursor-pointer"
                                     value={formData.sellerId}
                                     onChange={(e) => setFormData({ ...formData, sellerId: e.target.value })}
                                     disabled={loadingCoaches}
@@ -251,33 +267,35 @@ export default function OfflineSubscriptionForm() {
                             </div>
                         )}
 
-                        <div className="grid grid-cols-2 gap-5">
+                        {/* NGÀY BẮT ĐẦU & GIẢM GIÁ (2 CỘT SONG SONG NGHỆ THUẬT) */}
+                        <div className="grid grid-cols-2 gap-3">
                             <div>
-                                <label className="block text-sm text-neutral-400 mb-1">Ngày bắt đầu</label>
+                                <label className="block text-xs text-neutral-400 mb-1 font-medium">Ngày bắt đầu</label>
                                 <input
                                     type="date"
-                                    className="w-full bg-[#1a1a1a] border border-neutral-700 rounded-lg px-4 py-2.5 text-white"
+                                    className="w-full bg-[#161616] border border-neutral-800 rounded-lg px-3 py-2 text-xs sm:text-sm text-white outline-none focus:border-red-600"
                                     value={formData.startDate}
                                     onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm text-neutral-400 mb-1">Giảm giá (%)</label>
+                                <label className="block text-xs text-neutral-400 mb-1 font-medium">Giảm giá (%)</label>
                                 <input
                                     type="number"
                                     min="0"
                                     max="100"
-                                    className="w-full bg-[#1a1a1a] border border-neutral-700 rounded-lg px-4 py-2.5 text-white"
+                                    className="w-full bg-[#161616] border border-neutral-800 rounded-lg px-3 py-2 text-xs sm:text-sm text-white outline-none focus:border-red-600"
                                     value={formData.discount}
                                     onChange={(e) => setFormData({ ...formData, discount: Number(e.target.value) })}
                                 />
                             </div>
                         </div>
 
+                        {/* PHƯƠNG THỨC THANH TOÁN */}
                         <div>
-                            <label className="block text-sm text-neutral-400 mb-1">Thanh toán</label>
+                            <label className="block text-xs text-neutral-400 mb-1 font-medium">Thanh toán</label>
                             <select
-                                className="w-full bg-[#1a1a1a] border border-neutral-700 rounded-lg px-4 py-2.5 text-white"
+                                className="w-full bg-[#161616] border border-neutral-800 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-white outline-none focus:border-red-600 cursor-pointer"
                                 value={formData.paymentMethod}
                                 onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value as PaymentMethod })}
                             >
@@ -287,10 +305,11 @@ export default function OfflineSubscriptionForm() {
                             </select>
                         </div>
 
+                        {/* NÚT SUBMIT GỌN GÀNG */}
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 rounded-lg transition-all disabled:opacity-50"
+                            className="w-full bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white font-bold py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm tracking-wider uppercase transition-all disabled:opacity-50 mt-1 shadow-md shadow-red-600/20"
                         >
                             {isSubmitting ? 'ĐANG XỬ LÝ...' : 'XÁC NHẬN TẠO HỢP ĐỒNG'}
                         </button>
@@ -298,14 +317,72 @@ export default function OfflineSubscriptionForm() {
                 </div>
             </div>
 
-            {/* Modal thành công */}
+            {/* MODAL THÀNH CÔNG (PREMIUM STYLE) */}
             {showSuccessModal && (
-                <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 backdrop-blur-sm p-4">
-                    <div className="bg-[#111111] border border-red-600/50 rounded-2xl p-8 max-w-md w-full text-center">
-                        <div className="w-16 h-16 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">✓</div>
-                        <h2 className="text-xl font-bold mb-2">Thành công!</h2>
-                        <p className="text-neutral-400 mb-6">Hợp đồng đã được kích hoạt cho hội viên.</p>
-                        <button onClick={resetForm} className="w-full bg-red-600 py-3 rounded-lg font-bold">TIẾP TỤC</button>
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fadeIn">
+                    <div className="relative w-full max-w-md bg-gradient-to-b from-[#18181b] to-[#0f0f11] border border-neutral-800/90 rounded-2xl p-6 sm:p-7 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.9),0_0_35px_-10px_rgba(34,197,94,0.15)] overflow-hidden">
+
+                        {/* Đường viền Gradient hắt sáng cực tinh tế ở đỉnh Modal */}
+                        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-green-500/80 to-transparent" />
+
+                        {/* Icon Thành Công Hiện Đại */}
+                        <div className="flex justify-center mb-5">
+                            <div className="relative flex items-center justify-center w-14 h-14 rounded-2xl bg-green-500/10 border border-green-500/20 shadow-[0_0_25px_rgba(34,197,94,0.2)]">
+                                <svg className="w-7 h-7 text-green-400 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        {/* Tiêu đề & Nội dung */}
+                        <div className="text-center space-y-1 mb-5">
+                            <h3 className="text-lg sm:text-xl font-extrabold text-white uppercase tracking-wide">
+                                Tạo hợp đồng thành công
+                            </h3>
+                            <p className="text-xs sm:text-sm text-neutral-400">
+                                Gói tập đã được kích hoạt thành công trên hệ thống.
+                            </p>
+                        </div>
+
+                        {/* Thẻ Tóm Tắt Biên Nhận Hợp Đồng (Receipt Summary) */}
+                        <div className="bg-[#121214] border border-neutral-800/80 rounded-xl p-3.5 mb-6 text-xs space-y-2.5">
+                            <div className="flex justify-between items-center pb-2 border-b border-neutral-800/60">
+                                <span className="text-neutral-400">Hội viên:</span>
+                                <span className="font-semibold text-white">{selectedMember?.fullName}</span>
+                            </div>
+                            <div className="flex justify-between items-center pb-2 border-b border-neutral-800/60">
+                                <span className="text-neutral-400">Gói đăng ký:</span>
+                                <span className="font-semibold text-red-400">{selectedPkgInfo?.name}</span>
+                            </div>
+                            <div className="flex justify-between items-center pb-2 border-b border-neutral-800/60">
+                                <span className="text-neutral-400">Ngày bắt đầu:</span>
+                                <span className="font-mono text-neutral-200">{formData.startDate}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-neutral-400">Thanh toán:</span>
+                                <span className="font-medium text-green-400 bg-green-950/40 border border-green-800/40 px-2 py-0.5 rounded text-[11px]">
+                                    {formData.paymentMethod}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Cụm Nút Hành Động */}
+                        <div className="grid grid-cols-2 gap-3">
+                            <button
+                                type="button"
+                                onClick={() => toast.success("Tính năng in hợp đồng đang được xử lý...")}
+                                className="w-full bg-neutral-800/80 hover:bg-neutral-700/80 border border-neutral-700/80 text-neutral-200 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all active:scale-[0.98]"
+                            >
+                                🖨️ In biên nhận
+                            </button>
+                            <button
+                                type="button"
+                                onClick={resetForm}
+                                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white py-2.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider transition-all shadow-lg shadow-red-600/25 active:scale-[0.98]"
+                            >
+                                Tiếp tục
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
