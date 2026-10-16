@@ -41,7 +41,12 @@ axiosClient.interceptors.response.use(
     },
     async (error) => {
         const originalRequest = error.config;
-        if (originalRequest.url?.includes("/auth/refresh")) {
+        console.log("Request URL bị 401:", originalRequest.url);
+        const isAuthEndpoint = originalRequest.url?.includes("auth/login") ||
+            originalRequest.url?.includes("auth/register") ||
+            originalRequest.url?.includes("auth/refresh");
+
+        if (isAuthEndpoint) {
             return Promise.reject(error);
         }
         if (error.response?.status === 401 && !originalRequest._retry) {
@@ -52,7 +57,7 @@ axiosClient.interceptors.response.use(
                 const userId = localStorage.getItem('userId');
                 if (!userId) {
                     // Chỉ redirect nếu người dùng ĐANG KHÔNG Ở trang chủ (hoặc các trang public)
-                    const publicPaths = ['/']; // Thêm các route public của bạn vào đây
+                    const publicPaths = ['/']; // Thêm các route public vào đây
                     const currentPath = window.location.pathname;
 
                     if (!publicPaths.includes(currentPath)) {
