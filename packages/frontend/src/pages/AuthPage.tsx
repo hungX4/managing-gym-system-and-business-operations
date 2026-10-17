@@ -117,7 +117,7 @@ export default function AuthPage() {
 
                 {/* THÔNG BÁO LỖI */}
                 {errorMsg && (
-                    <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-2 rounded mb-6 text-sm text-center">
+                    <div className="bg-black/20 border border-red-500 text-red-500 px-4 py-2 rounded mb-6 text-sm text-center">
                         {errorMsg}
                     </div>
                 )}

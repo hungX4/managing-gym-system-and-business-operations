@@ -18,6 +18,7 @@ import ProfilePage from '../pages/ProfilePage';
 import PaymentSuccess from '../pages/PaymentSuccessPage';
 import CoachProfileSettings from '../pages/CoachProfilePage';
 import UserAttendanceHistory from '../pages/UserAttendancePage';
+import ServicesPage from '../pages/ServicePage';
 
 export default function AppRoutes() {
     return (
@@ -65,6 +66,7 @@ export default function AppRoutes() {
                 {/* Route mua goi tập offline */}
                 <Route path="subscription" element={<OfflineSucscriptionPage />} />
             </Route>
+            <Route path="/services" element={<ServicesPage />} />
         </Routes>
     );
 }
