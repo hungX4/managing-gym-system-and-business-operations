@@ -15,6 +15,7 @@ import { PayrollModule } from './modules/payroll/payroll.module';
 import { CheckinModule } from './modules/checkin/checkin.module';
 import { RevenueModule } from './modules/revenue/revenue.module';
 import { OnlinePaymentModule } from './modules/online-payment/online-payment.module';
+import { PostsModule } from './modules/posts/posts.module';
 @Module({
   imports: [
     // chỉ định đường dẫn tới file .env của Express cũ
@@ -59,7 +60,8 @@ import { OnlinePaymentModule } from './modules/online-payment/online-payment.mod
     PayrollModule,
     CheckinModule,
     RevenueModule,
-    OnlinePaymentModule
+    OnlinePaymentModule,
+    PostsModule
   ],
   controllers: [AppController],
   providers: [AppService],
