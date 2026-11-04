@@ -109,7 +109,7 @@ const HeroCarousel: React.FC = () => {
     return (
         <div
             // Đổi h-screen thành h-[85vh] ở đây
-            className="relative w-full h-screen bg-black overflow-hidden select-none cursor-grab active:cursor-grabbing"
+            className="relative w-full h-screen  -mt-16 bg-black overflow-hidden select-none cursor-grab active:cursor-grabbing"
             onMouseDown={handleDragStart}
             onMouseMove={handleDragMove}
             onMouseUp={handleDragEnd}
@@ -132,20 +132,20 @@ const HeroCarousel: React.FC = () => {
                             <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent"></div>
                         </div>
 
-                        <div className="relative h-full flex items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:max-w-none xl:mx-0 xl:pl-16 xl:pr-16
+                        <div className="relative h-full pt-16 flex items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:max-w-none xl:mx-0 xl:pl-16 xl:pr-16
     2xl:pl-24 2xl:pr-24">
                             {/* Bỏ cursor-grab ở đây vì đã đưa lên thẻ div ngoài cùng */}
                             <div className="w-full md:w-2/3">
                                 <div className="mb-6 relative pointer-events-none flex flex-col gap-y-1 md:gap-y-3 xl:gap-y-6 2xl:gap-y-8">
 
-                                    <h2 className="text-4xl md:text-5xl font-light tracking-widest text-gray-300 leading-tight ">
+                                    <h2 className="text-4xl md:text-3xl font-light tracking-widest text-gray-300 leading-tight ">
                                         {banner.subTitle}
                                     </h2>
 
                                     {/* 2. Sửa leading-snug thành leading-tight ở mobile và md:leading-none ở màn hình lớn để chữ không lấn chiếm không gian */}
                                     {/* 3. Thêm py-1 để tránh việc hiệu ứng WebkitTextStroke hoặc bg-clip-text bị trình duyệt cắt mất một vài pixel ở đỉnh chữ */}
                                     <h1
-                                        className="text-6xl leading-tight md:text-8xl font-black uppercase text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 md:leading-none py-1"
+                                        className="lg:text-8xl leading-tight md:text-6xl font-black uppercase text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 md:leading-none py-1"
                                         style={{ WebkitTextStroke: '1px white' }}
                                     >
                                         {banner.title}

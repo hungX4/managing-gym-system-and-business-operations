@@ -15,7 +15,9 @@ export const MAIN_NAV_LINKS: NavLink[] = [
     { path: '/services', label: 'Dịch vụ', allowedRoles: 'ALL' },
     { path: '/clubs', label: 'Câu lạc bộ', allowedRoles: 'ALL' },
     { path: '/schedule/groupx', label: 'Lịch nhóm', allowedRoles: 'ALL' },
-    { path: '/pricing', label: 'Bảng giá', allowedRoles: 'ALL' }, // Nhớ thêm dấu / trước pricing
+    { path: '/pricing', label: 'Bảng giá', allowedRoles: 'ALL' },
+    { path: '/tin-tuc', label: 'Tin Tức', allowedRoles: 'ALL' }, // Nhớ thêm dấu / trước pricing
+
 ];
 
 export const DROPDOWN_LINKS: NavLink[] = [
@@ -27,4 +29,5 @@ export const DROPDOWN_LINKS: NavLink[] = [
     { path: '/salary', label: "Chốt lương", allowedRoles: [Role.ADMIN] },
     { path: '/booking', label: 'Đặt lịch hẹn', allowedRoles: [Role.ADMIN, Role.COACH] },
     { path: '/checkin', label: 'Quản lý lịch tập', allowedRoles: [Role.ADMIN, Role.STAFF] },
+    { label: 'Quản lý bài viết', path: '/admin/posts', allowedRoles: [Role.ADMIN] },
 ];

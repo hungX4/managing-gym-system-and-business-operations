@@ -1,5 +1,5 @@
 // src/components/common/Pagination.tsx
-import React from 'react';
+
 
 interface PaginationMeta {
     totalItems: number;
@@ -30,8 +30,8 @@ export default function Pagination({ meta, onPageChange }: PaginationProps) {
                     onClick={() => onPageChange(Math.max(1, meta.currentPage - 1))}
                     disabled={meta.currentPage === 1}
                     className={`px-3 py-1.5 rounded text-xs font-bold transition-colors ${meta.currentPage === 1
-                            ? 'bg-gray-800/50 text-gray-600 cursor-not-allowed'
-                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white'
+                        ? 'bg-gray-800/50 text-gray-600 cursor-not-allowed'
+                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white'
                         }`}
                 >
                     TRƯỚC
@@ -42,8 +42,8 @@ export default function Pagination({ meta, onPageChange }: PaginationProps) {
                     onClick={() => onPageChange(Math.min(meta.totalPages, meta.currentPage + 1))}
                     disabled={meta.currentPage === meta.totalPages}
                     className={`px-3 py-1.5 rounded text-xs font-bold transition-colors ${meta.currentPage === meta.totalPages
-                            ? 'bg-gray-800/50 text-gray-600 cursor-not-allowed'
-                            : 'bg-red-600 text-white hover:bg-red-700'
+                        ? 'bg-gray-800/50 text-gray-600 cursor-not-allowed'
+                        : 'bg-red-600 text-white hover:bg-red-700'
                         }`}
                 >
                     SAU

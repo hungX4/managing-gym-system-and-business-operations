@@ -19,6 +19,10 @@ import PaymentSuccess from '../pages/PaymentSuccessPage';
 import CoachProfileSettings from '../pages/CoachProfilePage';
 import UserAttendanceHistory from '../pages/UserAttendancePage';
 import ServicesPage from '../pages/ServicePage';
+import PostsPage from '../pages/PostsPage';
+import PostDetailPage from '../pages/PostDetailPage';
+import AdminPostsPage from '../pages/AdminPostsPage';
+import AdminPostFormPage from '../pages/AdminPostFormPage';
 
 export default function AppRoutes() {
     return (
@@ -59,6 +63,9 @@ export default function AppRoutes() {
                     <Route path="salaryconfig" element={<SalaryConfigurationPage />} />
                     <Route path="salary" element={<SalaryComponent />} />
 
+                    <Route path="posts" element={<AdminPostsPage />} />
+                    <Route path="posts/new" element={<AdminPostFormPage />} />
+                    <Route path="posts/:id/edit" element={<AdminPostFormPage />} />
                 </Route>
             </Route>
 
@@ -67,6 +74,8 @@ export default function AppRoutes() {
                 <Route path="subscription" element={<OfflineSucscriptionPage />} />
             </Route>
             <Route path="/services" element={<ServicesPage />} />
+            <Route path="/tin-tuc" element={<PostsPage />} />
+            <Route path="/tin-tuc/:slug" element={<PostDetailPage />} />
         </Routes>
     );
 }
