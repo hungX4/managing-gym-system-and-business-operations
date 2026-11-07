@@ -121,5 +121,28 @@ export const ADMIN_DASHBOARD: ADMIN_DASHBOARD[] = [
             createElement('polyline', { points: '3.29 7 12 12 20.71 7' }),
             createElement('line', { x1: 12, x2: 12, y1: 22, y2: 12 })
         )
+    },
+    {
+        id: 'POSTS',
+        path: '/admin/posts',
+        label: 'Bài viết',
+        role: Role.ADMIN,
+        icon: createElement(
+            'svg',
+            {
+                viewBox: '0 0 24 24',
+                fill: 'none',
+                stroke: 'currentColor',
+                strokeWidth: 2,
+                strokeLinecap: 'round',
+                strokeLinejoin: 'round',
+                className: 'w-5 h-5'
+            },
+            createElement('path', { d: 'M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z' }),
+            createElement('polyline', { points: '14 2 14 8 20 8' }),
+            createElement('line', { x1: 16, y1: 13, x2: 8, y2: 13 }),
+            createElement('line', { x1: 16, y1: 17, x2: 8, y2: 17 }),
+            createElement('line', { x1: 10, y1: 9, x2: 8, y2: 9 })
+        )
     }
 ]

@@ -46,7 +46,7 @@ import { PostsModule } from './modules/posts/posts.module';
           timezone: '+07:00',
           //dateStrings: true, //Trả về nguyên bản chuỗi "YYYY-MM-DD HH:mm:ss"
           namingStrategy: new SnakeNamingStrategy(),
-          synchronize: false, // Giữ false để không đè nát DB cũ}
+          synchronize: true, // Giữ false để không đè nát DB cũ}
 
         }
       }
