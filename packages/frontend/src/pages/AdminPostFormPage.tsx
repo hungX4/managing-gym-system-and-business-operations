@@ -6,10 +6,10 @@ import { getErrorMessage } from '../utils/format';
 import { backLink, btn, containerNarrow, errorText, muted, pageTitle } from '../styles/ui';
 import PostForm from '../components/admin/PostForm';
 
-// Dùng chung cho tạo mới (/admin/posts/new) và sửa (/admin/posts/:id/edit)
 export default function AdminPostFormPage() {
   const { id } = useParams();
   const isEdit = Boolean(id);
+  const postId = id ? Number(id) : null;
   const navigate = useNavigate();
 
   const [post, setPost] = useState<Post | null>(null);
@@ -18,18 +18,23 @@ export default function AdminPostFormPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!id) return;
-    adminGetPost(Number(id))
+    if (!postId || isNaN(postId)) {
+      if (isEdit) setError('ID bài viết không hợp lệ');
+      return;
+    }
+
+    setLoading(true);
+    adminGetPost(postId)
       .then(setPost)
       .catch((e) => setError(getErrorMessage(e)))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [postId, isEdit]);
 
   const handleSubmit = async (values: PostFormValues) => {
     setSubmitting(true);
     setError('');
     try {
-      if (isEdit) await adminUpdatePost(Number(id), values);
+      if (isEdit && postId) await adminUpdatePost(postId, values);
       else await adminCreatePost(values);
       navigate('/admin/posts');
     } catch (e) {
@@ -46,7 +51,7 @@ export default function AdminPostFormPage() {
     );
   }
 
-  if (isEdit && !post) {
+  if (isEdit && (!post || isNaN(postId!))) {
     return (
       <main className={containerNarrow}>
         <p className={`${errorText} mb-4`}>{error || 'Không tìm thấy bài viết'}</p>
@@ -64,7 +69,6 @@ export default function AdminPostFormPage() {
       </Link>
       <h1 className={pageTitle}>{isEdit ? 'Chỉnh sửa bài viết' : 'Viết bài mới'}</h1>
 
-      {/* Form chỉ mount sau khi đã có dữ liệu, nên initialValues luôn đúng */}
       <PostForm
         initialValues={
           post

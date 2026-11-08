@@ -1,16 +1,16 @@
-export type PostCategory = 'news' | 'promotion' | 'training' | 'nutrition';
-export type PostStatus = 'draft' | 'published';
+export type PostCategory = 'NEWS' | 'PROMOTION' | 'TRAINING' | 'NUTRITION';
+export type PostStatus = 'DRAFT' | 'PUBLISHED';
 
 export const CATEGORY_LABEL: Record<PostCategory, string> = {
-  news: 'Tin tức',
-  promotion: 'Khuyến mãi',
-  training: 'Kiến thức tập luyện',
-  nutrition: 'Dinh dưỡng',
+  NEWS: 'Tin tức',
+  PROMOTION: 'Khuyến mãi',
+  TRAINING: 'Kiến thức tập luyện',
+  NUTRITION: 'Dinh dưỡng',
 };
 
 export const STATUS_LABEL: Record<PostStatus, string> = {
-  draft: 'Nháp',
-  published: 'Đã đăng',
+  DRAFT: 'Nháp',
+  PUBLISHED: 'Đã đăng',
 };
 
 export interface PostListItem {

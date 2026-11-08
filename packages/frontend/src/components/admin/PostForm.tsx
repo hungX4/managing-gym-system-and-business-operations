@@ -22,8 +22,8 @@ const EMPTY: PostFormValues = {
   content: '',
   excerpt: '',
   metaDescription: '',
-  category: 'news',
-  status: 'draft',
+  category: 'NEWS',
+  status: 'DRAFT',
   thumbnailFile: null,
 };
 
@@ -160,7 +160,7 @@ export default function PostForm({
           type="button"
           className={btn}
           disabled={submitting}
-          onClick={(e) => handleSubmit(e, 'draft')}
+          onClick={(e) => handleSubmit(e, 'DRAFT')}
         >
           Lưu nháp
         </button>
@@ -168,7 +168,7 @@ export default function PostForm({
           type="button"
           className={btnPrimary}
           disabled={submitting}
-          onClick={(e) => handleSubmit(e, 'published')}
+          onClick={(e) => handleSubmit(e, 'PUBLISHED')}
         >
           {submitting ? 'Đang lưu...' : 'Xuất bản'}
         </button>

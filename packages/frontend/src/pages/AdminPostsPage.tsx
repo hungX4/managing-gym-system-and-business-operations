@@ -38,13 +38,25 @@ export default function AdminPostsPage() {
 
   useEffect(load, [load]);
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setSearch(val);
+    // Tự động clear kết quả tìm kiếm khi rỗng
+    if (val.trim() === '' && keyword !== '') {
+      setKeyword('');
+      setPage(1);
+    }
+  };
+
   const handleDelete = async (post: PostListItem) => {
     if (!window.confirm(`Xóa bài "${post.title}"? Hành động này không thể hoàn tác.`)) return;
     try {
       await adminDeletePost(post.id);
-      // Xóa bài cuối của trang thì lùi về trang trước
-      if (data && data.items.length === 1 && page > 1) setPage(page - 1);
-      else load();
+      if (data && data.items.length === 1 && page > 1) {
+        setPage((prev) => prev - 1);
+      } else {
+        load();
+      }
     } catch (e) {
       alert(getErrorMessage(e));
     }
@@ -72,7 +84,7 @@ export default function AdminPostsPage() {
             className={input}
             placeholder="Tìm theo tiêu đề..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={handleSearchChange}
           />
           <button className={btn} type="submit">
             Tìm
@@ -152,21 +164,21 @@ export default function AdminPostsPage() {
                     )}
                   </td>
                   <td className={td}>{p.title}</td>
-                  <td className={td}>{CATEGORY_LABEL[p.category]}</td>
+                  <td className={td}>{CATEGORY_LABEL[p.category] ?? p.category ?? '—'}</td>
                   <td className={td}>
                     {p.status && (
                       <span
-                        className={`inline-block border border-black px-2.5 py-0.5 text-xs ${p.status === 'published' ? 'bg-black text-white' : ''
+                        className={`inline-block border border-black px-2.5 py-0.5 text-xs ${p.status === 'PUBLISHED' ? 'bg-black text-white' : ''
                           }`}
                       >
-                        {STATUS_LABEL[p.status]}
+                        {STATUS_LABEL[p.status] ?? p.status}
                       </span>
                     )}
                   </td>
                   <td className={td}>{formatDate(p.createdAt)}</td>
                   <td className={`${td} whitespace-nowrap text-right`}>
                     <span className="inline-flex gap-1.5">
-                      {p.status === 'published' && (
+                      {p.status === 'PUBLISHED' && (
                         <Link
                           className={`${btn} ${btnSm}`}
                           to={`/tin-tuc/${p.slug}`}
