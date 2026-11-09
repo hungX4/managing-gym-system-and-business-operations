@@ -24,6 +24,7 @@ export class AdminPostsController {
         @UploadedFile() thumbnail: Express.Multer.File,
         @CurrentUser('sub') authorId: string
     ) {
+        console.log(thumbnail, dto)
         return this.postsService.create(dto, authorId, thumbnail);
     }
 

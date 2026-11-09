@@ -17,7 +17,7 @@ function toFormData(values: PostFormValues): FormData {
   form.append('metaDescription', values.metaDescription);
   form.append('category', values.category);
   form.append('status', values.status);
-  if (values.thumbnailFile) form.append('thumbnail', values.thumbnailFile);
+  if (values.thumbnail) form.append('thumbnail', values.thumbnail);
   return form;
 }
 
@@ -36,7 +36,14 @@ export const adminGetPost = (id: number) =>
   axiosClient.get<Post>(`/admin/posts/${id}`).then((r) => r.data);
 
 export const adminCreatePost = (values: PostFormValues) =>
-  axiosClient.post<Post>('/admin/posts', toFormData(values)).then((r) => r.data);
+  axiosClient
+    .post<Post>('/admin/posts', toFormData(values), {
+      headers: {
+        // Đảm bảo không bị override bởi header JSON mặc định của axiosClient
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    .then((r) => r.data);
 
 export const adminUpdatePost = (id: number, values: PostFormValues) =>
   axiosClient.patch<Post>(`/admin/posts/${id}`, toFormData(values)).then((r) => r.data);

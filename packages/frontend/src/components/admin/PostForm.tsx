@@ -24,7 +24,7 @@ const EMPTY: PostFormValues = {
   metaDescription: '',
   category: 'NEWS',
   status: 'DRAFT',
-  thumbnailFile: null,
+  thumbnail: null,
 };
 
 export default function PostForm({
@@ -49,7 +49,7 @@ export default function PostForm({
   }, [preview]);
 
   const onSelectFile = (file: File | null) => {
-    set('thumbnailFile', file);
+    set('thumbnail', file);
     setPreview(file ? URL.createObjectURL(file) : null);
   };
 

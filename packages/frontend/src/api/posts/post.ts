@@ -51,5 +51,5 @@ export interface PostFormValues {
   metaDescription: string;
   category: PostCategory;
   status: PostStatus;
-  thumbnailFile: File | null;
+  thumbnail: File | null;
 }
