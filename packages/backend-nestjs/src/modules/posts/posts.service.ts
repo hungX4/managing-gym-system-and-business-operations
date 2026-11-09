@@ -46,7 +46,7 @@ export class PostsService {
                 author: { userId: authorId },
                 ...(thumbnail && {
                     thumbnail: thumbnail.path,
-                    thumnailId: thumbnail.filename
+                    thumbnailId: thumbnail.filename
                 })
             })
             return this.postRepo.save(post);
