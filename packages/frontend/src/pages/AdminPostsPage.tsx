@@ -154,7 +154,7 @@ export default function AdminPostsPage() {
               </tr>
             )}
             {!loading &&
-              data?.items.map((p) => (
+              data?.items?.items?.map((p) => (
                 <tr key={p.id}>
                   <td className={td}>
                     {p.thumbnail ? (

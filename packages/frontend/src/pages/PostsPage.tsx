@@ -26,7 +26,7 @@ export default function PostsPage() {
     setLoading(true);
     setError('');
     getPosts({ page, limit: LIMIT, category, search: keyword })
-      .then((res) => !cancelled && setData(res))
+      .then((res) => !cancelled && setData(res.items))
       .catch(() => !cancelled && setError('Không tải được danh sách bài viết'))
       .finally(() => !cancelled && setLoading(false));
     return () => {

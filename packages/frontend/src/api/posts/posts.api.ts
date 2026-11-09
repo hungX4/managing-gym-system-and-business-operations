@@ -23,17 +23,17 @@ function toFormData(values: PostFormValues): FormData {
 
 // ---------- Public ----------
 export const getPosts = (query: PostQuery = {}) =>
-  axiosClient.get<Paginated<PostListItem>>('/posts', { params: clean(query) }).then((r) => r.data);
+  axiosClient.get<Paginated<PostListItem>>('/posts', { params: clean(query) }).then((r) => r);
 
 export const getPostBySlug = (slug: string) =>
-  axiosClient.get<Post>(`/posts/${slug}`).then((r) => r.data);
+  axiosClient.get<Post>(`/posts/${slug}`).then((r) => r);
 
 // ---------- Admin ----------
-export const adminGetPosts = (query: PostQuery = {}) =>
-  axiosClient.get<Paginated<PostListItem>>('/admin/posts', { params: clean(query) }).then((r) => r.data);
+export const adminGetPosts = (query: PostQuery = {}): Promise<Paginated<PostListItem>> =>
+  axiosClient.get('/admin/posts', { params: clean(query) });
 
 export const adminGetPost = (id: number) =>
-  axiosClient.get<Post>(`/admin/posts/${id}`).then((r) => r.data);
+  axiosClient.get<Post>(`/admin/posts/${id}`).then((r) => r);
 
 export const adminCreatePost = (values: PostFormValues) =>
   axiosClient
